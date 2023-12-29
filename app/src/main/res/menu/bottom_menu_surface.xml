@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Home"
+        android:icon="@drawable/ic_home_fill"
+        android:id="@+id/homeFragment"
+        />
+    <item android:title="To Do"
+        android:icon="@drawable/ic_list_alt_fill"
+        android:id="@+id/todoFragment"
+        />
+    <item android:title="Profile"
+        android:icon="@drawable/ic_person_fill"
+        android:id="@+id/profileFragment"
+        />
+</menu>
