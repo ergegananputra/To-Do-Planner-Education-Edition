@@ -2,6 +2,7 @@ package com.minizuure.todoplannereducationedition
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
+import com.minizuure.todoplannereducationedition.services.database.ApplicationDatabase
 
 
 /**
@@ -10,6 +11,17 @@ import androidx.appcompat.app.AppCompatActivity
  */
 class ToDoPlannerApplication : Application() {
 
+    private val appDb by lazy {
+        ApplicationDatabase.getDatabase(this)
+    }
 
+    private val appRepository by lazy {
+        AppDatabaseRepository(
+            appDb.routineTableDao(),
+            appDb.sessionTableDao(),
+            appDb.taskTableDao(),
+            appDb.deleteAllOperation()
+        )
+    }
 
 }

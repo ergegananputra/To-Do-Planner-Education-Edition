@@ -4,6 +4,7 @@ plugins {
 
     // KSP
     id("com.google.devtools.ksp")
+    id("androidx.room")
 
     // Navigation
     id("androidx.navigation.safeargs.kotlin")
@@ -43,6 +44,17 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
+
+    sourceSets {
+        // Adds exported schema location as test app assets.
+        // follow this instruction: https://developer.android.com/training/data-storage/room/migrating-db-versions#kotlin_1
+        // TODO: build test case
+        getByName("androidTest").assets.srcDirs("$projectDir/schemas")
+    }
 }
 
 dependencies {
@@ -54,6 +66,11 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("androidx.room:room-runtime:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
+
+    // Testing Unit
+    implementation("androidx.test:core-ktx:1.5.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("androidx.room:room-testing:2.6.1")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
