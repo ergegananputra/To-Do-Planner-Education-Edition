@@ -1,5 +1,6 @@
 package com.minizuure.todoplannereducationedition.services.database
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -10,6 +11,7 @@ import androidx.room.Update
  * @param T The type of the entity.
  * insert, delete, update are all suspend functions.
  */
+@Dao
 interface BaseIODao<T> {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
