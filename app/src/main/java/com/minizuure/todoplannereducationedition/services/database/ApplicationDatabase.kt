@@ -8,9 +8,15 @@ import com.minizuure.todoplannereducationedition.services.database.routine.Routi
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTableDao
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTableDao
+import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTableDao
 
-@Database(entities = [RoutineTable::class, SessionTable::class, TaskTableDao::class],
+@Database(
+    entities = [
+        RoutineTable::class,
+        SessionTable::class,
+        TaskTable::class
+               ],
     version = 1,
     exportSchema = true
 )

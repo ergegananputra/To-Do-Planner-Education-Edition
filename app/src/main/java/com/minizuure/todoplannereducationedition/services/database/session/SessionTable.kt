@@ -3,6 +3,7 @@ package com.minizuure.todoplannereducationedition.services.database.session
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 
@@ -26,7 +27,8 @@ import com.minizuure.todoplannereducationedition.services.database.routine.Routi
             childColumns = ["fk_routine_id"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index("fk_routine_id")]
 )
 data class SessionTable(
     @PrimaryKey(autoGenerate = true)

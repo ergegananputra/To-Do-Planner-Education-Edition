@@ -2,4 +2,15 @@
     <string name="app_name">ToDo Planner : Education Edition</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delete">Delete</string>
+    <string name="detail">Detail Title Full Title Full Title Full Title Full Title Full Title Full Title Full Title Full Title</string>
+    <string name="field">…</string>
+    <string name="quiz_materials_title">Quiz Materials</string>
+    <string name="reschedule">Reschedule</string>
+    <string name="to_pack">To-Pack</string>
+    <string name="quiz">Quiz</string>
+    <string name="add_plan_for_next_week">Add plan for next week</string>
+    <string name="add_quiz_materials_here">Add quiz materials here</string>
+    <string name="add_to_pack_here">add to-pack here</string>
+    <string name="add_your_memo_here">Add your memo here</string>
 </resources>
