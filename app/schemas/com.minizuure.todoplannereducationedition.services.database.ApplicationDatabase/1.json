@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "24bb8996f440efa0b7e0ca5e4abca7e5",
+    "identityHash": "93cc9e8332496db556cb677fbf0ff0a3",
     "entities": [
       {
         "tableName": "routine_table",
@@ -95,7 +95,17 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_session_table_fk_routine_id",
+            "unique": false,
+            "columnNames": [
+              "fk_routine_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_session_table_fk_routine_id` ON `${TABLE_NAME}` (`fk_routine_id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "routine_table",
@@ -111,12 +121,81 @@
         ]
       },
       {
-        "tableName": "TaskTableDao",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` ()",
-        "fields": [],
+        "tableName": "task_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `index_day` INTEGER NOT NULL, `session_id` INTEGER NOT NULL, `is_custom_session` INTEGER NOT NULL, `time_start` TEXT, `time_end` TEXT, `location_name` TEXT, `location_link` TEXT, `is_shared_to_community` INTEGER NOT NULL, `community_id` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "indexDay",
+            "columnName": "index_day",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sessionId",
+            "columnName": "session_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isCustomSession",
+            "columnName": "is_custom_session",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "time_start",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "time_end",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "locationName",
+            "columnName": "location_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "locationAddress",
+            "columnName": "location_link",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isSharedToCommunity",
+            "columnName": "is_shared_to_community",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "communityId",
+            "columnName": "community_id",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
         "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": []
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -125,7 +204,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '24bb8996f440efa0b7e0ca5e4abca7e5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '93cc9e8332496db556cb677fbf0ff0a3')"
     ]
   }
 }
