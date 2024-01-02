@@ -6,17 +6,25 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.minizuure.todoplannereducationedition.databinding.ActivityMainBinding
 import com.minizuure.todoplannereducationedition.first_layer.detail.DetailActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    // TODO : Delete this testing purpose
+    private var testingPurpose = true
+
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater)}
 
     private val launcherToDetail = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             Log.d("MainActivity", "onCreate: RESULT_OK")
+            testingPurpose = false
         }
     }
 
@@ -33,11 +41,19 @@ class MainActivity : AppCompatActivity() {
             bottomNavigationViewSurface.setupWithNavController(navController)
         }
 
-        byPassTesting()
+        byPassTesting(testingPurpose)
     }
 
-    private fun byPassTesting() {
+    private fun byPassTesting(state : Boolean) {
         val intentToDetail = Intent(this, DetailActivity::class.java)
-        launcherToDetail.launch(intentToDetail)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            delay(1000)
+            if (state) {
+                this.launch(Dispatchers.Main) {
+                    launcherToDetail.launch(intentToDetail)
+                }
+            }
+        }
     }
 }

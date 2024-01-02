@@ -20,5 +20,10 @@ class DetailActivity : AppCompatActivity() {
             MaterialColors.getColor(binding.appBarLayoutDetail,
                 com.google.android.material.R.attr.colorSurface)
         )
+
+        binding.toolbarDetail.setNavigationOnClickListener {
+            setResult(RESULT_OK)
+            finish()
+        }
     }
 }
