@@ -1,14 +1,249 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/task_layout_0"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".first_layer.task.TaskFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/task_layout_appbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="task" />
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/task_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:menu="@menu/task_bar_menu"
+            app:navigationIcon="@drawable/ic_arrow_back_outline"
+            app:title="### Task"
+            app:titleCentered="true" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/task_layout_1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/task_layout_appbar"
+        app:layout_constraintVertical_bias="0.0">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/task_input_layout_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/task_input_edit_text_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Title">
+
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/task_button_folder"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:drawableLeft="@drawable/ic_folder_outline"
+            android:drawableRight="@drawable/ic_arrow_down"
+            android:padding="16dp"
+            android:text="Select Routines Template"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            app:cornerRadius="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/task_input_layout_title" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/task_button_folder">
+            <LinearLayout
+                android:id="@+id/linearLayout_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/task_button_date_day"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:padding="16dp"
+                    android:text="Select Day"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    app:cornerRadius="4dp"
+                    app:icon="@drawable/ic_arrow_down"
+                    app:iconGravity="end" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/task_button_date_time"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:padding="16dp"
+                    android:text="Select Session"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    app:cornerRadius="4dp"
+                    app:icon="@drawable/ic_arrow_down"
+                    app:iconGravity="end" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/task_layout_custom_session"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/task_button_end_session"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:padding="16dp"
+                    android:text="Start"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    app:cornerRadius="4dp"
+                    app:icon="@drawable/ic_schedule_outline"
+                    app:iconGravity="start"
+                    app:iconPadding="12dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/task_button_start_session"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:padding="16dp"
+                    android:text="End"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    app:cornerRadius="4dp"
+                    app:icon="@drawable/ic_schedule_outline"
+                    app:iconGravity="start"
+                    app:iconPadding="12dp"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/task_input_layout_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:startIconContentDescription="Location Name"
+            app:startIconDrawable="@drawable/ic_location_on_outline">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/task_input_edit_text_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Location Name">
+
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/task_input_layout_maps_link"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/task_input_layout_location">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/task_input_edit_text_maps_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Google Maps Link" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/task_switch_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/task_input_layout_maps_link" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/task_switch_share"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintStart_toEndOf="@+id/task_switch_share"
+            app:layout_constraintTop_toTopOf="@+id/task_switch_share">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Share to community"
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/task_text_community_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Community Name" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/materialButton4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:isScrollContainer="false"
+            android:text="Save"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/task_switch_share"
+            app:layout_constraintVertical_bias="1.0">
+
+        </com.google.android.material.button.MaterialButton>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
