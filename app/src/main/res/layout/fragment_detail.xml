@@ -223,7 +223,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/button_reschedule_next_plan" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/materialButton"
+                    android:id="@+id/button_tags_quiz"
                     style="@style/Widget.Material3.Button.OutlinedButton.Icon"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -243,7 +243,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/reschedule"
                     app:icon="@drawable/ic_next_plan_outline"
-                    app:layout_constraintEnd_toEndOf="@+id/materialButton"
+                    app:layout_constraintEnd_toEndOf="@+id/button_tags_quiz"
                     app:layout_constraintStart_toStartOf="@+id/button_quiz_next_plan"
                     app:layout_constraintTop_toBottomOf="@+id/text_view_routine_name" />
 
