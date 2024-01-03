@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">ToDo Planner : Education Edition</string>
+    <string name="app_version">version x.y.z</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="delete">Delete</string>
@@ -23,4 +24,28 @@
     <string name="next_day">Next day</string>
     <string name="previous_day">Previous day</string>
     <string name="search_here">Search here</string>
+    <string name="theme_mode">Theme mode</string>
+    <string name="theme_mode_status_light">light</string>
+    <string name="theme_mode_status_dark">dark</string>
+    <string name="greeting_in_profile">Hi,</string>
+    <string name="username_default_profile">You are not logged in</string>
+    <string name="login_status_default_profile">Login here</string>
+    <string name="manage_your_application_here">Manage your application here</string>
+    <string name="routines_management">Routines management</string>
+    <string name="routines_management_description">template, session, routines, tasks</string>
+    <string name="app_language">App language</string>
+    <string name="app_language_description_Example">English</string>
+    <string name="settings">Settings</string>
+    <string name="settings_description"><![CDATA[storage, permission, terms & services]]></string>
+    <string name="communities_settings_description">create or join communities</string>
+    <string name="beta">BETA</string>
+    <string name="help">Help</string>
+    <string name="help_description">features description, about us</string>
+    <string name="switch_theme">Switch Theme</string>
+    <string name="open_routines_management">Open routines management</string>
+    <string name="open_language_settings">open language settings</string>
+    <string name="open_settings">open settings</string>
+    <string name="open_communities_settings">open communities settings</string>
+    <string name="open_help">open help</string>
+
 </resources>
