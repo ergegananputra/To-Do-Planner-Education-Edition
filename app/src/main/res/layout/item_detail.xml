@@ -25,6 +25,8 @@
             android:checked="true"
             android:drawablePadding="16dp"
             android:minHeight="48dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:textColor="?attr/colorOnSurface"
             android:textAppearance="?attr/textAppearanceBodySmall"
             android:text="@string/field" />

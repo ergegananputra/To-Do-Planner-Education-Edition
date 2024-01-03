@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,205 +6,208 @@
     android:layout_height="match_parent"
     tools:context=".surface.todo.TodoFragment">
 
-    <androidx.core.widget.NestedScrollView
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/efab_add_task"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/add_task_label"
+        app:icon="@drawable/ic_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_top_bar_essentials"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.search.SearchBar
+            android:id="@+id/search_bar_todo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_here"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:id="@+id/container_filter_chip"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_bar_todo">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout2"
-                android:layout_width="match_parent"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_main_todo"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <com.google.android.material.search.SearchBar
-                    android:id="@+id/searchBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Search Text"
-                    app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/constraintLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/searchBar">
-
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/chipGroup"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <com.google.android.material.chip.Chip
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Quiz" />
-
-                        <com.google.android.material.chip.Chip
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="To-Pack" />
-                    </com.google.android.material.chip.ChipGroup>
-
-                    <com.google.android.material.divider.MaterialDivider
-                        android:id="@+id/materialDivider"
-                        android:layout_width="1dp"
-                        android:layout_height="0dp"
-                        android:layout_marginStart="8dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/chipGroup"
-                        app:layout_constraintStart_toEndOf="@+id/chipGroup"
-                        app:layout_constraintTop_toTopOf="@+id/chipGroup" />
-
-                    <HorizontalScrollView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:scrollbars="none"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toEndOf="@+id/materialDivider"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.0">
-
-                        <com.google.android.material.chip.ChipGroup
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:paddingStart="8dp">
-
-                            <com.google.android.material.chip.Chip
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="All Event"
-                                app:chipIcon="@drawable/ic_history" />
-
-                            <com.google.android.material.chip.Chip
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Communities"
-                                app:chipIcon="@drawable/ic_communities" />
-
-                            <com.google.android.material.chip.Chip
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Communities"
-                                app:chipIcon="@drawable/ic_communities" />
-                        </com.google.android.material.chip.ChipGroup>
-                    </HorizontalScrollView>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_arrow_left"
-                    style="@style/Widget.Material3.Button.IconButton"
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_quiz_todo"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    app:icon="@drawable/ic_arrow_left"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    android:text="@string/quiz" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_arrow_right"
-                    style="@style/Widget.Material3.Button.IconButton"
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_to_pack_todo"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    app:icon="@drawable/ic_arrow_right"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    android:text="@string/to_pack" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="@id/button_arrow_left"
-                    app:layout_constraintEnd_toStartOf="@id/button_arrow_right"
-                    app:layout_constraintStart_toEndOf="@id/button_arrow_left"
-                    app:layout_constraintTop_toTopOf="@id/button_arrow_left">
+            </com.google.android.material.chip.ChipGroup>
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_calendar"
-                        style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:icon="@drawable/ic_calendar" />
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/materialDivider"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/chip_group_main_todo"
+                app:layout_constraintStart_toEndOf="@+id/chip_group_main_todo"
+                app:layout_constraintTop_toTopOf="@+id/chip_group_main_todo" />
 
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/datetime"
-                        style="@style/TextAppearance.Material3.BodyMedium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="8dp"
-                        android:text="dd/MM/YYYY"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                        android:textColor="?attr/colorOnBackground" />
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+            <HorizontalScrollView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@null"
+                android:scrollbars="none"
+                android:requiresFadingEdge="horizontal"
+                android:fadingEdgeLength="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
-                tools:listitem="@layout/card_schedule"/>
+                app:layout_constraintStart_toEndOf="@+id/materialDivider"
+                app:layout_constraintTop_toTopOf="parent">
 
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="0dp"
+                    >
 
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_all_todo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:text="@string/all_event"
+                        app:chipIconVisible="true"
+                        app:chipIconTint="?attr/colorOnSurfaceVariant"
+                        app:chipIcon="@drawable/ic_history" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_communities_todo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/communities"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        app:chipIconVisible="true"
+                        app:chipIconTint="?attr/colorOnSurfaceVariant"
+                        app:chipIcon="@drawable/ic_communities_outline" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:layout_width="wrap_content"
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_datetime"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Task"
-        app:icon="@drawable/ic_add"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/container_top_bar_essentials">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_datetime_arrow_left"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            app:icon="@drawable/ic_arrow_left"
+            app:iconTint="?attr/colorOnBackground"
+            android:contentDescription="@string/previous_day"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_datetime_arrow_right"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            app:icon="@drawable/ic_arrow_right"
+            app:iconTint="?attr/colorOnBackground"
+            android:contentDescription="@string/next_day"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text_view_datetime_todo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_calendar"
+            android:drawablePadding="16dp"
+            android:gravity="center"
+            android:text="@string/dd_mm_yyyy_format"
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:textColor="?attr/colorOnBackground"
+            app:layout_constraintBottom_toBottomOf="@+id/button_datetime_arrow_left"
+            app:layout_constraintEnd_toStartOf="@+id/button_datetime_arrow_right"
+            app:layout_constraintStart_toEndOf="@+id/button_datetime_arrow_left"
+            app:layout_constraintTop_toTopOf="@+id/button_datetime_arrow_left" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view_todo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fadingEdgeLength="16dp"
+        android:requiresFadingEdge="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.975"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.975" />
+        app:layout_constraintTop_toBottomOf="@+id/container_datetime">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_todo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/container_datetime"
+            android:paddingTop="16dp"
+            android:paddingBottom="150dp"
+            tools:itemCount="3"
+            tools:listitem="@layout/card_schedule" />
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

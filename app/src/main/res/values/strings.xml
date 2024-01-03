@@ -13,4 +13,14 @@
     <string name="add_quiz_materials_here">Add quiz materials here</string>
     <string name="add_to_pack_here">add to-pack here</string>
     <string name="add_your_memo_here">Add your memo here</string>
+    <string name="quiz_materials">Quiz Materials</string>
+    <string name="today">Today</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="add_task_label">Add Task</string>
+    <string name="all_event">All Event</string>
+    <string name="communities">Communities</string>
+    <string name="dd_mm_yyyy_format">DD/mm/YYYY</string>
+    <string name="next_day">Next day</string>
+    <string name="previous_day">Previous day</string>
+    <string name="search_here">Search here</string>
 </resources>
