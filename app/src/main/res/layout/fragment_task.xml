@@ -22,7 +22,10 @@
             app:menu="@menu/task_bar_menu"
             app:navigationIcon="@drawable/ic_arrow_back_outline"
             app:title="### Task"
-            app:titleCentered="true" />
+            app:titleCentered="true"
+            android:textColor="?attr/colorOnSurface"
+            android:maxLines="1"
+            android:ellipsize="marquee"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -118,13 +121,13 @@
                     app:iconGravity="end" />
 
             </LinearLayout>
+            <!-- di hide kalau ngga perlu / belum milih custom session-->
             <LinearLayout
                 android:id="@+id/task_layout_custom_session"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/task_button_end_session"
@@ -221,13 +224,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Share to community"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                android:textColor="?attr/colorOnSurface"
+                android:maxLines="1"
+                android:ellipsize="marquee"/>
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/task_text_community_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Community Name" />
+                android:text="Community Name"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:maxLines="1"
+                android:ellipsize="marquee"/>
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton

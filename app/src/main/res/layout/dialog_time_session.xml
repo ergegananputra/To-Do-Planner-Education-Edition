@@ -9,10 +9,15 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/materialTextView"
-        style="@style/TextAppearance.Material3.BodyMedium"
+        style="@style/TextAppearance.Material3.BodyLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:maxLines="1"
         android:text="Enter #### Time"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:maxLength="2"
-                    android:textColor="?attr/colorPrimaryContainer"
+                    android:textColor="?attr/colorOnPrimaryContainer"
                     android:textSize="64sp">
 
                 </com.google.android.material.textfield.TextInputEditText>
@@ -58,9 +63,12 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:maxLines="1"
                 android:padding="8dp"
                 android:text="Hour"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
         </LinearLayout>
 
@@ -68,8 +76,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:ellipsize="marquee"
+            android:maxLines="1"
             android:text=":"
             android:textAlignment="center"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="64sp" />
 
         <LinearLayout
@@ -104,9 +115,12 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:maxLines="1"
                 android:padding="8dp"
                 android:text="Minute"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
         </LinearLayout>
     </LinearLayout>
@@ -133,10 +147,13 @@
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:maxLines="1"
             android:text="Cancel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/materialButton"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/materialButton"
@@ -146,7 +163,9 @@
             android:text="OK"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:maxLines="1"
+            android:ellipsize="marquee" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
