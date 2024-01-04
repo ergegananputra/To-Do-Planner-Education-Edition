@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/second_layer_navigation"
+    app:startDestination="@id/routinesFragment">
+
+    <fragment
+        android:id="@+id/routinesFragment"
+        android:name="com.minizuure.todoplannereducationedition.second_layer.routines.RoutinesFragment"
+        android:label="fragment_routines"
+        tools:layout="@layout/fragment_routines" />
+</navigation>
