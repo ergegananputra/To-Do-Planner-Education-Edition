@@ -47,5 +47,7 @@
     <string name="open_settings">open settings</string>
     <string name="open_communities_settings">open communities settings</string>
     <string name="open_help">open help</string>
+    <string name="times_used">used</string>
+    <string name="_0">0</string>
 
 </resources>
