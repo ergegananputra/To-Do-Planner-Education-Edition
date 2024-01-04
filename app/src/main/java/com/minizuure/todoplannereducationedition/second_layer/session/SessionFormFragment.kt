@@ -1,4 +1,4 @@
-package com.minizuure.todoplannereducationedition.second_layer.routines
+package com.minizuure.todoplannereducationedition.second_layer.session
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,19 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.minizuure.todoplannereducationedition.R
-import com.minizuure.todoplannereducationedition.databinding.FragmentRoutineFormBinding
+import com.minizuure.todoplannereducationedition.databinding.FragmentSessionFormBinding
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
+import com.minizuure.todoplannereducationedition.second_layer.routines.RoutineFormFragmentArgs
 
-
-class RoutineFormFragment : Fragment() {
-
-    val args : RoutineFormFragmentArgs by navArgs()
+class SessionFormFragment : Fragment() {
+    val args : SessionFormFragmentArgs by navArgs()
     private val binding by lazy {
-        FragmentRoutineFormBinding.inflate(layoutInflater)
+        FragmentSessionFormBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(
@@ -34,21 +32,12 @@ class RoutineFormFragment : Fragment() {
         (activity as RoutineManagementActivity).setToolbarTitle(this)
 
         setupSaveButton()
-        setupAddSessionButton()
-    }
-
-    private fun setupAddSessionButton() {
-        val destination = RoutineFormFragmentDirections.actionRoutineFormFragmentToSessionFormFragment(0)
-
-        binding.buttonAddSession.setOnClickListener {
-            findNavController().navigate(destination)
-        }
     }
 
     private fun setupSaveButton() {
         binding.buttonSaveRouteForm.setOnClickListener {
             //TODO: upload ke database
-            Toast.makeText(requireContext(), "Save routine", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Save session", Toast.LENGTH_SHORT).show()
             findNavController().navigateUp()
         }
     }

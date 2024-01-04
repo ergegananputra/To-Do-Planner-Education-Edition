@@ -23,5 +23,18 @@
             android:name="routine_id"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_routineFormFragment_to_sessionFormFragment"
+            app:destination="@id/sessionFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sessionFormFragment"
+        android:name="com.minizuure.todoplannereducationedition.second_layer.session.SessionFormFragment"
+        android:label="fragment_session_form"
+        tools:layout="@layout/fragment_session_form" >
+        <argument
+            android:name="session_id"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 </navigation>

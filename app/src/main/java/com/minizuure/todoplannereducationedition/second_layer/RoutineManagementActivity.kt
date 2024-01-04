@@ -9,6 +9,7 @@ import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.ActivityRoutineManagementBinding
 import com.minizuure.todoplannereducationedition.second_layer.routines.RoutineFormFragment
 import com.minizuure.todoplannereducationedition.second_layer.routines.RoutinesFragment
+import com.minizuure.todoplannereducationedition.second_layer.session.SessionFormFragment
 
 class RoutineManagementActivity : AppCompatActivity() {
     private val binding by lazy {
@@ -66,7 +67,15 @@ class RoutineManagementActivity : AppCompatActivity() {
 
                 changeToolbarTitle(title)
             }
+            is SessionFormFragment -> {
+                val title = if (fragment.args.sessionId == 0) {
+                    getString(R.string.new_session)
+                } else {
+                    getString(R.string.edit_session)
+                }
 
+                changeToolbarTitle(title)
+            }
 
             else -> changeToolbarTitle()
         }

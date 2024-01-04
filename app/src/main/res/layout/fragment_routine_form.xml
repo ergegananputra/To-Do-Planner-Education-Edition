@@ -9,7 +9,7 @@
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +28,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
-                android:hint="Routine Title"
+                android:hint="@string/routine_title_hint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -37,7 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -48,7 +48,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                android:hint="Description"
+                android:hint="@string/description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_input_layout_routine_title">
@@ -57,7 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -68,11 +68,14 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                android:hint="Start Date"
+                android:hint="@string/start_date_hint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_input_layout_description"
-                app:startIconDrawable="@drawable/ic_today_outline">
+                app:startIconDrawable="@drawable/ic_today_outline"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_arrow_down"
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -80,7 +83,7 @@
                     android:inputType="date"
                     android:paddingStart="48dp"
                     android:paddingEnd="0dp"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -91,11 +94,14 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                android:hint="End Date"
+                android:hint="@string/end_date_hint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_input_layout_start_date"
-                app:startIconDrawable="@drawable/ic_today_outline">
+                app:startIconDrawable="@drawable/ic_today_outline"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_arrow_down"
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -103,7 +109,7 @@
                     android:inputType="date"
                     android:paddingStart="48dp"
                     android:paddingEnd="0dp"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -114,7 +120,7 @@
                 android:layout_marginStart="16dp"
                 android:ellipsize="marquee"
                 android:maxLines="1"
-                android:text="Sessions"
+                android:text="@string/sessions"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textColor="?attr/colorOnBackground"
                 app:layout_constraintBottom_toBottomOf="@+id/button_add_session"
@@ -145,10 +151,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/button_add_session"
                 tools:listitem="@layout/item_session_detail" />
 
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.core.widget.NestedScrollView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_flying_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
 
 
     <com.google.android.material.button.MaterialButton
@@ -156,13 +171,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="56dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="54dp"
-        android:text="Save"
         android:elevation="4dp"
+        android:text="@string/save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline_flying_button"
+        app:layout_constraintVertical_bias="1.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

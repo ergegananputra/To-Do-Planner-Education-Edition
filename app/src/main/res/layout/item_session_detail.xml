@@ -129,7 +129,7 @@
                     android:id="@+id/tags_friday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/fridat_short"
+                    android:text="@string/friday_short"
                     android:textAppearance="?attr/textAppearanceLabelSmall"
                     android:textColor="?attr/colorOnPrimaryContainer"
                     android:background="@drawable/rounded_rectangle_8dp"

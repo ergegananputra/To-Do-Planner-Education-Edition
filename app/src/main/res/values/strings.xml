@@ -55,9 +55,20 @@
     <string name="tuesday_short">Tue</string>
     <string name="wednesday_short">Wed</string>
     <string name="thursday_short">Thu</string>
-    <string name="fridat_short">Fri</string>
+    <string name="friday_short">Fri</string>
     <string name="saturday_short">Sat</string>
     <string name="new_routine">New Routine</string>
     <string name="edit_routine">Edit Routine</string>
+    <string name="routine_title_hint">Routine Title</string>
+    <string name="description">Description</string>
+    <string name="start_date_hint">Start Date</string>
+    <string name="end_date_hint">End Date</string>
+    <string name="sessions">Sessions</string>
+    <string name="save">Save</string>
+    <string name="session_title">Session Title</string>
+    <string name="start_time_hint">Start</string>
+    <string name="end_time_hint">End</string>
+    <string name="new_session">New Session</string>
+    <string name="edit_session">Edit Session</string>
 
 </resources>
