@@ -9,5 +9,19 @@
         android:id="@+id/routinesFragment"
         android:name="com.minizuure.todoplannereducationedition.second_layer.routines.RoutinesFragment"
         android:label="fragment_routines"
-        tools:layout="@layout/fragment_routines" />
+        tools:layout="@layout/fragment_routines" >
+        <action
+            android:id="@+id/action_routinesFragment_to_routineFormFragment"
+            app:destination="@id/routineFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/routineFormFragment"
+        android:name="com.minizuure.todoplannereducationedition.second_layer.routines.RoutineFormFragment"
+        android:label="fragment_routine_form"
+        tools:layout="@layout/fragment_routine_form" >
+        <argument
+            android:name="routine_id"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
 </navigation>

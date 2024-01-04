@@ -49,5 +49,15 @@
     <string name="open_help">open help</string>
     <string name="times_used">used</string>
     <string name="_0">0</string>
+    <string name="interval_time_format">HH:MM - HH:MM</string>
+    <string name="sunday_short">Sun</string>
+    <string name="monday_short">Mon</string>
+    <string name="tuesday_short">Tue</string>
+    <string name="wednesday_short">Wed</string>
+    <string name="thursday_short">Thu</string>
+    <string name="fridat_short">Fri</string>
+    <string name="saturday_short">Sat</string>
+    <string name="new_routine">New Routine</string>
+    <string name="edit_routine">Edit Routine</string>
 
 </resources>
