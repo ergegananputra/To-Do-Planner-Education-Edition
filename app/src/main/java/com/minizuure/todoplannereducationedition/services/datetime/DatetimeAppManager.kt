@@ -2,10 +2,12 @@ package com.minizuure.todoplannereducationedition.services.datetime
 
 import android.content.Context
 import android.text.format.DateFormat
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import com.minizuure.todoplannereducationedition.R
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -65,7 +67,7 @@ class DatetimeAppManager {
     fun setEditTextTimePickerDialog(
         context: Context,
         parentFragmentManager: FragmentManager,
-        textInputLayoutTime: TextInputLayout
+        textInputLayoutTime: TextInputLayout,
     ) {
         val picker = timePickerBuilder(context)
 
@@ -74,10 +76,26 @@ class DatetimeAppManager {
         }
 
         picker.addOnPositiveButtonClickListener {
+            textInputLayoutTime.error = null
             val hour = picker.hour
             val minute = picker.minute
             val time = String.format("%02d:%02d", hour, minute)
             textInputLayoutTime.editText?.setText(time)
+        }
+
+        textInputLayoutTime.editText?.doAfterTextChanged { text ->
+            if (text.toString().trim().length == 5) {
+                val (hour, minute) = text.toString().trim().split(":")
+                if (hour.length != 2 || minute.length != 2 || hour.toInt() > 23 || hour.toInt() < 0 || minute.toInt() > 59 || minute.toInt() < 0) {
+                    val errMsg = context.getString(R.string.error_msg_time_invalid_format)
+                    textInputLayoutTime.error = errMsg
+                } else {
+                    textInputLayoutTime.error = null
+                    textInputLayoutTime.clearFocus()
+                }
+            } else if (text.toString().trim().isNotEmpty()) {
+                textInputLayoutTime.error = null
+            }
         }
     }
 

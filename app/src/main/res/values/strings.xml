@@ -70,5 +70,10 @@
     <string name="end_time_hint">End</string>
     <string name="new_session">New Session</string>
     <string name="edit_session">Edit Session</string>
+    <string name="error_msg_title_empty">Title cannot be empty</string>
+    <string name="error_msg_start_time_empty">Start time cannot be empty</string>
+    <string name="error_msg_end_time_empty">End time cannot be empty</string>
+    <string name="error_msg_no_days_selected_session_form">Please select at least one day</string>
+    <string name="error_msg_time_invalid_format">Invalid Format</string>
 
 </resources>

@@ -36,5 +36,25 @@
             android:name="session_id"
             app:argType="integer"
             android:defaultValue="0" />
+        <argument
+            android:name="new_routine"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="title"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="start_time"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="end_time"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="selected_days"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>
