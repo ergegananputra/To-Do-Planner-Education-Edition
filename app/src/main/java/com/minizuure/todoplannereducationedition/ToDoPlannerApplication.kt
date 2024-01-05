@@ -15,7 +15,7 @@ class ToDoPlannerApplication : Application() {
         ApplicationDatabase.getDatabase(this)
     }
 
-    private val appRepository by lazy {
+    val appRepository by lazy {
         AppDatabaseRepository(
             appDb.routineTableDao(),
             appDb.sessionTableDao(),

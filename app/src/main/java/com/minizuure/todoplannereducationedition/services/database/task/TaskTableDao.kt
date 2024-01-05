@@ -16,7 +16,7 @@ interface TaskTableDao : BaseIODao<TaskTable> {
 
 
     @Query("SELECT * FROM task_table WHERE id = :id")
-    suspend fun getById(id: Int): TaskTable?
+    suspend fun getById(id: Long): TaskTable?
 
     @Query("SELECT * FROM task_table WHERE index_day = :indexDay")
     suspend fun getByIndexDay(indexDay: Int): List<TaskTable>

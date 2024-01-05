@@ -13,18 +13,18 @@ interface SessionTableDao : BaseIODao<SessionTable> {
     suspend fun getPaginated(limit: Int, offset: Int = 0, searchQuery: String = ""): List<SessionTable>
 
     @Query("SELECT * FROM session_table WHERE id = :id")
-    suspend fun getById(id: Int): SessionTable?
+    suspend fun getById(id: Long): SessionTable?
 
     @Query("SELECT * FROM session_table WHERE fk_routine_id = :routineId")
-    suspend fun getByRoutineId(routineId: Int): List<SessionTable>
+    suspend fun getByRoutineId(routineId: Long): List<SessionTable>
 
 
     @Query("SELECT * FROM session_table WHERE title LIKE :searchQuery")
     suspend fun search(searchQuery: String): List<SessionTable>
 
     @Query("SELECT COUNT(*) FROM session_table WHERE fk_routine_id = :routineId")
-    suspend fun countSessionsForRoutine(routineId: Int): Int
+    suspend fun countSessionsForRoutine(routineId: Long): Int
 
     @Query("SELECT * FROM session_table WHERE fk_routine_id = :routineId")
-    suspend fun getSessionsForRoutine(routineId: Int): List<SessionTable>
+    suspend fun getSessionsForRoutine(routineId: Long): List<SessionTable>
 }

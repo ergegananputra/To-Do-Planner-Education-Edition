@@ -4,13 +4,18 @@ import android.content.Context
 import android.text.format.DateFormat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.minizuure.todoplannereducationedition.R
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Datetime Package
@@ -32,8 +37,14 @@ class DatetimeAppManager {
         return ZonedDateTime.ofInstant(timestampInstant, zoneLocalTimeId)
     }
 
+    fun convertReadableDateToIso8601(readableDatetime: String) : String {
+        val readableDate = LocalDate.parse(readableDatetime, DateTimeFormatter.ofPattern("dd LLLL yyyy"))
+        val zonedDateTime = readableDate.atStartOfDay(zoneLocalTimeId)
+        return zonedDateTime.toInstant().toString()
+    }
 
-    private fun timePickerBuilder(context: Context) : MaterialTimePicker {
+
+    private fun timePickerBuilder(context: Context, title: String) : MaterialTimePicker {
         val currentTime = DatetimeAppManager().getLocalDateTime()
         val clockFormat = if (DateFormat.is24HourFormat(context)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
 
@@ -41,8 +52,23 @@ class DatetimeAppManager {
             .setTimeFormat(clockFormat)
             .setHour(currentTime.hour)
             .setMinute(currentTime.minute)
-            .setTitleText("Select start time")
+            .setTitleText(title)
             .build()
+    }
+
+
+    private fun datePickerBuilder(context: Context, title : String, forwardOnly: Boolean) : MaterialDatePicker<Long> {
+        val datePickerBuilder = MaterialDatePicker.Builder.datePicker()
+            .setTitleText(title)
+
+        if (forwardOnly) {
+            val constraintsBuilder = CalendarConstraints.Builder()
+                .setValidator(DateValidatorPointForward.now())
+
+            datePickerBuilder.setCalendarConstraints(constraintsBuilder.build())
+        }
+
+        return datePickerBuilder.build()
     }
 
     /**
@@ -68,8 +94,9 @@ class DatetimeAppManager {
         context: Context,
         parentFragmentManager: FragmentManager,
         textInputLayoutTime: TextInputLayout,
+        title: String = "Select time"
     ) {
-        val picker = timePickerBuilder(context)
+        val picker = timePickerBuilder(context, title)
 
         textInputLayoutTime.setEndIconOnClickListener {
             picker.show(parentFragmentManager, "SessionFormFragment")
@@ -98,6 +125,59 @@ class DatetimeAppManager {
             }
         }
     }
+
+    /**
+     * Set EditText DatePickerDialog.
+     * Use this function to set EditText DatePickerDialog and open Date Picker Dialog.
+     * example in RoutineFormFragment.kt:
+     * ```kotlin
+     *      DatetimeAppManager().setEditTextDatePickerDialog(
+     *            requireContext(),
+     *            parentFragmentManager,
+     *            binding.textInputLayoutStartDate,
+     *            title = getString(R.string.select_start_date)
+     *       )
+     * ```
+     *  @param context : Context
+     *  @param parentFragmentManager : FragmentManager
+     *  @param textInputLayoutDate : TextInputLayout
+     *  @param title : String
+     *  @param forwardOnly : Boolean
+     *
+     */
+    fun setEditTextDatePickerDialog(
+        context: Context,
+        parentFragmentManager: FragmentManager,
+        textInputLayoutDate: TextInputLayout,
+        title: String = "Select date",
+        forwardOnly : Boolean = false
+    ) {
+        val picker = datePickerBuilder(context, title, forwardOnly)
+
+        textInputLayoutDate.editText?.isFocusable = false
+        textInputLayoutDate.editText?.isClickable = true
+        textInputLayoutDate.editText?.isCursorVisible = false
+
+
+        textInputLayoutDate.editText?.setOnClickListener {
+            picker.show(parentFragmentManager, "SessionFormFragment")
+        }
+
+        textInputLayoutDate.setEndIconOnClickListener {
+            picker.show(parentFragmentManager, "SessionFormFragment")
+        }
+
+        picker.addOnPositiveButtonClickListener {
+            textInputLayoutDate.error = null
+            picker.selection?.let { epoc ->
+                val selectedDate = Instant.ofEpochMilli(epoc).atZone(zoneLocalTimeId).toLocalDate()
+                val formattedSelectedDate = selectedDate.format(DateTimeFormatter.ofPattern("dd LLLL yyyy"))
+                textInputLayoutDate.editText?.setText(formattedSelectedDate)
+            }
+        }
+
+    }
+
 
 
 }

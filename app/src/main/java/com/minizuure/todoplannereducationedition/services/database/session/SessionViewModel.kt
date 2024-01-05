@@ -13,7 +13,7 @@ class SessionViewModel(
         return appDatabaseRepository.getAllSessions()
     }
 
-    suspend fun getById(id: Int) : SessionTable? {
+    suspend fun getById(id: Long) : SessionTable? {
         Log.d("SessionViewModel", "begin get session by id: $id")
         val result = appDatabaseRepository.getSessionById(id)
         Log.d("SessionViewModel", "result get session by id is ${result != null}")
@@ -25,7 +25,7 @@ class SessionViewModel(
         return appDatabaseRepository.getPaginatedSessions(limit, offset, search)
     }
 
-    suspend fun getByRoutineId(routineId: Int) : List<SessionTable> {
+    suspend fun getByRoutineId(routineId: Long) : List<SessionTable> {
         Log.d("SessionViewModel", "get sessions by routine id: $routineId")
         return appDatabaseRepository.getByRoutineId(routineId)
     }
@@ -40,7 +40,7 @@ class SessionViewModel(
         timeStart : String,
         timeEnd : String,
         selectedDays : String,
-        fkRoutineId : Int
+        fkRoutineId : Long
     ) {
         Log.d("SessionViewModel", "insert session with params: $title, $timeStart, $timeEnd, $selectedDays, $fkRoutineId")
         val sessionTable = SessionTable(
@@ -69,12 +69,12 @@ class SessionViewModel(
         return appDatabaseRepository.searchSessions(searchQuery)
     }
 
-    suspend fun countSessionsForRoutine(routineId: Int) : Int {
+    suspend fun countSessionsForRoutine(routineId: Long) : Int {
         Log.d("SessionViewModel", "count sessions for routine: $routineId")
         return appDatabaseRepository.countSessionsForRoutine(routineId)
     }
 
-    suspend fun getSessionsForRoutine(routineId: Int) : List<SessionTable> {
+    suspend fun getSessionsForRoutine(routineId: Long) : List<SessionTable> {
         Log.d("SessionViewModel", "get sessions for routine: $routineId")
         return appDatabaseRepository.getSessionsForRoutine(routineId)
     }
