@@ -68,7 +68,7 @@ class RoutineManagementActivity : AppCompatActivity() {
                 changeToolbarTitle(title)
             }
             is SessionFormFragment -> {
-                val title = if (fragment.args.sessionId == 0) {
+                val title = if (fragment.args.sessionId == -1) {
                     getString(R.string.new_session)
                 } else {
                     getString(R.string.edit_session)

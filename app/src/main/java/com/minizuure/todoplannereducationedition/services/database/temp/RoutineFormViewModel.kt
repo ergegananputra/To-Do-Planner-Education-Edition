@@ -9,8 +9,11 @@ import kotlinx.coroutines.flow.first
 
 class RoutineFormViewModel : ViewModel() {
     val tempSessions : MutableLiveData<MutableList<TempSession>> = MutableLiveData(mutableListOf())
-    private suspend fun size() : Int {
-        return tempSessions.asFlow().first().size
+    private suspend fun automaticId() : Int {
+        if (tempSessions.asFlow().first().isEmpty()) {
+            return 0
+        }
+        return tempSessions.asFlow().first().last().id + 1
     }
 
     suspend fun addTempSession(
@@ -22,7 +25,7 @@ class RoutineFormViewModel : ViewModel() {
         Log.d("RoutineFormViewModel", "addTempSession: inserting")
         tempSessions.asFlow().first().add(
             TempSession(
-                index = size(),
+                id = automaticId(),
                 title = title,
                 startTime = startTime,
                 endTime = endTime,
@@ -32,15 +35,15 @@ class RoutineFormViewModel : ViewModel() {
     }
 
     suspend fun updateTempSession(
-        index : Int,
+        id : Int,
         title : String,
         startTime : String,
         endTime : String,
         daysSelected : String
     ) {
-        Log.d("RoutineFormViewModel", "updateTempSession: updating $index")
-        tempSessions.asFlow().first()[index] = TempSession(
-            index = index,
+        Log.d("RoutineFormViewModel", "updateTempSession: updating $id")
+        tempSessions.asFlow().first()[id] = TempSession(
+            id = id,
             title = title,
             startTime = startTime,
             endTime = endTime,
@@ -48,8 +51,9 @@ class RoutineFormViewModel : ViewModel() {
         )
     }
 
-    suspend fun deleteTempSession(index : Int) {
-        Log.d("RoutineFormViewModel", "deleteTempSession: deleting $index")
+    suspend fun deleteTempSession(id : Int) {
+        Log.d("RoutineFormViewModel", "deleteTempSession: deleting $id")
+        val index = tempSessions.asFlow().first().indexOfFirst { it.id == id }
         tempSessions.asFlow().first().removeAt(index)
     }
 

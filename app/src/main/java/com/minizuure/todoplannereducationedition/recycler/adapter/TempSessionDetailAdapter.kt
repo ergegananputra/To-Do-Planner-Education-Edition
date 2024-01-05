@@ -3,6 +3,7 @@ package com.minizuure.todoplannereducationedition.recycler.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import com.minizuure.todoplannereducationedition.databinding.ItemSessionDetailBinding
 import com.minizuure.todoplannereducationedition.model.TempSession
@@ -10,7 +11,7 @@ import com.minizuure.todoplannereducationedition.model.TempSession
 class TempSessionDetailAdapter(
     var sessions : MutableList<TempSession>,
     private val onClick : (TempSession) -> Unit,
-    private val onLongClick : (TempSession) -> Unit,
+    private val onLongClick : (TempSession, MaterialButton) -> Unit,
 ) : RecyclerView.Adapter<TempSessionDetailAdapter.TempSessionViewHolder>() {
     inner class TempSessionViewHolder(
         private val binding : ItemSessionDetailBinding
@@ -27,7 +28,12 @@ class TempSessionDetailAdapter(
             }
 
             binding.cardViewSessionDetail.setOnLongClickListener {
-                onLongClick(session)
+                if (binding.buttonDeleteItemSessionDetail.visibility == MaterialTextView.VISIBLE) {
+                    binding.buttonDeleteItemSessionDetail.visibility = MaterialTextView.GONE
+                }
+                else {
+                    onLongClick(session, binding.buttonDeleteItemSessionDetail)
+                }
                 true
             }
 

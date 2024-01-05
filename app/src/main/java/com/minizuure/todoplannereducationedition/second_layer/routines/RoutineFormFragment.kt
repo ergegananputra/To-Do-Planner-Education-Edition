@@ -8,16 +8,21 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.button.MaterialButton
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.FragmentRoutineFormBinding
 import com.minizuure.todoplannereducationedition.model.TempSession
 import com.minizuure.todoplannereducationedition.recycler.adapter.TempSessionDetailAdapter
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
 import com.minizuure.todoplannereducationedition.services.database.temp.RoutineFormViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class RoutineFormFragment : Fragment() {
@@ -33,12 +38,44 @@ class RoutineFormFragment : Fragment() {
         TempSessionDetailAdapter(
             sessions = mutableListOf(),
             onClick = {
-               Toast.makeText(requireContext(), "Session clicked ${it.index}", Toast.LENGTH_SHORT).show()
+                onClickSessionItem(it)
             },
-            onLongClick = {
-                Toast.makeText(requireContext(), "Session long clicked ${it.index}", Toast.LENGTH_SHORT).show()
+            onLongClick = { session, button ->
+                onLongClickSessionItem(session, button)
             },
         )
+    }
+
+    private fun onLongClickSessionItem(session: TempSession, button: MaterialButton) {
+        button.visibility = View.VISIBLE
+        button.setOnClickListener {
+            button.visibility = View.GONE
+            Toast.makeText(requireContext(), "Delete ${session.title}", Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                routineFormViewModel.deleteTempSession(session.id)
+                tempSessionDetailAdapter.notifyItemRemoved(session.id)
+            }
+
+        }
+
+        lifecycleScope.launch {
+            this.launch(Dispatchers.IO) {
+                delay(5000)
+                this.launch(Dispatchers.Main) { button.visibility = View.GONE }
+            }
+        }
+    }
+
+    private fun onClickSessionItem(it: TempSession) {
+        val destination = RoutineFormFragmentDirections.actionRoutineFormFragmentToSessionFormFragment(
+            sessionId = it.id,
+            newRoutine = args.routineId == 0,
+            title = it.title,
+            startTime = it.startTime,
+            endTime = it.endTime,
+            selectedDays = it.daysSelected
+        )
+        findNavController().navigate(destination)
     }
 
     override fun onCreateView(
@@ -84,7 +121,13 @@ class RoutineFormFragment : Fragment() {
     }
 
     private fun setupAddSessionButton() {
-        val destination = RoutineFormFragmentDirections.actionRoutineFormFragmentToSessionFormFragment(0)
+        val destination = RoutineFormFragmentDirections.actionRoutineFormFragmentToSessionFormFragment(
+            newRoutine = args.routineId == 0,
+            title = null,
+            startTime = null,
+            endTime = null,
+            selectedDays = null,
+        )
 
         binding.buttonAddSession.setOnClickListener {
             findNavController().navigate(destination)

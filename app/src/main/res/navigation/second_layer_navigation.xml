@@ -35,7 +35,7 @@
         <argument
             android:name="session_id"
             app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="-1" />
         <argument
             android:name="new_routine"
             app:argType="boolean"

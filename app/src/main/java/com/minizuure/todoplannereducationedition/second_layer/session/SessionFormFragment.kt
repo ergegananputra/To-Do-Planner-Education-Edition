@@ -15,10 +15,8 @@ import androidx.navigation.fragment.navArgs
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.FragmentSessionFormBinding
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
-import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.temp.RoutineFormViewModel
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -59,11 +57,34 @@ class SessionFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as RoutineManagementActivity).setToolbarTitle(this)
+        if (args.sessionId != -1) {
+            loadData()
+        }
 
         setupSaveButton()
         setupSessionTitle()
         setupStartTimePicker()
         setupDaysTag()
+    }
+
+    private fun loadData() {
+        binding.textInputLayoutSessionTitle.editText?.setText(args.title)
+        binding.textInputLayoutStartTime.editText?.setText(args.startTime)
+        binding.textInputLayoutEndTime.editText?.setText(args.endTime)
+
+        val selectedDays = args.selectedDays
+        val days = listOf(
+            binding.buttonTagsSunday,
+            binding.buttonTagsMonday,
+            binding.buttonTagsTuesday,
+            binding.buttonTagsWednesday,
+            binding.buttonTagsThursday,
+            binding.buttonTagsFriday,
+            binding.buttonTagsSaturday,
+        )
+        selectedDays?.forEachIndexed { index, c ->
+            days[index].isActivated = c == '1'
+        }
     }
 
     private fun setupSessionTitle() {
@@ -147,15 +168,28 @@ class SessionFormFragment : Fragment() {
 
             val daysSelected = days.joinToString("") { if (it) "1" else "0" }
 
-            if (args.sessionId == 0) {
+            // old routines always have id so it can store to database immediately
+            if (args.newRoutine) {
                 lifecycleScope.launch {
-                    routineFormViewModel.addTempSession(
-                        title = title,
-                        startTime = startTime,
-                        endTime = endTime,
-                        daysSelected = daysSelected
-                    )
-                    navigateBackSuccess()
+                    // check if session is new or old to determine if it should be added to temp session or updated
+                    if (args.sessionId == -1) {
+                        routineFormViewModel.addTempSession(
+                            title = title,
+                            startTime = startTime,
+                            endTime = endTime,
+                            daysSelected = daysSelected
+                        )
+                        navigateBackSuccess()
+                    } else {
+                        routineFormViewModel.updateTempSession(
+                            id = args.sessionId,
+                            title = title,
+                            startTime = startTime,
+                            endTime = endTime,
+                            daysSelected = daysSelected
+                        )
+                        navigateBackSuccess()
+                    }
                 }
             } else {
                 lifecycleScope.launch {
