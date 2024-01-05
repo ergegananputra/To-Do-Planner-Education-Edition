@@ -95,4 +95,26 @@
     <style name="Tags.ToPack" parent="Button.Card.Tags.Secondary">
         <item name="android:drawableStart">@drawable/ic_luggage_18</item>
     </style>
+
+
+    <style name="Tags.Chip" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:minWidth">60dp</item>
+        <item name="android:background">@drawable/chip_tags</item>
+        <item name="android:clickable">true</item>
+        <item name="android:state_active">true</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:textAllCaps">false</item>
+
+        <item name="android:textColor">@color/text_color_chip_tags</item>
+        <item name="android:paddingVertical">4dp</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
+    </style>
+
+
 </resources>

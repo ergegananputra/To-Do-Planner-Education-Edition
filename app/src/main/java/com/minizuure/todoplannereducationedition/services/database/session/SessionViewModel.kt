@@ -46,10 +46,10 @@ class SessionViewModel(
         val sessionTable = SessionTable(
             id = 0,
             title = title,
-            time_start = timeStart,
-            time_end = timeEnd,
-            selected_days = selectedDays,
-            fk_routine_id = fkRoutineId
+            timeStart = timeStart,
+            timeEnd = timeEnd,
+            selectedDays = selectedDays,
+            fkRoutineId = fkRoutineId
         )
         appDatabaseRepository.insertSession(sessionTable)
     }

@@ -38,14 +38,14 @@ data class SessionTable(
     var title: String,
 
     @ColumnInfo(name = "time_start")
-    var time_start: String,
+    var timeStart: String,
 
     @ColumnInfo(name = "time_end")
-    var time_end: String,
+    var timeEnd: String,
 
     @ColumnInfo(name = "bool_selected_days")
-    var selected_days : String  = "0000000",
+    var selectedDays : String  = "0000000",
 
     @ColumnInfo(name = "fk_routine_id")
-    val fk_routine_id : Int = 0,
+    val fkRoutineId : Int = 0,
 )

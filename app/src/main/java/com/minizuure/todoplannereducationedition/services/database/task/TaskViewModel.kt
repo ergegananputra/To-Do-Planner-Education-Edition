@@ -58,11 +58,11 @@ class TaskViewModel(
 
         if (isCustomSession) {
             val sessionTable = appDatabaseRepository.getSessionById(sessionId)
-            Log.d("TaskViewModel", "sessionTable is not null: ${sessionTable != null} ${sessionTable?.time_start} ${sessionTable?.time_end}")
+            Log.d("TaskViewModel", "sessionTable is not null: ${sessionTable != null} ${sessionTable?.timeStart} ${sessionTable?.timeEnd}")
 
             if (sessionTable != null) {
-                timeStart = sessionTable.time_start
-                timeEnd = sessionTable.time_end
+                timeStart = sessionTable.timeStart
+                timeEnd = sessionTable.timeEnd
             }
 
         }
