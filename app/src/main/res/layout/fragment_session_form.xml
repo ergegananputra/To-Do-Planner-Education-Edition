@@ -118,89 +118,47 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/materialTextView5">
 
-                <com.google.android.material.card.MaterialCardView
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_tags_sunday"
                     style="@style/Tags.Chip"
-                    >
+                    android:text="@string/sunday_short"
+                    />
 
-                    <com.google.android.material.textview.MaterialTextView
-                        style="@style/Tags.Chip.Text"
-                        android:text="@string/sunday_short"
-                        />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_tags_monday"
                     style="@style/Tags.Chip"
-                    >
+                    android:text="@string/monday_short"
+                    />
 
-                    <com.google.android.material.textview.MaterialTextView
-                        style="@style/Tags.Chip.Text"
-                        android:text="@string/monday_short"
-                        />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_tags_tuesday"
                     style="@style/Tags.Chip"
-                    >
+                    android:text="@string/tuesday_short"
+                    />
 
-                    <com.google.android.material.textview.MaterialTextView
-                        style="@style/Tags.Chip.Text"
-                        android:text="@string/tuesday_short"
-                        />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_tags_wednesday"
                     style="@style/Tags.Chip"
-                    >
+                    android:text="@string/wednesday_short"
+                    />
 
-                    <com.google.android.material.textview.MaterialTextView
-                        style="@style/Tags.Chip.Text"
-                        android:text="@string/wednesday_short"
-                        />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_tags_thursday"
                     style="@style/Tags.Chip"
-                    >
+                    android:text="@string/thursday_short"
+                    />
 
-                    <com.google.android.material.textview.MaterialTextView
-                        style="@style/Tags.Chip.Text"
-                        android:text="@string/thursday_short"
-                        />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_tags_friday"
                     style="@style/Tags.Chip"
-                    >
+                    android:text="@string/friday_short"
+                    />
 
-                    <com.google.android.material.textview.MaterialTextView
-                        style="@style/Tags.Chip.Text"
-                        android:text="@string/friday_short"
-                        />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_tags_saturday"
                     style="@style/Tags.Chip"
-                    >
-
-                    <com.google.android.material.textview.MaterialTextView
-                        style="@style/Tags.Chip.Text"
-                        android:text="@string/saturday_short"
-                        />
-
-                </com.google.android.material.card.MaterialCardView>
+                    android:text="@string/saturday_short"
+                    />
 
             </com.google.android.flexbox.FlexboxLayout>
 
