@@ -70,36 +70,63 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/task_button_date_day"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    android:padding="16dp"
-                    android:text="Select Day"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    app:cornerRadius="4dp"
-                    app:icon="@drawable/ic_arrow_down"
-                    app:iconGravity="end" />
+                    android:layout_marginEnd="4dp"
+                    android:orientation="vertical">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/task_button_date_day"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="Select Day"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        app:cornerRadius="4dp"
+                        app:icon="@drawable/ic_arrow_down"
+                        app:iconGravity="end" />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/task_text_day_error_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Error msg.."
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="?attr/colorError"
+                        android:paddingStart="4dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/task_button_date_time"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:padding="16dp"
-                    android:text="Select Session"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    app:cornerRadius="4dp"
-                    app:icon="@drawable/ic_arrow_down"
-                    app:iconGravity="end" />
+                    android:orientation="vertical">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/task_button_date_time"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="Select Session"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        app:cornerRadius="4dp"
+                        app:icon="@drawable/ic_arrow_down"
+                        app:iconGravity="end" />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/task_text_session_error_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Error msg.."
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="?attr/colorError"
+                        android:paddingStart="4dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
 
             </LinearLayout>
 

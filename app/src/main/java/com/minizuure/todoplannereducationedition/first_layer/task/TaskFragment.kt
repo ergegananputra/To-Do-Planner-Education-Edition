@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.FragmentTaskBinding
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
+import com.minizuure.todoplannereducationedition.services.errormsgs.ErrorMsgManager
 
 class TaskFragment : Fragment() {
 
@@ -27,6 +28,7 @@ class TaskFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupStartTimePicker()
+        setupErrorMessages()
     }
     private fun setupStartTimePicker() {
         DatetimeAppManager().setEditTextTimePickerDialog(
@@ -39,6 +41,15 @@ class TaskFragment : Fragment() {
             requireContext(),
             parentFragmentManager,
             binding.taskInputEndSession
+        )
+    }
+
+    private fun setupErrorMessages() {
+        ErrorMsgManager().setErrorMessages(
+            requireContext(),
+            binding.taskInputLayoutLocation,
+            binding.taskInputEditTextLocation,
+            "20 characters max"
         )
     }
 }
