@@ -11,11 +11,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentRoutinesBinding
 import com.minizuure.todoplannereducationedition.recycler.adapter.RoutinesAdapter
 import com.minizuure.todoplannereducationedition.recycler.model.RoutinesItemPreview
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
+import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity.Companion.DEFAULT_ROUTINE_ID
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
@@ -23,6 +25,7 @@ import com.minizuure.todoplannereducationedition.services.database.session.Sessi
 import com.minizuure.todoplannereducationedition.services.database.temp.RoutineFormViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RoutinesFragment : Fragment() {
     private val routineFormViewModel : RoutineFormViewModel by activityViewModels()
@@ -35,14 +38,21 @@ class RoutinesFragment : Fragment() {
 
     private val routineAdapter by lazy {
         RoutinesAdapter(
-            routines = mutableListOf(),
             onClick = {
                 onClickRoutineItem(it.id)
             },
             onClickDelete = {
                 onClickDeleteRoutineItem(it.id)
+            },
+            onLongClick = {
+                onClickLongRoutineItem(it.id)
             }
         )
+    }
+
+    private fun onClickLongRoutineItem(id: Long) {
+        val destination = RoutinesFragmentDirections.actionRoutinesFragmentToRoutineFormFragment(id)
+        findNavController().navigate(destination)
     }
 
     private fun onClickDeleteRoutineItem(id: Long) {
@@ -53,6 +63,8 @@ class RoutinesFragment : Fragment() {
                 routineViewModel.delete(deletedRoutine)
                 routineAdapter.notifyItemRemoved(index)
                 Toast.makeText(requireContext(), "Deleted ${deletedRoutine.title}", Toast.LENGTH_SHORT).show()
+
+                updateRecyclerViewData()
             }
         }
     }
@@ -79,6 +91,21 @@ class RoutinesFragment : Fragment() {
 
         setupEfabCreateRoutine()
         setupRecyclerView()
+        setupTotalRoutineCounter()
+    }
+
+    private fun setupTotalRoutineCounter() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            val count = withContext(Dispatchers.IO) { routineViewModel.getCount() }
+            binding.textViewRoutineSum.text = count.toString()
+        }
+
+        routineAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onChanged() {
+                super.onChanged()
+                binding.textViewRoutineSum.text = routineAdapter.itemCount.toString()
+            }
+        })
     }
 
     private fun setupViewModelFactory() {
@@ -119,7 +146,7 @@ class RoutinesFragment : Fragment() {
 
     private fun setupEfabCreateRoutine() {
         binding.efabCreateNewRoutine.setOnClickListener {
-            val destination = RoutinesFragmentDirections.actionRoutinesFragmentToRoutineFormFragment(0)
+            val destination = RoutinesFragmentDirections.actionRoutinesFragmentToRoutineFormFragment(DEFAULT_ROUTINE_ID)
             lifecycleScope.launch {
                 routineFormViewModel.clearTempSessions()
                 findNavController().navigate(destination)

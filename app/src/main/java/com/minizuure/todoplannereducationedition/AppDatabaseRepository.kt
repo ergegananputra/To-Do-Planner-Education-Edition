@@ -37,6 +37,7 @@ class AppDatabaseRepository(
 
     // RoutineTableDao
     suspend fun getAllRoutines() = withContext(Dispatchers.IO) { routineTableDao.getAll() }
+    suspend fun getRoutinesCount() = withContext(Dispatchers.IO) { routineTableDao.getCount() }
     suspend fun getRoutineById(id: Long) = withContext(Dispatchers.IO) { routineTableDao.getById(id) }
     suspend fun getPaginatedRoutines(limit: Int, offset: Int = 0, searchQuery: String = "") =
         withContext(Dispatchers.IO) {

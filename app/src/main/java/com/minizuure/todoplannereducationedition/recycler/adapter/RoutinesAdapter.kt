@@ -10,9 +10,9 @@ import com.minizuure.todoplannereducationedition.databinding.ItemRoutinesBinding
 import com.minizuure.todoplannereducationedition.recycler.model.RoutinesItemPreview
 
 class RoutinesAdapter(
-    var routines : MutableList<RoutinesItemPreview>,
     private val onClick : (RoutinesItemPreview) -> Unit,
     private val onClickDelete : (RoutinesItemPreview) -> Unit,
+    private val onLongClick : (RoutinesItemPreview) -> Unit,
 ) : ListAdapter<RoutinesItemPreview, RoutinesAdapter.RoutinesViewHolder>(RoutinesItemPreviewDiffUtil()) {
     inner class RoutinesViewHolder(
         private val binding : ItemRoutinesBinding
@@ -24,6 +24,11 @@ class RoutinesAdapter(
 
             binding.cardViewDefaultRoutine.setOnClickListener {
                 onClick(routinesItemPreview)
+            }
+
+            binding.cardViewDefaultRoutine.setOnLongClickListener {
+                onLongClick(routinesItemPreview)
+                true
             }
 
             binding.buttonDeleteItemRoutine.setOnClickListener {
@@ -51,7 +56,7 @@ class RoutinesAdapter(
     }
 
     fun getIndexById(id: Long) : Int {
-        val index = routines.indexOfFirst { it.id == id }
+        val index = currentList.indexOfFirst { it.id == id }
         Log.d("RoutinesAdapter", "getIndexById: $index")
         return index
     }

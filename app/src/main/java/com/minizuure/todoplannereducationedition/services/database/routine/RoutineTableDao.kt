@@ -11,6 +11,9 @@ interface RoutineTableDao : BaseIODao<RoutineTable> {
     @Query("SELECT * FROM routine_table")
     suspend fun getAll(): List<RoutineTable>
 
+    @Query("SELECT COUNT(*) FROM routine_table")
+    suspend fun getCount(): Int
+
     @Query("SELECT * FROM routine_table WHERE id = :id")
     suspend fun getById(id: Long): RoutineTable?
 

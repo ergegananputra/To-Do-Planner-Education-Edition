@@ -19,10 +19,13 @@ import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentRoutineFormBinding
 import com.minizuure.todoplannereducationedition.model.TempSession
+import com.minizuure.todoplannereducationedition.recycler.adapter.SessionDetailAdapter
 import com.minizuure.todoplannereducationedition.recycler.adapter.TempSessionDetailAdapter
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
+import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity.Companion.DEFAULT_ROUTINE_ID
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
+import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.temp.RoutineFormViewModel
@@ -31,12 +34,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class RoutineFormFragment : Fragment() {
 
     val args : RoutineFormFragmentArgs by navArgs()
-    val routineFormViewModel : RoutineFormViewModel by activityViewModels()
+    private val routineFormViewModel : RoutineFormViewModel by activityViewModels()
 
     private lateinit var routineViewModel : RoutineViewModel
     private lateinit var sessionViewModel: SessionViewModel
@@ -57,14 +61,31 @@ class RoutineFormFragment : Fragment() {
         )
     }
 
-    private fun onLongClickSessionItem(session: TempSession, button: MaterialButton) {
+    private val sessionDetailAdapter by lazy {
+        SessionDetailAdapter(
+            onClick = {
+                onClickSessionItem(it)
+            },
+            onLongClick = { sessionTable, button ->
+                onLongClickSessionItem(sessionTable, button)
+            },
+        )
+    }
+
+    private fun onLongClickSessionItem(session: SessionTable, button: MaterialButton) {
         button.visibility = View.VISIBLE
         button.setOnClickListener {
             button.visibility = View.GONE
-            Toast.makeText(requireContext(), "Delete ${session.title}", Toast.LENGTH_SHORT).show()
             lifecycleScope.launch {
-                routineFormViewModel.deleteTempSession(session.id)
-                tempSessionDetailAdapter.notifyItemRemoved(session.id)
+                val index = withContext(Dispatchers.IO) { sessionDetailAdapter.getIndexById(session.id) }
+                val sessionToDelete =  withContext(Dispatchers.IO) { sessionViewModel.getById(session.id) }
+                sessionToDelete?.let {
+                    Toast.makeText(requireContext(), "Delete ${session.title}", Toast.LENGTH_SHORT).show()
+                    sessionViewModel.delete(sessionToDelete)
+                    sessionDetailAdapter.removeIndex(index)
+
+                    updateRecyclerViewData()
+                }
             }
 
         }
@@ -77,10 +98,43 @@ class RoutineFormFragment : Fragment() {
         }
     }
 
+    private fun onLongClickSessionItem(session: TempSession, button: MaterialButton) {
+        button.visibility = View.VISIBLE
+        button.setOnClickListener {
+            button.visibility = View.GONE
+            Toast.makeText(requireContext(), "Delete ${session.title}", Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                routineFormViewModel.deleteTempSession(session.id)
+                tempSessionDetailAdapter.notifyItemRemoved(session.id.toInt())
+            }
+
+        }
+
+        lifecycleScope.launch {
+            this.launch(Dispatchers.IO) {
+                delay(5000)
+                this.launch(Dispatchers.Main) { button.visibility = View.GONE }
+            }
+        }
+    }
+
+    private fun onClickSessionItem(it: SessionTable) {
+        val destination = RoutineFormFragmentDirections.actionRoutineFormFragmentToSessionFormFragment(
+            sessionId = it.id,
+            newRoutine = args.routineId == DEFAULT_ROUTINE_ID,
+            routineId = it.fkRoutineId,
+            title = it.title,
+            startTime = it.timeStart,
+            endTime = it.timeEnd,
+            selectedDays = it.selectedDays
+        )
+        findNavController().navigate(destination)
+    }
+
     private fun onClickSessionItem(it: TempSession) {
         val destination = RoutineFormFragmentDirections.actionRoutineFormFragmentToSessionFormFragment(
             sessionId = it.id,
-            newRoutine = args.routineId == 0,
+            newRoutine = args.routineId == DEFAULT_ROUTINE_ID,
             title = it.title,
             startTime = it.startTime,
             endTime = it.endTime,
@@ -100,13 +154,33 @@ class RoutineFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as RoutineManagementActivity).setToolbarTitle(this)
-
         setupViewModelFactory()
-        setupSaveButton()
+
+        if (args.routineId != DEFAULT_ROUTINE_ID) {
+            loadData()
+        }
+
         setupAddSessionButton()
         setupSessionRecyclerView()
         setupTitle()
         setupDatePicker()
+
+        setupSaveButton()
+    }
+
+    private fun loadData() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            val routine = withContext(Dispatchers.IO) {routineViewModel.getById(args.routineId)}
+            if (routine != null) {
+                val readableStartDate = DatetimeAppManager().convertIso8601ToReadableDate(routine.date_start)
+                val readableEndDate = DatetimeAppManager().convertIso8601ToReadableDate(routine.date_end)
+
+                binding.textInputLayoutRoutineTitle.editText?.setText(routine.title)
+                binding.textInputLayoutDescription.editText?.setText(routine.description)
+                binding.textInputLayoutStartDate.editText?.setText(readableStartDate)
+                binding.textInputLayoutEndDate.editText?.setText(readableEndDate)
+            }
+        }
     }
 
     private fun setupViewModelFactory() {
@@ -144,7 +218,7 @@ class RoutineFormFragment : Fragment() {
     }
 
     private fun setupSessionRecyclerView() {
-        if (args.routineId == 0) {
+        if (args.routineId == DEFAULT_ROUTINE_ID) {
             setupRecyclerForNewRoutine()
         } else {
             setupRecyclerForExistingRoutine()
@@ -152,7 +226,23 @@ class RoutineFormFragment : Fragment() {
     }
 
     private fun setupRecyclerForExistingRoutine() {
-        // TODO : setup recycler for existing routine
+        binding.recyclerViewSessionsForm.apply {
+            adapter = sessionDetailAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+
+        updateRecyclerViewData()
+    }
+
+    private fun updateRecyclerViewData() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val sessions = sessionViewModel.getByRoutineId(args.routineId)
+            val sessionsItemPreview = mutableListOf<SessionTable>()
+            sessions.forEach {
+                sessionsItemPreview.add(it)
+            }
+            sessionDetailAdapter.submitList(sessionsItemPreview.toMutableList())
+        }
     }
 
     private fun setupRecyclerForNewRoutine() {
@@ -170,7 +260,8 @@ class RoutineFormFragment : Fragment() {
 
     private fun setupAddSessionButton() {
         val destination = RoutineFormFragmentDirections.actionRoutineFormFragmentToSessionFormFragment(
-            newRoutine = args.routineId == 0,
+            newRoutine = args.routineId == DEFAULT_ROUTINE_ID,
+            routineId = args.routineId,
             title = null,
             startTime = null,
             endTime = null,
@@ -178,39 +269,79 @@ class RoutineFormFragment : Fragment() {
         )
 
         binding.buttonAddSession.setOnClickListener {
+            clearEditTextFocus()
             findNavController().navigate(destination)
         }
     }
 
     private fun setupSaveButton() {
         binding.buttonSaveRouteForm.setOnClickListener {
-            if (args.routineId == 0) {
-                createRoutine()
-            } else {
-                updateRoutine()
+            clearEditTextFocus()
+            val title = binding.textInputLayoutRoutineTitle.editText?.text.toString().trim()
+            val description = binding.textInputLayoutDescription.editText?.text.toString().trim()
+            val startDate = binding.textInputLayoutStartDate.editText?.text.toString()
+            val endDate = binding.textInputLayoutEndDate.editText?.text.toString()
+
+            lifecycleScope.launch {
+                if (args.routineId == DEFAULT_ROUTINE_ID) {
+                    createRoutine(title, description, startDate, endDate)
+                } else {
+                    updateRoutine(title, description, startDate, endDate)
+                }
             }
+
         }
     }
 
-    private fun updateRoutine() {
-        //TODO: upload ke database
-        Toast.makeText(requireContext(), "Not Implemented yet", Toast.LENGTH_SHORT).show()
-        findNavController().navigateUp()
+    private fun clearEditTextFocus() {
+        with(binding) {
+            textInputLayoutRoutineTitle.clearFocus()
+            textInputLayoutDescription.clearFocus()
+            textInputLayoutStartDate.clearFocus()
+            textInputLayoutEndDate.clearFocus()
+        }
     }
 
-    private fun createRoutine() {
-        val title = binding.textInputLayoutRoutineTitle.editText?.text.toString().trim()
-        val description = binding.textInputLayoutDescription.editText?.text.toString().trim()
-        var startDate = binding.textInputLayoutStartDate.editText?.text.toString()
-        var endDate = binding.textInputLayoutEndDate.editText?.text.toString()
+    private suspend fun updateRoutine(
+        title: String,
+        description: String,
+        startDateArg: String,
+        endDateArg: String
+    ) {
+        if(validateForm(title, description, startDateArg, endDateArg)) {
+            return
+        }
+        lifecycleScope.launch {
+            val startDate = DatetimeAppManager().convertReadableDateToIso8601(startDateArg)
+            val endDate = DatetimeAppManager().convertReadableDateToIso8601(endDateArg)
 
-        if(validateForm(title, description, startDate, endDate)) {
+            this.launch(Dispatchers.IO) {
+                routineViewModel.update(
+                    id = args.routineId,
+                    title = title,
+                    description = description,
+                    dateStart = startDate,
+                    dateEnd = endDate,
+                )
+            }
+
+            findNavController().navigateUp()
+        }
+    }
+
+    private suspend fun createRoutine(
+        title: String,
+        description: String,
+        startDateArg: String,
+        endDateArg: String
+    ) {
+        if(validateForm(title, description, startDateArg, endDateArg)) {
             return
         }
 
         lifecycleScope.launch {
-            startDate = DatetimeAppManager().convertReadableDateToIso8601(startDate)
-            endDate = DatetimeAppManager().convertReadableDateToIso8601(endDate)
+            val startDate = DatetimeAppManager().convertReadableDateToIso8601(startDateArg)
+            val endDate = DatetimeAppManager().convertReadableDateToIso8601(endDateArg)
 
             val routineId = routineViewModel.insert(
                 title = title,
@@ -233,7 +364,7 @@ class RoutineFormFragment : Fragment() {
         }
     }
 
-    private fun validateForm(
+    private suspend fun validateForm(
         title: String,
         description: String,
         startDate: String,
@@ -252,15 +383,20 @@ class RoutineFormFragment : Fragment() {
             return true
         }
 
-        if (args.routineId == 0) {
+        if (args.routineId == DEFAULT_ROUTINE_ID) {
             if (routineFormViewModel.tempSessions.value?.isEmpty() == true) {
                 val msg = getString(R.string.error_msg_session_empty)
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 return true
             }
         } else {
-            // TODO: check if there is at least one session in edit mode
-            Toast.makeText(requireContext(), "Not Implemented yet", Toast.LENGTH_SHORT).show()
+            val sessions = withContext(Dispatchers.IO) { sessionViewModel.getByRoutineId(args.routineId) }
+            if (sessions.isEmpty()) {
+                val msg = getString(R.string.error_msg_session_empty)
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                return true
+            }
+
         }
 
         return false

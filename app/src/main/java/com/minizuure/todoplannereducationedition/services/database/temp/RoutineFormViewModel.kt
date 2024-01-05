@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.first
 
 class RoutineFormViewModel : ViewModel() {
     val tempSessions : MutableLiveData<MutableList<TempSession>> = MutableLiveData(mutableListOf())
-    private suspend fun automaticId() : Int {
+    private suspend fun automaticId() : Long {
         if (tempSessions.asFlow().first().isEmpty()) {
             return 0
         }
@@ -35,14 +35,14 @@ class RoutineFormViewModel : ViewModel() {
     }
 
     suspend fun updateTempSession(
-        id : Int,
+        id : Long,
         title : String,
         startTime : String,
         endTime : String,
         daysSelected : String
     ) {
         Log.d("RoutineFormViewModel", "updateTempSession: updating $id")
-        tempSessions.asFlow().first()[id] = TempSession(
+        tempSessions.asFlow().first()[id.toInt()] = TempSession(
             id = id,
             title = title,
             startTime = startTime,
@@ -51,7 +51,7 @@ class RoutineFormViewModel : ViewModel() {
         )
     }
 
-    suspend fun deleteTempSession(id : Int) {
+    suspend fun deleteTempSession(id : Long) {
         Log.d("RoutineFormViewModel", "deleteTempSession: deleting $id")
         val index = tempSessions.asFlow().first().indexOfFirst { it.id == id }
         tempSessions.asFlow().first().removeAt(index)

@@ -37,6 +37,11 @@ class DatetimeAppManager {
         return ZonedDateTime.ofInstant(timestampInstant, zoneLocalTimeId)
     }
 
+    fun convertIso8601ToReadableDate(dateTimeInUTCiso8601: String) : String {
+        val localizedDateTime = localizedUTC(dateTimeInUTCiso8601)
+        return localizedDateTime.format(DateTimeFormatter.ofPattern("dd LLLL yyyy"))
+    }
+
     fun convertReadableDateToIso8601(readableDatetime: String) : String {
         val readableDate = LocalDate.parse(readableDatetime, DateTimeFormatter.ofPattern("dd LLLL yyyy"))
         val zonedDateTime = readableDate.atStartOfDay(zoneLocalTimeId)
