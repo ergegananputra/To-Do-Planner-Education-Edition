@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             bottomNavigationViewSurface.setupWithNavController(navController)
         }
 
-        byPassTesting(testingPurpose)
+//        byPassTesting(testingPurpose)
     }
 
     private fun byPassTesting(state : Boolean) {
