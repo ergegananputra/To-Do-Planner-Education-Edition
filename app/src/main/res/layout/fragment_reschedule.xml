@@ -51,7 +51,7 @@
         app:layout_constraintTop_toBottomOf="@id/reschedule_button_original_schedule" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/reschedule_button_folder"
+        android:id="@+id/reschedule_input_date"
         style="@style/Widget.Material3.TextInputLayout.FilledBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -71,6 +71,7 @@
         app:startIconDrawable="@drawable/ic_today_outline">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/reschedule_input_edit_text_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorSurfaceContainerHigh"
@@ -90,7 +91,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reschedule_button_folder">
+        app:layout_constraintTop_toBottomOf="@+id/reschedule_input_date">
 
         <LinearLayout
             android:id="@+id/linearLayout_1"
@@ -98,78 +99,113 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/task_button_date_day"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:padding="16dp"
-                android:text="Select Day"
-                android:textAlignment="viewStart"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:cornerRadius="4dp"
-                app:icon="@drawable/ic_arrow_down"
-                app:iconGravity="end" />
+                android:layout_marginEnd="4dp"
+                android:orientation="vertical">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/reschedule_button_date_day"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Select Day"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    app:cornerRadius="4dp"
+                    app:icon="@drawable/ic_arrow_down"
+                    app:iconGravity="end" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/reschedule_text_day_error_msg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Error msg.."
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorError"
+                    android:paddingStart="4dp"
+                    android:visibility="gone"/>
+            </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/task_button_date_time"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:padding="16dp"
-                android:text="Select Session"
-                android:textAlignment="viewStart"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:cornerRadius="4dp"
-                app:icon="@drawable/ic_arrow_down"
-                app:iconGravity="end" />
+                android:orientation="vertical">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/reschedule_button_date_time"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Select Session"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    app:cornerRadius="4dp"
+                    app:icon="@drawable/ic_arrow_down"
+                    app:iconGravity="end" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/reschedule_text_session_error_msg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Error msg.."
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorError"
+                    android:paddingStart="4dp"
+                    android:visibility="gone"/>
+            </LinearLayout>
 
         </LinearLayout>
         <!-- di hide kalau ngga perlu / belum milih custom session-->
         <LinearLayout
-            android:id="@+id/task_layout_custom_session"
+            android:id="@+id/reschedule_layout_custom_session"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/task_button_end_session"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/reschedule_input_end_session"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="4dp"
                 android:layout_weight="1"
-                android:padding="16dp"
-                android:text="Start"
-                android:textAlignment="viewStart"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:cornerRadius="4dp"
-                app:icon="@drawable/ic_schedule_outline"
-                app:iconGravity="start"
-                app:iconPadding="12dp" />
+                android:hint="Start"
+                app:endIconDrawable="@drawable/ic_schedule_outline"
+                app:endIconMode="custom">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/task_button_start_session"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/reschedule_input_edit_text_start_session"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="time"
+                    android:maxLength="5"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/reschedule_input_start_session"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:padding="16dp"
-                android:text="End"
-                android:textAlignment="viewStart"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:cornerRadius="4dp"
-                app:icon="@drawable/ic_schedule_outline"
-                app:iconGravity="start"
-                app:iconPadding="12dp" />
+                android:hint="End"
+                app:endIconDrawable="@drawable/ic_schedule_outline"
+                app:endIconMode="custom">
 
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/reschedule_input_edit_text_end_session"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="time"
+                    android:maxLength="5"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -179,6 +215,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        app:errorEnabled="false"
+        app:errorTextColor="?attr/colorError"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -187,10 +225,11 @@
         app:startIconDrawable="@drawable/ic_location_on_outline">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/task_input_edit_text_location"
+            android:id="@+id/reschedule_input_edit_text_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Location Name">
+            android:hint="Location Name"
+            android:paddingStart="48dp">
 
         </com.google.android.material.textfield.TextInputEditText>
     </com.google.android.material.textfield.TextInputLayout>
@@ -199,13 +238,13 @@
         android:id="@+id/reschedule_input_layout_maps_link"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/reschedule_input_layout_location">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/task_input_edit_text_maps_link"
+            android:id="@+id/reschedule_input_edit_text_maps_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Google Maps Link" />
@@ -251,15 +290,26 @@
         android:id="@+id/reschedule_button_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:isScrollContainer="false"
         android:text="Save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reschedule_switch"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toTopOf="@+id/guideline6">
 
     </com.google.android.material.button.MaterialButton>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_percent="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
