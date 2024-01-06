@@ -16,6 +16,9 @@
             android:name=".first_layer.reschedule.RescheduleActivity"
             android:exported="false" />
         <activity
+            android:name=".first_layer.task.TaskActivity"
+            android:exported="false" />
+        <activity
             android:name=".second_layer.RoutineManagementActivity"
             android:exported="true">
             <intent-filter>
