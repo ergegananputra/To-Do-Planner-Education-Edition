@@ -83,5 +83,13 @@
     <string name="error_msg_end_date_empty">End date cannot be empty</string>
     <string name="error_msg_session_empty">Please add at least one session</string>
     <string name="error_msg_more_than_20">Location name must less or equals then 20 characters</string>
+    <string name="please_choose_one_of_the_following_routines">Please choose one of the following routines</string>
+    <string name="search_routines">Search routines</string>
+    <string name="you_have_not_set_a_default_routine">You have not set a default routine</string>
+    <string name="set_default_routine">Set default routine</string>
+    <string name="total_routines">Total routines</string>
+    <string name="create_new_routine">Create New Routine</string>
+    <string name="no_routine_selected">No routine selected</string>
+    <string name="cancel_action">Cancel action</string>
 
 </resources>

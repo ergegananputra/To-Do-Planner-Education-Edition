@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentRoutinesBinding
 import com.minizuure.todoplannereducationedition.recycler.adapter.RoutinesAdapter
@@ -23,6 +24,7 @@ import com.minizuure.todoplannereducationedition.services.database.routine.Routi
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.temp.RoutineFormViewModel
+import com.minizuure.todoplannereducationedition.services.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,8 +48,20 @@ class RoutinesFragment : Fragment() {
             },
             onLongClick = {
                 onClickLongRoutineItem(it.id)
-            }
+            },
+            onClickSelect = {
+                onClickSelectRoutineItem(it.id, it.title)
+            },
         )
+    }
+
+    private fun onClickSelectRoutineItem(id: Long, title: String) {
+        UserPreferences(requireContext()).apply {
+            defaultRoutineId = id
+            defaultRoutineName = title
+        }
+        cancelDefaultRoutineMode()
+        binding.textViewStatusDefaultRoutineName.text = title
     }
 
     private fun onClickLongRoutineItem(id: Long) {
@@ -92,6 +106,54 @@ class RoutinesFragment : Fragment() {
         setupEfabCreateRoutine()
         setupRecyclerView()
         setupTotalRoutineCounter()
+        setupDefaultRoutine()
+    }
+
+    private fun setupDefaultRoutine() {
+        lifecycleScope.launch {
+            val routineName = UserPreferences(requireContext()).defaultRoutineName
+            binding.textViewStatusDefaultRoutineName.text = routineName
+        }
+
+        binding.cardViewDefaultRoutine.setOnClickListener {
+            if (!routineAdapter.isSelectMode) {
+                selectDefaultRoutineMode()
+            }
+        }
+
+        binding.buttonDefaultRoutine.setOnClickListener {
+            selectDefaultRoutineMode()
+        }
+
+        binding.buttonCancelDefaultRoutine.setOnClickListener {
+            cancelDefaultRoutineMode()
+        }
+    }
+
+    private fun cancelDefaultRoutineMode() {
+        binding.textViewChooseRoutine.visibility = View.GONE
+
+        val textDefaultRoutine = getText(R.string.set_default_routine)
+        binding.textViewTitleDefaultRoutine.text = textDefaultRoutine
+
+        binding.textViewStatusDefaultRoutineName.visibility = View.VISIBLE
+
+        binding.buttonDefaultRoutine.visibility = View.VISIBLE
+        binding.buttonCancelDefaultRoutine.visibility = View.GONE
+        routineAdapter.isSelectMode = false
+    }
+
+    private fun selectDefaultRoutineMode() {
+        binding.textViewChooseRoutine.visibility = View.VISIBLE
+
+        val textNoRoutineSelected = getText(R.string.no_routine_selected)
+        binding.textViewTitleDefaultRoutine.text = textNoRoutineSelected
+
+        binding.textViewStatusDefaultRoutineName.visibility = View.GONE
+
+        binding.buttonDefaultRoutine.visibility = View.GONE
+        binding.buttonCancelDefaultRoutine.visibility = View.VISIBLE
+        routineAdapter.isSelectMode = true
     }
 
     private fun setupTotalRoutineCounter() {
