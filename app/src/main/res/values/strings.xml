@@ -72,8 +72,8 @@
     <string name="edit_session">Edit Session</string>
     <string name="select_start_date">Select start date</string>
     <string name="select_end_date">select_end_date</string>
-  
-  
+
+
     <string name="error_msg_title_empty">Title cannot be empty</string>
     <string name="error_msg_start_time_empty">Start time cannot be empty</string>
     <string name="error_msg_end_time_empty">End time cannot be empty</string>
@@ -91,5 +91,13 @@
     <string name="create_new_routine">Create New Routine</string>
     <string name="no_routine_selected">No routine selected</string>
     <string name="cancel_action">Cancel action</string>
+    <string name="routine_detail">Routine Detail</string>
+    <string name="session_used">session used</string>
+    <string name="days">Days</string>
+    <string name="see_details">see details</string>
+    <string name="default_char">#</string>
+    <string name="usages">Usages</string>
+    <string name="expired_in">Expired in</string>
+    <string name="sessions_day_avg">sessions / day (avg)</string>
 
 </resources>
