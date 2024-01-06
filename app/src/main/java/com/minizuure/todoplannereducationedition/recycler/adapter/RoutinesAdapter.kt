@@ -2,6 +2,7 @@ package com.minizuure.todoplannereducationedition.recycler.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -13,7 +14,17 @@ class RoutinesAdapter(
     private val onClick : (RoutinesItemPreview) -> Unit,
     private val onClickDelete : (RoutinesItemPreview) -> Unit,
     private val onLongClick : (RoutinesItemPreview) -> Unit,
+    private var _isSelectMode : Boolean = false,
+    private val onClickSelect : (RoutinesItemPreview) -> Unit,
 ) : ListAdapter<RoutinesItemPreview, RoutinesAdapter.RoutinesViewHolder>(RoutinesItemPreviewDiffUtil()) {
+
+    var isSelectMode : Boolean
+        get() = _isSelectMode
+        set(value) {
+            _isSelectMode = value
+            notifyDataSetChanged()
+        }
+
     inner class RoutinesViewHolder(
         private val binding : ItemRoutinesBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -33,6 +44,20 @@ class RoutinesAdapter(
 
             binding.buttonDeleteItemRoutine.setOnClickListener {
                 onClickDelete(routinesItemPreview)
+            }
+
+            // Select Mode
+            if (isSelectMode) {
+                binding.buttonDeleteItemRoutine.visibility = View.GONE
+                binding.radioButtonSelectModeItemRoutine.visibility = View.VISIBLE
+                binding.radioButtonSelectModeItemRoutine.setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        onClickSelect(routinesItemPreview)
+                    }
+                }
+            } else {
+                binding.radioButtonSelectModeItemRoutine.visibility = View.GONE
+                binding.buttonDeleteItemRoutine.visibility = View.VISIBLE
             }
         }
 

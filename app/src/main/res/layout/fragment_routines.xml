@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="54dp"
-        android:text="Create New Routine"
+        android:text="@string/create_new_routine"
         app:icon="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Total routines"
+                android:text="@string/total_routines"
                 android:textAlignment="center"
                 android:textAppearance="?attr/textAppearanceLabelSmall"
                 android:textColor="?attr/colorPrimary"
@@ -51,7 +51,7 @@
                 android:id="@+id/text_view_routine_sum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="@string/_0"
                 android:textAlignment="center"
                 android:textAppearance="?attr/textAppearanceHeadlineLarge"
                 android:textColor="?attr/colorPrimary"
@@ -91,39 +91,56 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                android:contentDescription="Set default routine"
+                android:contentDescription="@string/set_default_routine"
                 app:icon="@drawable/ic_article_shortcut_outline"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <com.google.android.material.button.MaterialButton
+                android:visibility="gone"
+                android:id="@+id/button_cancel_default_routine"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:contentDescription="@string/cancel_action"
+                app:icon="@drawable/ic_cancel_outline"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <LinearLayout
+                android:id="@+id/linearLayout3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="@+id/button_default_routine"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_cancel_default_routine"
                 app:layout_constraintStart_toEndOf="@+id/button_default_routine"
                 app:layout_constraintTop_toTopOf="@+id/button_default_routine">
 
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_view_title_default_routine"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="marquee"
                     android:maxLines="1"
-                    android:text="Set default routine"
+                    android:text="@string/set_default_routine"
                     android:textAppearance="?attr/textAppearanceLabelLarge"
                     android:textColor="?attr/colorOnSurface" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_status_default_routine"
+                    android:id="@+id/text_view_status_default_routine_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="marquee"
                     android:maxLines="1"
-                    android:text="You have not set a default routine"
+                    android:text="@string/you_have_not_set_a_default_routine"
                     android:textAppearance="?attr/textAppearanceBodySmall"
                     android:textColor="?attr/colorOnSurface" />
             </LinearLayout>
@@ -140,10 +157,25 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="Search routines"
+        android:hint="@string/search_routines"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/card_view_default_routine" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_choose_routine"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/please_choose_one_of_the_following_routines"
+        android:textAppearance="?attr/textAppearanceLabelMedium"
+        android:textColor="?attr/colorSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_bar_routines" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_routines"
@@ -156,7 +188,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_bar_routines"
+        app:layout_constraintTop_toBottomOf="@+id/text_view_choose_routine"
         tools:listitem="@layout/item_routines" />
 
 

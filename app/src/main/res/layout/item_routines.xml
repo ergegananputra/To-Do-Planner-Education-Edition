@@ -76,7 +76,7 @@
             android:layout_marginBottom="10dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button_delete_item_routine"
+            app:layout_constraintEnd_toStartOf="@+id/radio_button_select_mode_item_routine"
             app:layout_constraintStart_toEndOf="@+id/button_default_routine"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -100,6 +100,19 @@
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?attr/colorOnSurface" />
         </LinearLayout>
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:visibility="gone"
+            android:id="@+id/radio_button_select_mode_item_routine"
+            style="@style/Widget.Material3.CompoundButton.RadioButton"
+            app:useMaterialThemeColors="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/button_delete_item_routine"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_delete_item_routine"
