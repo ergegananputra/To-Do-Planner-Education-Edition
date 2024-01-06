@@ -61,7 +61,7 @@ class RoutineManagementActivity : AppCompatActivity() {
                 changeToolbarTitle(title)
             }
             is RoutineFormFragment -> {
-                val title = if (fragment.args.routineId == 0L) {
+                val title = if (fragment.args.routineId == DEFAULT_ROUTINE_ID) {
                     getString(R.string.new_routine)
                 } else {
                     getString(R.string.edit_routine)
@@ -70,7 +70,7 @@ class RoutineManagementActivity : AppCompatActivity() {
                 changeToolbarTitle(title)
             }
             is SessionFormFragment -> {
-                val title = if (fragment.args.sessionId == -1L) {
+                val title = if (fragment.args.sessionId == DEFAULT_SESSION_ID) {
                     getString(R.string.new_session)
                 } else {
                     getString(R.string.edit_session)
@@ -97,7 +97,8 @@ class RoutineManagementActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val DEFAULT_ROUTINE_ID = 0L
+        const val DEFAULT_ROUTINE_ID = -1L
+        const val DEFAULT_SESSION_ID = -1L
     }
 
 

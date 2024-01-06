@@ -18,6 +18,9 @@ import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentSessionFormBinding
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
+import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity.Companion.DEFAULT_ROUTINE_ID
+import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity.Companion.DEFAULT_SESSION_ID
+import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.temp.RoutineFormViewModel
@@ -191,7 +194,7 @@ class SessionFormFragment : Fragment() {
             if (args.newRoutine) {
                 lifecycleScope.launch {
                     // check if session is new or old to determine if it should be added to temp session or updated
-                    if (args.sessionId == -1L) {
+                    if (args.sessionId == DEFAULT_SESSION_ID) {
                         routineFormViewModel.addTempSession(
                             title = title,
                             startTime = startTime,
@@ -210,9 +213,13 @@ class SessionFormFragment : Fragment() {
                         navigateBackSuccess()
                     }
                 }
-            } else if (args.routineId != -1L) {
+            } else if (args.routineId != DEFAULT_ROUTINE_ID) {
                 lifecycleScope.launch {
-                    uploadToDatabase(title, startTime, endTime, daysSelected)
+                    if (args.sessionId != DEFAULT_SESSION_ID) {
+                        updateToDatabase(title, startTime, endTime, daysSelected)
+                    } else {
+                        uploadToDatabase(title, startTime, endTime, daysSelected)
+                    }
                     navigateBackSuccess()
                 }
             } else {
@@ -222,6 +229,8 @@ class SessionFormFragment : Fragment() {
             }
         }
     }
+
+
 
     private fun clearEditTextFocus() {
         binding.textInputLayoutSessionTitle.clearFocus()
@@ -273,6 +282,26 @@ class SessionFormFragment : Fragment() {
                 timeEnd = endTime,
                 selectedDays = daysSelected,
                 fkRoutineId = args.routineId
+            )
+        }
+    }
+
+    private suspend fun updateToDatabase(
+        title: String,
+        startTime: String,
+        endTime: String,
+        daysSelected: String
+    ) {
+        withContext(Dispatchers.IO) {
+            sessionViewModel.update(
+                SessionTable(
+                    id = args.sessionId,
+                    title = title,
+                    timeStart = startTime,
+                    timeEnd = endTime,
+                    selectedDays = daysSelected,
+                    fkRoutineId = args.routineId
+                )
             )
         }
     }

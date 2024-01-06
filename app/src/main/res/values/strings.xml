@@ -71,7 +71,7 @@
     <string name="new_session">New Session</string>
     <string name="edit_session">Edit Session</string>
     <string name="select_start_date">Select start date</string>
-    <string name="select_end_date">select_end_date</string>
+    <string name="select_end_date">Select end date</string>
 
 
     <string name="error_msg_title_empty">Title cannot be empty</string>

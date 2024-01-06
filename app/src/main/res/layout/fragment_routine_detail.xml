@@ -17,14 +17,24 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/routine_title_hint"
             android:textAppearance="?attr/textAppearanceHeadlineSmall"
             android:textColor="?attr/colorOnBackground"
-            android:drawableEnd="@drawable/ic_communities_outline"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/image_view_icon_community"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:visibility="visible"
+            android:id="@+id/image_view_icon_community"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_communities_outline"
+            app:layout_constraintBottom_toBottomOf="@+id/text_view_title_routine_detail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/text_view_title_routine_detail" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_view_expired_date_routine_detail"
@@ -37,7 +47,7 @@
             android:text="@string/expired_in"
             android:textAppearance="?attr/textAppearanceLabelSmall"
             android:textColor="?attr/colorOnSurfaceVariant"
-            app:layout_constraintEnd_toEndOf="@+id/text_view_title_routine_detail"
+            app:layout_constraintEnd_toEndOf="@+id/image_view_icon_community"
             app:layout_constraintStart_toStartOf="@+id/text_view_title_routine_detail"
             app:layout_constraintTop_toBottomOf="@+id/text_view_title_routine_detail" />
 
@@ -49,7 +59,7 @@
             android:text="Lorem ipsum dolor si amet. Short description about the routine detail."
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?attr/colorOnSurface"
-            app:layout_constraintEnd_toEndOf="@+id/text_view_title_routine_detail"
+            app:layout_constraintEnd_toEndOf="@+id/image_view_icon_community"
             app:layout_constraintStart_toStartOf="@+id/text_view_title_routine_detail"
             app:layout_constraintTop_toBottomOf="@+id/text_view_expired_date_routine_detail" />
 
@@ -198,6 +208,7 @@
             app:layout_constraintTop_toBottomOf="@+id/recycler_view_session_routine_detail" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_usages_routine_detail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
