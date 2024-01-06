@@ -116,5 +116,29 @@
         <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
     </style>
 
+    <style name="SearchBar" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintEnabled">false</item>
+        <item name="boxBackgroundColor">?attr/colorSurfaceContainerHigh</item>
+        <item name="boxBackgroundMode">filled</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="boxCornerRadiusTopStart">28dp</item>
+        <item name="boxCornerRadiusTopEnd">28dp</item>
+        <item name="boxCornerRadiusBottomStart">28dp</item>
+        <item name="boxCornerRadiusBottomEnd">28dp</item>
+        <item name="startIconDrawable">@drawable/ic_search_outline</item>
+        <item name="endIconMode">clear_text</item>
+    </style>
+
+    <style name="SearchBar.Text" parent="ThemeOverlay.Material3.TextInputEditText">
+        <item name="android:paddingStart">48dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:inputType">text</item>
+        <item name="android:imeOptions">actionSearch</item>
+        <item name="android:imeActionLabel">Search</item>
+        <item name="android:hint">@string/search_here</item>
+    </style>
+
 
 </resources>

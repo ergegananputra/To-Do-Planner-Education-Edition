@@ -149,18 +149,28 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-
-    <com.google.android.material.search.SearchBar
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/search_bar_routines"
+        style="@style/SearchBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="@string/search_routines"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/card_view_default_routine" />
+        app:layout_constraintTop_toBottomOf="@+id/card_view_default_routine">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/SearchBar.Text"
+            android:hint="@string/search_routines"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/text_view_choose_routine"
