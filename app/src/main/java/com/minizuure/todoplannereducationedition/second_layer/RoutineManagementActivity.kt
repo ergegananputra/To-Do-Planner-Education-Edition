@@ -7,6 +7,7 @@ import androidx.navigation.findNavController
 import com.minizuure.todoplannereducationedition.CustomSystemTweak
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.ActivityRoutineManagementBinding
+import com.minizuure.todoplannereducationedition.second_layer.routines.RoutineDetailFragment
 import com.minizuure.todoplannereducationedition.second_layer.routines.RoutineFormFragment
 import com.minizuure.todoplannereducationedition.second_layer.routines.RoutinesFragment
 import com.minizuure.todoplannereducationedition.second_layer.session.SessionFormFragment
@@ -56,7 +57,8 @@ class RoutineManagementActivity : AppCompatActivity() {
         //TODO: Tambahkan opsi untuk fragment lain
         when (fragment) {
             is RoutinesFragment -> {
-                binding.toolbarRoutineManagement.title = getString(R.string.routines_management)
+                val title = getString(R.string.routines_management)
+                changeToolbarTitle(title)
             }
             is RoutineFormFragment -> {
                 val title = if (fragment.args.routineId == 0L) {
@@ -74,6 +76,10 @@ class RoutineManagementActivity : AppCompatActivity() {
                     getString(R.string.edit_session)
                 }
 
+                changeToolbarTitle(title)
+            }
+            is RoutineDetailFragment -> {
+                val title = getString(R.string.routine_detail)
                 changeToolbarTitle(title)
             }
 

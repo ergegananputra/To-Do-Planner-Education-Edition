@@ -1,15 +1,9 @@
 package com.minizuure.todoplannereducationedition.second_layer.routines
 
-import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
@@ -33,7 +27,6 @@ import com.minizuure.todoplannereducationedition.services.database.session.Sessi
 import com.minizuure.todoplannereducationedition.services.database.temp.RoutineFormViewModel
 import com.minizuure.todoplannereducationedition.services.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -49,7 +42,7 @@ class RoutinesFragment : Fragment() {
     private val routineAdapter by lazy {
         RoutinesAdapter(
             onClick = {
-                onClickRoutineItem(it.id)
+                onClickRoutineItem(it.id, it.title, it.description)
             },
             onClickDelete = {
                 onClickDeleteRoutineItem(it.id)
@@ -92,9 +85,14 @@ class RoutinesFragment : Fragment() {
     }
 
 
-    private fun onClickRoutineItem(id: Long) {
-        // TODO: Open Detail
-        Toast.makeText(requireContext(), "Clicked $id", Toast.LENGTH_SHORT).show()
+    private fun onClickRoutineItem(id: Long, title: String, description: String) {
+        val destination = RoutinesFragmentDirections.actionRoutinesFragmentToRoutineDetailFragment(
+            routineId = id,
+            title = title,
+            description = description
+        )
+
+        findNavController().navigate(destination)
     }
 
     override fun onCreateView(
