@@ -30,7 +30,7 @@ class TaskViewModel(
         return appDatabaseRepository.getTasksByIndexDay(indexDay)
     }
 
-    suspend fun getBySessionId(sessionId: Int) : List<TaskTable> {
+    suspend fun getBySessionId(sessionId: Long) : List<TaskTable> {
         Log.d("TaskViewModel", "get tasks by session id: $sessionId")
         return appDatabaseRepository.getTasksBySessionId(sessionId)
     }

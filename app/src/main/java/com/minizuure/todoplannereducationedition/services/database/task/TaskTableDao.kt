@@ -22,7 +22,7 @@ interface TaskTableDao : BaseIODao<TaskTable> {
     suspend fun getByIndexDay(indexDay: Int): List<TaskTable>
 
     @Query("SELECT * FROM task_table WHERE is_custom_session = 1 AND session_id = :sessionId")
-    suspend fun getBySessionId(sessionId: Int): List<TaskTable>
+    suspend fun getBySessionId(sessionId: Long): List<TaskTable>
 
 
 }
