@@ -23,7 +23,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "task_table")
 data class TaskTable(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0,
 
     @ColumnInfo(name = "title")
     var title: String,
@@ -32,7 +32,7 @@ data class TaskTable(
     var indexDay : Int = 0,
 
     @ColumnInfo(name = "session_id")
-    var sessionId : Int = 0,
+    var sessionId : Long = 0,
 
     // Additional Custom Session
 

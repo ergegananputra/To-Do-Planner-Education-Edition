@@ -32,7 +32,7 @@ import com.minizuure.todoplannereducationedition.services.database.routine.Routi
 )
 data class SessionTable(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Long,
 
     @ColumnInfo(name = "title")
     var title: String,
@@ -47,5 +47,5 @@ data class SessionTable(
     var selectedDays : String  = "0000000",
 
     @ColumnInfo(name = "fk_routine_id")
-    val fkRoutineId : Int = 0,
+    val fkRoutineId : Long = 0,
 )

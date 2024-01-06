@@ -2,6 +2,7 @@ package com.minizuure.todoplannereducationedition.second_layer.session
 
 import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,16 +10,22 @@ import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.minizuure.todoplannereducationedition.R
+import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentSessionFormBinding
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
+import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
+import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.temp.RoutineFormViewModel
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SessionFormFragment : Fragment() {
     val args : SessionFormFragmentArgs by navArgs()
@@ -26,6 +33,8 @@ class SessionFormFragment : Fragment() {
     private val binding by lazy {
         FragmentSessionFormBinding.inflate(layoutInflater)
     }
+
+    private lateinit var sessionViewModel: SessionViewModel
 
     private val selectedDaysAnimator by lazy {
         ObjectAnimator.ofFloat(binding.textViewSelectedDaysLabel, View.ALPHA, 0.5f, 1f).apply {
@@ -57,14 +66,24 @@ class SessionFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as RoutineManagementActivity).setToolbarTitle(this)
-        if (args.sessionId != -1) {
+
+        setupViewModelFactory()
+        if (args.sessionId != -1L) {
             loadData()
         }
 
-        setupSaveButton()
         setupSessionTitle()
         setupStartTimePicker()
         setupDaysTag()
+
+        setupSaveButton()
+    }
+
+    private fun setupViewModelFactory() {
+        val app : ToDoPlannerApplication = requireActivity().application as ToDoPlannerApplication
+
+        val sessionFactory = SessionViewModelFactory(app.appRepository)
+        sessionViewModel = ViewModelProvider(requireActivity(), sessionFactory)[SessionViewModel::class.java]
     }
 
     private fun loadData() {
@@ -172,7 +191,7 @@ class SessionFormFragment : Fragment() {
             if (args.newRoutine) {
                 lifecycleScope.launch {
                     // check if session is new or old to determine if it should be added to temp session or updated
-                    if (args.sessionId == -1) {
+                    if (args.sessionId == -1L) {
                         routineFormViewModel.addTempSession(
                             title = title,
                             startTime = startTime,
@@ -191,11 +210,15 @@ class SessionFormFragment : Fragment() {
                         navigateBackSuccess()
                     }
                 }
-            } else {
+            } else if (args.routineId != -1L) {
                 lifecycleScope.launch {
-                    uploadToDatabase()
+                    uploadToDatabase(title, startTime, endTime, daysSelected)
                     navigateBackSuccess()
                 }
+            } else {
+                Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                Log.d("SessionFormFragment", "setupSaveButton: Error in routine ${args.routineId}, session ${args.sessionId}")
+                navigateBackSuccess()
             }
         }
     }
@@ -237,8 +260,21 @@ class SessionFormFragment : Fragment() {
         return !notValid
     }
 
-    private suspend fun uploadToDatabase() {
-        // TODO: upload ke database
+    private suspend fun uploadToDatabase(
+        title: String,
+        startTime: String,
+        endTime: String,
+        daysSelected: String
+    ) {
+        withContext(Dispatchers.IO) {
+            sessionViewModel.insert(
+                title = title,
+                timeStart = startTime,
+                timeEnd = endTime,
+                selectedDays = daysSelected,
+                fkRoutineId = args.routineId
+            )
+        }
     }
 
     private fun navigateBackSuccess() {

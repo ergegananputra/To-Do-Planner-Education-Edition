@@ -149,13 +149,15 @@
         android:id="@+id/recycler_view_routines"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:paddingBottom="150dp"
         android:clipToPadding="false"
-        tools:listitem="@layout/item_routines"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="150dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_bar_routines" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_bar_routines"
+        tools:listitem="@layout/item_routines" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

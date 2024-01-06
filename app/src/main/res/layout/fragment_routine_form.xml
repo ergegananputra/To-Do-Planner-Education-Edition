@@ -72,17 +72,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_input_layout_description"
-                app:startIconDrawable="@drawable/ic_today_outline"
                 app:endIconMode="custom"
-                app:endIconDrawable="@drawable/ic_arrow_down"
+                app:endIconDrawable="@drawable/ic_today_outline"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="date"
-                    android:paddingStart="48dp"
-                    android:paddingEnd="0dp"
                     android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -98,17 +95,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_input_layout_start_date"
-                app:startIconDrawable="@drawable/ic_today_outline"
                 app:endIconMode="custom"
-                app:endIconDrawable="@drawable/ic_arrow_down"
+                app:endIconDrawable="@drawable/ic_today_outline"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="date"
-                    android:paddingStart="48dp"
-                    android:paddingEnd="0dp"
                     android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>

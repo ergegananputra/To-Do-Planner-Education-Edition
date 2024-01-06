@@ -13,7 +13,7 @@ class TaskViewModel(
         return appDatabaseRepository.getAllTasks()
     }
 
-    suspend fun getById(id: Int) : TaskTable? {
+    suspend fun getById(id: Long) : TaskTable? {
         Log.d("TaskViewModel", "begin get task by id: $id")
         val result = appDatabaseRepository.getTaskById(id)
         Log.d("TaskViewModel", "result get task by id is ${result != null}")
@@ -30,7 +30,7 @@ class TaskViewModel(
         return appDatabaseRepository.getTasksByIndexDay(indexDay)
     }
 
-    suspend fun getBySessionId(sessionId: Int) : List<TaskTable> {
+    suspend fun getBySessionId(sessionId: Long) : List<TaskTable> {
         Log.d("TaskViewModel", "get tasks by session id: $sessionId")
         return appDatabaseRepository.getTasksBySessionId(sessionId)
     }
@@ -43,7 +43,7 @@ class TaskViewModel(
     suspend fun insert(
         title : String,
         indexDay : Int,
-        sessionId : Int,
+        sessionId : Long,
         isCustomSession : Boolean = false,
         startTime : String? = null,
         endTime : String? = null,

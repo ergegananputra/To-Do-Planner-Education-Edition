@@ -70,10 +70,18 @@
     <string name="end_time_hint">End</string>
     <string name="new_session">New Session</string>
     <string name="edit_session">Edit Session</string>
+    <string name="select_start_date">Select start date</string>
+    <string name="select_end_date">select_end_date</string>
+  
+  
     <string name="error_msg_title_empty">Title cannot be empty</string>
     <string name="error_msg_start_time_empty">Start time cannot be empty</string>
     <string name="error_msg_end_time_empty">End time cannot be empty</string>
     <string name="error_msg_no_days_selected_session_form">Please select at least one day</string>
     <string name="error_msg_time_invalid_format">Invalid Format</string>
+    <string name="error_msg_start_date_empty">Start date cannot be empty</string>
+    <string name="error_msg_end_date_empty">End date cannot be empty</string>
+    <string name="error_msg_session_empty">Please add at least one session</string>
     <string name="error_msg_more_than_20">Location name must less or equals then 20 characters</string>
+
 </resources>

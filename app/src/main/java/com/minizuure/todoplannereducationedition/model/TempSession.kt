@@ -1,7 +1,7 @@
 package com.minizuure.todoplannereducationedition.model
 
 data class TempSession(
-    val id : Int = 0,
+    val id : Long = 0L,
     val title : String,
     val startTime : String,
     val endTime : String,

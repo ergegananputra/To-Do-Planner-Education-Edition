@@ -11,7 +11,11 @@ class RoutineViewModel(
         return appDatabaseRepository.getAllRoutines()
     }
 
-    suspend fun getById(id: Int) : RoutineTable? {
+    suspend fun getCount() : Int {
+        return appDatabaseRepository.getRoutinesCount()
+    }
+
+    suspend fun getById(id: Long) : RoutineTable? {
         return appDatabaseRepository.getRoutineById(id)
     }
 
@@ -28,22 +32,40 @@ class RoutineViewModel(
         description : String,
         dateStart : String,
         dateEnd : String,
-    ) {
+    ) : Long {
         val routineTable = RoutineTable(
-            id = 0,
             title = title,
             description = description,
             date_start = dateStart,
             date_end = dateEnd
         )
-        appDatabaseRepository.insertRoutine(routineTable)
+        return appDatabaseRepository.insertRoutine(routineTable)
     }
+
+    // delete by id
 
     suspend fun delete(routineTable: RoutineTable) {
         appDatabaseRepository.deleteRoutine(routineTable)
     }
 
     suspend fun update(routineTable: RoutineTable) {
+        appDatabaseRepository.updateRoutine(routineTable)
+    }
+
+    suspend fun update(
+        id : Long,
+        title : String,
+        description : String,
+        dateStart : String,
+        dateEnd : String,
+    ) {
+        val routineTable = RoutineTable(
+            id = id,
+            title = title,
+            description = description,
+            date_start = dateStart,
+            date_end = dateEnd
+        )
         appDatabaseRepository.updateRoutine(routineTable)
     }
 }

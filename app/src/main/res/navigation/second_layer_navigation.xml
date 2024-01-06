@@ -21,8 +21,7 @@
         tools:layout="@layout/fragment_routine_form" >
         <argument
             android:name="routine_id"
-            app:argType="integer"
-            android:defaultValue="0" />
+            app:argType="long" />
         <action
             android:id="@+id/action_routineFormFragment_to_sessionFormFragment"
             app:destination="@id/sessionFormFragment" />
@@ -34,8 +33,8 @@
         tools:layout="@layout/fragment_session_form" >
         <argument
             android:name="session_id"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            app:argType="long"
+            android:defaultValue="-1L" />
         <argument
             android:name="new_routine"
             app:argType="boolean"
@@ -56,5 +55,9 @@
             android:name="selected_days"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="routine_id"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
 </navigation>
