@@ -11,11 +11,15 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.minizuure.todoplannereducationedition.R
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.Locale
+import kotlin.math.abs
 
 /**
  * Datetime Package
@@ -30,6 +34,32 @@ class DatetimeAppManager {
 
     fun getLocalDateTime() : ZonedDateTime {
         return ZonedDateTime.now(zoneLocalTimeId)
+    }
+
+    /**
+     * @return List of days of week in localized string, example ["Sunday", "Monday", "Tuesday", ...]
+     */
+    fun getAllDaysOfWeek() : List<String> {
+        val daysOfWeek = DayOfWeek.entries.map { dayOfWeek ->
+            dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
+        }
+        return daysOfWeek.rotate(1)
+    }
+
+    private fun <T> List<T>.rotate(distance: Int): List<T> {
+        val tempList = this + this
+        val shift = abs(distance) % size
+        return if (distance >= 0) {
+            // shift right
+            tempList.subList(size - shift, tempList.size - shift)
+        } else {
+            // shift left
+            tempList.subList(shift, size + shift)
+        }
+    }
+
+    fun dayIdFromDayName(dayName: String) : Int {
+        return getAllDaysOfWeek().indexOf(dayName)
     }
 
     private fun localizedUTC(dateTimeInUTCiso8601: String) : ZonedDateTime {
@@ -104,6 +134,7 @@ class DatetimeAppManager {
         val picker = timePickerBuilder(context, title)
 
         textInputLayoutTime.setEndIconOnClickListener {
+            it.rootView.clearFocus()
             picker.show(parentFragmentManager, "SessionFormFragment")
         }
 
@@ -165,10 +196,12 @@ class DatetimeAppManager {
 
 
         textInputLayoutDate.editText?.setOnClickListener {
+            it.rootView.clearFocus()
             picker.show(parentFragmentManager, "SessionFormFragment")
         }
 
         textInputLayoutDate.setEndIconOnClickListener {
+            it.rootView.clearFocus()
             picker.show(parentFragmentManager, "SessionFormFragment")
         }
 

@@ -20,4 +20,10 @@ data class RoutineTable(
 
     @ColumnInfo(name = "date_end")
     var date_end: String,
+
+    @ColumnInfo(name = "isSharedToCommunity")
+    var isSharedToCommunity: Boolean = false,
+
+    @ColumnInfo(name = "communityId")
+    var communityId: String? = null,
 )

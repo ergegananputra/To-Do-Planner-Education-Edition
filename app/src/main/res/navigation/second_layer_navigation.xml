@@ -78,5 +78,8 @@
         <argument
             android:name="description"
             app:argType="string" />
+        <action
+            android:id="@+id/action_routineDetailFragment_to_sessionFormFragment"
+            app:destination="@id/sessionFormFragment" />
     </fragment>
 </navigation>
