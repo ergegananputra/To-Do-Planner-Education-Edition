@@ -7,26 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".first_layer.task.TaskFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/task_layout_appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/task_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:menu="@menu/task_bar_menu"
-            app:navigationIcon="@drawable/ic_arrow_back_outline"
-            app:title="### Task"
-            app:titleCentered="true"
-            android:textColor="?attr/colorOnSurface"
-            android:maxLines="1"
-            android:ellipsize="marquee"/>
-    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/task_layout_1"
@@ -37,8 +17,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/task_layout_appbar"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/task_input_layout_title"
@@ -83,45 +63,73 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/task_button_folder">
+
             <LinearLayout
                 android:id="@+id/linearLayout_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/task_button_date_day"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    android:padding="16dp"
-                    android:text="Select Day"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    app:cornerRadius="4dp"
-                    app:icon="@drawable/ic_arrow_down"
-                    app:iconGravity="end" />
+                    android:layout_marginEnd="4dp"
+                    android:orientation="vertical">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/task_button_date_day"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="Select Day"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        app:cornerRadius="4dp"
+                        app:icon="@drawable/ic_arrow_down"
+                        app:iconGravity="end" />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/task_text_day_error_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Error msg.."
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="?attr/colorError"
+                        android:paddingStart="4dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/task_button_date_time"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:padding="16dp"
-                    android:text="Select Session"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    app:cornerRadius="4dp"
-                    app:icon="@drawable/ic_arrow_down"
-                    app:iconGravity="end" />
+                    android:orientation="vertical">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/task_button_date_time"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="Select Session"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        app:cornerRadius="4dp"
+                        app:icon="@drawable/ic_arrow_down"
+                        app:iconGravity="end" />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/task_text_session_error_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Error msg.."
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="?attr/colorError"
+                        android:paddingStart="4dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
 
             </LinearLayout>
-            <!-- di hide kalau ngga perlu / belum milih custom session-->
+
             <LinearLayout
                 android:id="@+id/task_layout_custom_session"
                 android:layout_width="match_parent"
@@ -129,38 +137,44 @@
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/task_button_end_session"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/task_input_end_session"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="4dp"
                     android:layout_weight="1"
-                    android:padding="16dp"
-                    android:text="Start"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    app:cornerRadius="4dp"
-                    app:icon="@drawable/ic_schedule_outline"
-                    app:iconGravity="start"
-                    app:iconPadding="12dp"/>
+                    android:hint="Start"
+                    app:endIconDrawable="@drawable/ic_schedule_outline"
+                    app:endIconMode="custom">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/task_button_start_session"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="time"
+                        android:maxLines="1"
+                        android:maxLength="5"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/task_input_start_session"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:padding="16dp"
-                    android:text="End"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    app:cornerRadius="4dp"
-                    app:icon="@drawable/ic_schedule_outline"
-                    app:iconGravity="start"
-                    app:iconPadding="12dp"/>
+                    android:hint="End"
+                    app:endIconDrawable="@drawable/ic_schedule_outline"
+                    app:endIconMode="custom">
 
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="time"
+                        android:maxLength="5"
+                        android:maxLines="1"/>
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </LinearLayout>
 
@@ -181,7 +195,8 @@
                 android:id="@+id/task_input_edit_text_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Location Name">
+                android:hint="Location Name"
+                android:paddingStart="48dp">
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -223,36 +238,47 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:maxLines="1"
                 android:text="Share to community"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                android:textColor="?attr/colorOnSurface"
-                android:maxLines="1"
-                android:ellipsize="marquee"/>
+                android:textColor="?attr/colorOnSurface" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/task_text_community_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Community Name"
-                android:textColor="?attr/colorOnSurfaceVariant"
+                android:ellipsize="marquee"
                 android:maxLines="1"
-                android:ellipsize="marquee"/>
+                android:text="Community Name"
+                android:textColor="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/materialButton4"
+            android:id="@+id/task_button_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="32dp"
             android:isScrollContainer="false"
             android:text="Save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/task_switch_share"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintTop_toTopOf="@+id/guideline5">
 
         </com.google.android.material.button.MaterialButton>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_percent="0.8"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
