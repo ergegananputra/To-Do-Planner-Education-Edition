@@ -111,5 +111,6 @@
     <string name="default_community_name">Community Name</string>
     <string name="edit_task">Edit Task</string>
     <string name="new_task">New Task</string>
+    <string name="select">Select</string>
 
 </resources>

@@ -3,14 +3,15 @@ package com.minizuure.todoplannereducationedition.services.database.routine
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.GlobalMinimumInterface
 
 @Entity(tableName = "routine_table")
 data class RoutineTable(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    override val id: Long = 0,
 
     @ColumnInfo(name = "title")
-    var title: String,
+    override var title: String,
 
     @ColumnInfo(name = "description")
     var description: String,
@@ -26,4 +27,4 @@ data class RoutineTable(
 
     @ColumnInfo(name = "communityId")
     var communityId: String? = null,
-)
+) : GlobalMinimumInterface
