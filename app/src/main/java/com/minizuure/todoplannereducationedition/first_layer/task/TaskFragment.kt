@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -23,8 +24,10 @@ import com.minizuure.todoplannereducationedition.services.database.routine.Routi
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
+import com.minizuure.todoplannereducationedition.services.database.temp.TaskFormViewModel
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import com.minizuure.todoplannereducationedition.services.errormsgs.ErrorMsgManager
+import com.minizuure.todoplannereducationedition.services.preferences.UserPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,6 +36,7 @@ private const val ARG_TASK_ID = "com.minizuure.todoplannereducationedition.first
 class TaskFragment : Fragment() {
     val args : TaskFragmentArgs by navArgs()
     private var taskId: Long? = null
+    private val taskFormViewModel : TaskFormViewModel by activityViewModels()
     private lateinit var routineViewModel : RoutineViewModel
     private lateinit var sessionViewModel: SessionViewModel
 
@@ -82,10 +86,7 @@ class TaskFragment : Fragment() {
     }
 
     private fun setupDropdownTextField() {
-        CustomTextField(requireContext()).setDropdownTextField(
-            binding.textInputLayoutRoutineTemplate,
-            onClick = spinnerRoutineTemplateOnClick()
-        )
+        setRoutineTemplateDropDown()
 
         CustomTextField(requireContext()).setDropdownTextField(
             binding.textInputLayoutSelectDay,
@@ -96,6 +97,29 @@ class TaskFragment : Fragment() {
             binding.textInputLayoutSelectSession,
             onClick = spinnerSelectSessionOnClick()
         )
+    }
+
+    private fun setRoutineTemplateDropDown() {
+        lifecycleScope.launch {
+            val routineTemplateId = UserPreferences(requireContext()).defaultRoutineId
+            val routineTemplate = withContext(Dispatchers.IO) {
+                routineViewModel.getById(routineTemplateId)
+            }
+
+            routineTemplate?.let { routineTemplateNonNull ->
+                taskFormViewModel.setRoutineTemplate(routineTemplateNonNull)
+            }
+
+        }
+
+        CustomTextField(requireContext()).setDropdownTextField(
+            binding.textInputLayoutRoutineTemplate,
+            onClick = spinnerRoutineTemplateOnClick()
+        )
+
+        taskFormViewModel.routineTemplate.observe(viewLifecycleOwner) {
+            binding.textInputLayoutRoutineTemplate.editText?.setText(it.title)
+        }
     }
 
     private fun spinnerSelectSessionOnClick(): () -> Unit = {
@@ -112,17 +136,13 @@ class TaskFragment : Fragment() {
                 routineViewModel.getAll()
             }
 
-            val routineTemplateAdapter = GlobalAdapter(
-                useIndexes = true,
-                onClickAction = onClickRoutineItem()
-            )
-
-            routineTemplateAdapter.submitList(routines)
-
+            val routineTemplateAdapter = GlobalAdapter(useIndexes = true)
             val bottomSheet = GlobalBottomSheetDialogFragment(
                 title = getString(R.string.default_select_routines_template),
                 globalAdapter = routineTemplateAdapter
             )
+            routineTemplateAdapter.onClickAction = onClickRoutineItem(bottomSheet)
+            routineTemplateAdapter.submitList(routines)
 
             if (!isDialogOpen) {
                 bottomSheet.show(parentFragmentManager, "routine_template_bottom_sheet")
@@ -130,12 +150,13 @@ class TaskFragment : Fragment() {
         }
     }
 
-    private fun onClickRoutineItem(): (GlobalMinimumInterface) -> Unit = {
+    private fun onClickRoutineItem(bottomSheet: GlobalBottomSheetDialogFragment): (GlobalMinimumInterface) -> Unit = {
         if (it is RoutineTable) {
             binding.textInputLayoutRoutineTemplate.editText?.setText(it.title)
         } else {
             Log.wtf("TaskFragment", "onClickRoutineItem: it is not RoutineTemplateImpl")
         }
+        bottomSheet.closeDialog()
     }
 
     private fun setupTimePicker() {

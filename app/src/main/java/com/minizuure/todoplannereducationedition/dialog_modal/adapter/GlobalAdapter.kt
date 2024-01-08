@@ -9,8 +9,8 @@ import com.minizuure.todoplannereducationedition.databinding.ItemGeneralBottomSh
 import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.GlobalMinimumInterface
 
 class GlobalAdapter(
-    private val onClickAction : (GlobalMinimumInterface) -> Unit,
-    private val onLongClickAction : (GlobalMinimumInterface) -> Unit = {},
+    var onClickAction : (GlobalMinimumInterface) -> Unit = {},
+    var onLongClickAction : (GlobalMinimumInterface) -> Unit = {},
     private val useIndexes : Boolean = false,
     private val firstDiffrenetColor : Boolean = false,
     private val startFromIndexZero : Boolean = false,
