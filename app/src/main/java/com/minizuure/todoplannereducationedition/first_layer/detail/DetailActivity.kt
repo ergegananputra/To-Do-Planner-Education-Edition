@@ -11,19 +11,19 @@ class DetailActivity : AppCompatActivity() {
         ActivityDetailBinding.inflate(layoutInflater)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-
-        binding.appBarLayoutDetail.setStatusBarForegroundColor(
-            MaterialColors.getColor(binding.appBarLayoutDetail,
-                com.google.android.material.R.attr.colorSurface)
-        )
-
-        binding.toolbarDetail.setNavigationOnClickListener {
-            setResult(RESULT_OK)
-            finish()
-        }
-    }
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        enableEdgeToEdge()
+//        super.onCreate(savedInstanceState)
+//        setContentView(binding.root)
+//
+//        binding.appBarLayoutDetail.setStatusBarForegroundColor(
+//            MaterialColors.getColor(binding.appBarLayoutDetail,
+//                com.google.android.material.R.attr.colorSurface)
+//        )
+//
+//        binding.toolbarDetail.setNavigationOnClickListener {
+//            setResult(RESULT_OK)
+//            finish()
+//        }
+//    }
 }

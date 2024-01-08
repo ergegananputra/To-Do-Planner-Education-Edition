@@ -16,15 +16,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    // TODO : Delete this testing purpose
-    private var testingPurpose = true
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater)}
 
     private val launcherToDetail = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             Log.d("MainActivity", "onCreate: RESULT_OK")
-            testingPurpose = false
         }
     }
 
@@ -41,19 +38,8 @@ class MainActivity : AppCompatActivity() {
             bottomNavigationViewSurface.setupWithNavController(navController)
         }
 
-//        byPassTesting(testingPurpose)
+
     }
 
-    private fun byPassTesting(state : Boolean) {
-        val intentToDetail = Intent(this, DetailActivity::class.java)
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            delay(1000)
-            if (state) {
-                this.launch(Dispatchers.Main) {
-                    launcherToDetail.launch(intentToDetail)
-                }
-            }
-        }
-    }
 }

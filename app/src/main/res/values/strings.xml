@@ -109,5 +109,7 @@
     <string name="google_maps_link">Google Maps Link</string>
     <string name="share_to_community">Share to community</string>
     <string name="default_community_name">Community Name</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="new_task">New Task</string>
 
 </resources>

@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.DigitsKeyListener
+import android.widget.EditText
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.minizuure.todoplannereducationedition.R
@@ -32,7 +33,7 @@ class ErrorMsgManager {
     fun setErrorMessages(
         context: Context,
         textInputLayout: TextInputLayout,
-        textInputEditText: TextInputEditText? = null,
+        textInputEditText: EditText? = null,
         errorType: String
     ) {
         when(errorType) {

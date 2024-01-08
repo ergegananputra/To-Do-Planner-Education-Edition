@@ -16,9 +16,6 @@ class RoutineManagementActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityRoutineManagementBinding.inflate(layoutInflater)
     }
-    private val routineNavController by lazy {
-        findNavController(R.id.nav_host_fragment_routine_management)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
