@@ -99,5 +99,15 @@
     <string name="usages">Usages</string>
     <string name="expired_in">Expired in</string>
     <string name="sessions_day_avg">sessions / day (avg)</string>
+    <string name="title">Title</string>
+    <string name="default_select_routines_template">Select Routines Template</string>
+    <string name="default_select_session">Select Session</string>
+    <string name="default_select_day">Select Day</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="location_name">Location Name</string>
+    <string name="google_maps_link">Google Maps Link</string>
+    <string name="share_to_community">Share to community</string>
+    <string name="default_community_name">Community Name</string>
 
 </resources>
