@@ -20,13 +20,7 @@
             android:name=".first_layer.reschedule.RescheduleActivity"
             android:exported="false" />
         <activity
-            android:name=".first_layer.task.TaskActivity"
-            android:exported="false" />
-        <activity
             android:name=".second_layer.RoutineManagementActivity"
-            android:exported="false"/>
-        <activity
-            android:name=".first_layer.detail.DetailActivity"
             android:exported="false"/>
         <activity
             android:name=".MainActivity"

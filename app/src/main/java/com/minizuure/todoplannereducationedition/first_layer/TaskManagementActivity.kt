@@ -6,7 +6,12 @@ import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navArgs
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.minizuure.todoplannereducationedition.CustomSystemTweak
 import com.minizuure.todoplannereducationedition.R
@@ -15,7 +20,8 @@ import com.minizuure.todoplannereducationedition.first_layer.detail.DetailFragme
 import com.minizuure.todoplannereducationedition.first_layer.task.TaskFragment
 
 class TaskManagementActivity : AppCompatActivity() {
-    val args : TaskManagementActivityArgs by navArgs()
+    private val args : TaskManagementActivityArgs by navArgs()
+    private lateinit var taskNavController : NavController
 
     private val binding by lazy {
         ActivityTaskManagementBinding.inflate(layoutInflater)
@@ -23,9 +29,22 @@ class TaskManagementActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        val navHostFragment = supportFragmentManager.findFragmentById(binding.navHostFragmentContainerViewTask.id) as NavHostFragment
+        taskNavController = navHostFragment.navController
+
         CustomSystemTweak(this).statusBarTweak()
 
         setupFragment(args.actionToOpen)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return if (taskNavController.currentDestination?.id == taskNavController.graph.startDestinationId) {
+            finish()
+            true
+        } else {
+            taskNavController.navigateUp() || super.onSupportNavigateUp()
+        }
     }
 
     private fun setupFragment(toOpen: String) {
@@ -44,7 +63,7 @@ class TaskManagementActivity : AppCompatActivity() {
         }
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container_view_task, fragment)
+            .replace(binding.navHostFragmentContainerViewTask.id, fragment)
             .commit()
     }
 
@@ -71,6 +90,9 @@ class TaskManagementActivity : AppCompatActivity() {
 
     private fun changeToolbarTitle(title: String = "", isCollapsable: Boolean = true) {
         if (isCollapsable) {
+            setSupportActionBar(binding.toolbarDetail)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
             binding.collapsingToolbarTaskManagement.visibility = View.VISIBLE
             binding.toolbarNonCollapsingTaskManagement.visibility = View.GONE
             if (title == "") {
@@ -79,6 +101,9 @@ class TaskManagementActivity : AppCompatActivity() {
                 binding.collapsingToolbarTaskManagement.title = title
             }
         } else {
+            setSupportActionBar(binding.toolbarNonCollapsingTaskManagement)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
             binding.collapsingToolbarTaskManagement.visibility = View.GONE
             binding.toolbarNonCollapsingTaskManagement.visibility = View.VISIBLE
             if (title == "") {

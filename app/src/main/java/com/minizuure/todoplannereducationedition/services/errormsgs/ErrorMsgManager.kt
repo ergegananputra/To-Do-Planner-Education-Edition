@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.DigitsKeyListener
 import android.widget.EditText
+import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.minizuure.todoplannereducationedition.R
@@ -38,24 +39,13 @@ class ErrorMsgManager {
     ) {
         when(errorType) {
             "20 characters max" -> {
-                // untested
-                textInputEditText?.addTextChangedListener(object: TextWatcher {
-                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                        if(p0.toString().length > 20) {
-                            textInputLayout.isErrorEnabled = true
-                            textInputLayout.error = context.resources.getString(R.string.error_msg_more_than_20)
-                            textInputEditText.keyListener = null
-                        } else {
-                            textInputLayout.isErrorEnabled = false
-                            textInputLayout.error = null
-                            textInputEditText.keyListener = DigitsKeyListener.getInstance("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-                        }
+                textInputEditText?.doAfterTextChanged { text ->
+                    if (text?.length!! > 20) {
+                        textInputLayout.error = context.getString(R.string.error_msg_more_than_20)
+                    } else {
+                        textInputLayout.error = null
                     }
-
-                    override fun afterTextChanged(p0: Editable?) {}
-                })
+                }
             }
         }
     }
