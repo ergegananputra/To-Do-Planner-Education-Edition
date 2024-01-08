@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.minizuure.todoplannereducationedition.databinding.FragmentTaskBinding
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
+import com.minizuure.todoplannereducationedition.services.customtextfield.CustomTextField
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import com.minizuure.todoplannereducationedition.services.errormsgs.ErrorMsgManager
 
@@ -40,10 +41,41 @@ class TaskFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as TaskManagementActivity).setToolbarTitle(this)
 
-        setupStartTimePicker()
+        setupDropdownTextField()
+        setupTimePicker()
         setupErrorMessages()
     }
-    private fun setupStartTimePicker() {
+
+    private fun setupDropdownTextField() {
+        CustomTextField(requireContext()).setDropdownTextField(
+            binding.textInputLayoutRoutineTemplate,
+            onClick = spinnerRoutineTemplateOnClick()
+        )
+
+        CustomTextField(requireContext()).setDropdownTextField(
+            binding.textInputLayoutSelectDay,
+            onClick = spinnerSelectDayOnClick()
+        )
+
+        CustomTextField(requireContext()).setDropdownTextField(
+            binding.textInputLayoutSelectSession,
+            onClick = spinnerSelectSessionOnClick()
+        )
+    }
+
+    private fun spinnerSelectSessionOnClick(): () -> Unit = {
+        // TODO: open bottom sheet dialog and show all available sessions
+    }
+
+    private fun spinnerSelectDayOnClick(): () -> Unit = {
+        // TODO: open bottom sheet dialog and show all available days
+    }
+
+    private fun spinnerRoutineTemplateOnClick(): () -> Unit = {
+        // TODO: open bottom sheet dialog and show all available routine template
+    }
+
+    private fun setupTimePicker() {
         DatetimeAppManager().setEditTextTimePickerDialog(
             requireContext(),
             parentFragmentManager,
