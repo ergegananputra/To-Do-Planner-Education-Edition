@@ -58,6 +58,11 @@ class DatetimeAppManager {
         }
     }
 
+    fun convertStringTimeToMinutes(time: String, delimiters : String = ":") : Int {
+        val (hour, minute) = time.split(delimiters)
+        return hour.toInt() * 60 + minute.toInt()
+    }
+
     fun dayIdFromDayName(dayName: String) : Int {
         return getAllDaysOfWeek().indexOf(dayName)
     }
@@ -129,7 +134,8 @@ class DatetimeAppManager {
         context: Context,
         parentFragmentManager: FragmentManager,
         textInputLayoutTime: TextInputLayout,
-        title: String = "Select time"
+        title: String = "Select time",
+        customSuccessAction : () -> Unit = {}
     ) {
         val picker = timePickerBuilder(context, title)
 
@@ -144,6 +150,8 @@ class DatetimeAppManager {
             val minute = picker.minute
             val time = String.format("%02d:%02d", hour, minute)
             textInputLayoutTime.editText?.setText(time)
+
+            customSuccessAction()
         }
 
         textInputLayoutTime.editText?.doAfterTextChanged { text ->
@@ -155,6 +163,8 @@ class DatetimeAppManager {
                 } else {
                     textInputLayoutTime.error = null
                     textInputLayoutTime.clearFocus()
+
+                    customSuccessAction()
                 }
             } else if (text.toString().trim().isNotEmpty()) {
                 textInputLayoutTime.error = null
@@ -186,7 +196,8 @@ class DatetimeAppManager {
         parentFragmentManager: FragmentManager,
         textInputLayoutDate: TextInputLayout,
         title: String = "Select date",
-        forwardOnly : Boolean = false
+        forwardOnly : Boolean = false,
+        customSuccessAction: () -> Unit = {}
     ) {
         val picker = datePickerBuilder(context, title, forwardOnly)
 
@@ -212,6 +223,7 @@ class DatetimeAppManager {
                 val formattedSelectedDate = selectedDate.format(DateTimeFormatter.ofPattern("dd LLLL yyyy"))
                 textInputLayoutDate.editText?.setText(formattedSelectedDate)
             }
+            customSuccessAction()
         }
 
     }

@@ -112,5 +112,10 @@
     <string name="edit_task">Edit Task</string>
     <string name="new_task">New Task</string>
     <string name="select">Select</string>
+    <string name="error_no_routine_template_selected">Please select routine template first</string>
+    <string name="error_no_session_selected">Please select session first</string>
+    <string name="error_no_day_selected">Please select day first</string>
+    <string name="custom_session">Custom Session</string>
+    <string name="error_time_interval">End time must be greater than start time</string>
 
 </resources>

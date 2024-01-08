@@ -52,6 +52,7 @@ class GlobalBottomSheetDialogFragment(
             binding.includeCustomAddButtonBottomSheet.textViewItemBottomSheet.text = additionalButtonText
             binding.includeCustomAddButtonBottomSheet.cardViewItemGeneral.setOnClickListener {
                 additionalButtonLogic()
+                dismiss()
             }
         } else {
             binding.includeCustomAddButtonBottomSheet.root.visibility = View.GONE

@@ -1,5 +1,6 @@
 package com.minizuure.todoplannereducationedition.dialog_modal.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -14,13 +15,19 @@ class GlobalAdapter(
     private val useIndexes : Boolean = false,
     private val firstDiffrenetColor : Boolean = false,
     private val startFromIndexZero : Boolean = false,
+    private val useCustomName : Boolean = false,
+    private val customNameLogic : (GlobalMinimumInterface) -> String = {""}
 ) : ListAdapter<GlobalMinimumInterface, GlobalAdapter.GlobalViewHolder>(GlobalDiffUtils()) {
 
     inner class GlobalViewHolder(
         private val binding : ItemGeneralBottomSheetBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: GlobalMinimumInterface, index: Int) {
-            binding.textViewItemBottomSheet.text = item.title
+            binding.textViewItemBottomSheet.text = if (useCustomName) {
+                customNameLogic(item)
+            } else {
+                item.title
+            }
 
             if (useIndexes) {
                 binding.buttonItemBottomSheet.text = index.toString()
@@ -29,6 +36,7 @@ class GlobalAdapter(
             }
 
             if (firstDiffrenetColor) {
+                Log.d("GlobalAdapter", "bind: $index ${item.title}")
                 binding.buttonItemBottomSheet.isActivated = index != 0
             } else {
                 binding.buttonItemBottomSheet.isActivated = true

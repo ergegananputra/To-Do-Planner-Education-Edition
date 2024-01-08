@@ -16,12 +16,14 @@ import com.minizuure.todoplannereducationedition.databinding.FragmentTaskBinding
 import com.minizuure.todoplannereducationedition.dialog_modal.GlobalBottomSheetDialogFragment
 import com.minizuure.todoplannereducationedition.dialog_modal.GlobalBottomSheetDialogFragment.Companion.isDialogOpen
 import com.minizuure.todoplannereducationedition.dialog_modal.adapter.GlobalAdapter
+import com.minizuure.todoplannereducationedition.dialog_modal.model.DaysOfWeekImpl
 import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.GlobalMinimumInterface
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
 import com.minizuure.todoplannereducationedition.services.customtextfield.CustomTextField
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
+import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.temp.TaskFormViewModel
@@ -123,15 +125,124 @@ class TaskFragment : Fragment() {
     }
 
     private fun spinnerSelectSessionOnClick(): () -> Unit = {
-        // TODO: open bottom sheet dialog and show all available sessions
+        lifecycleScope.launch {
+            if (isDialogOpen) return@launch
+            if (taskFormViewModel.getRoutineTemplate() == null) {
+                Log.e("TaskFragment", "spinnerSelectSessionOnClick: routine is null")
+                val errorMsg = getString(R.string.error_no_routine_template_selected)
+                binding.textInputLayoutSelectSession.error = errorMsg
+                return@launch
+            }
+            if (taskFormViewModel.getDay() == null) {
+                Log.e("TaskFragment", "spinnerSelectSessionOnClick: day is null")
+                val errorMsg = getString(R.string.error_no_day_selected)
+                binding.textInputLayoutSelectSession.error = errorMsg
+                return@launch
+            }
+
+            val selectedDayId = taskFormViewModel.getDay()!!.id
+
+            val sessionsFiltered = withContext(Dispatchers.IO) {
+                sessionViewModel.getSessionsForRoutine(taskFormViewModel.getRoutineTemplate()!!.id)
+            }.filter { session ->
+                session.selectedDays[selectedDayId.toInt()] == '1'
+            }
+
+            val sessionsAdapter = GlobalAdapter(
+                useIndexes = true,
+                useCustomName = true,
+                customNameLogic = { session ->
+                    if (session is SessionTable) {
+                        return@GlobalAdapter "${session.timeStart} - ${session.timeEnd}"
+                    } else {
+                        Log.wtf("TaskFragment", "onClickSessionItem: it is not SessionTable")
+                        return@GlobalAdapter session.title
+                    }
+                }
+            )
+            val bottomSheet = GlobalBottomSheetDialogFragment(
+                title = getString(R.string.default_select_session),
+                globalAdapter = sessionsAdapter,
+                useAdditionalButton = true,
+                additionalButtonText = getString(R.string.custom_session),
+                additionalButtonLogic = customSessionLogic()
+            )
+            sessionsAdapter.onClickAction = onClickSessionItem(bottomSheet)
+
+            sessionsAdapter.submitList(sessionsFiltered)
+
+            bottomSheet.show(parentFragmentManager, "select_session_bottom_sheet")
+
+        }
+    }
+
+    private fun customSessionLogic(): () -> Unit = {
+        taskFormViewModel.setIsCustomSession(true)
+        taskFormViewModel.setSession(null)
+        val text = getString(R.string.custom_session)
+        binding.textInputLayoutSelectSession.editText?.setText(text)
+    }
+
+
+    private fun onClickSessionItem(bottomSheet: GlobalBottomSheetDialogFragment): (GlobalMinimumInterface) -> Unit = {
+        taskFormViewModel.setIsCustomSession(false)
+        if (it is SessionTable) {
+            val text = "${it.timeStart} - ${it.timeEnd}"
+            binding.textInputLayoutSelectSession.editText?.setText(text)
+            taskFormViewModel.setSession(it)
+        } else {
+            Log.wtf("TaskFragment", "onClickSessionItem: it is not SessionTable")
+        }
+        bottomSheet.closeDialog()
     }
 
     private fun spinnerSelectDayOnClick(): () -> Unit = {
-        // TODO: open bottom sheet dialog and show all available days
+        lifecycleScope.launch {
+            val routine = taskFormViewModel.getRoutineTemplate()
+
+            if (isDialogOpen) return@launch
+            if (routine == null) {
+                Log.e("TaskFragment", "spinnerSelectDayOnClick: routine is null")
+                val errorMsg = getString(R.string.error_no_routine_template_selected)
+                binding.textInputLayoutSelectDay.error = errorMsg
+                return@launch
+            }
+            val days = DatetimeAppManager().getAllDaysOfWeek()
+                .mapIndexed { index, title ->
+                    DaysOfWeekImpl(index.toLong(), title)
+                }
+
+            val selectDaysAdapter = GlobalAdapter(
+                firstDiffrenetColor = true,
+                startFromIndexZero = true
+            )
+            val bottomSheet = GlobalBottomSheetDialogFragment(
+                title = getString(R.string.default_select_day),
+                globalAdapter = selectDaysAdapter
+            )
+            selectDaysAdapter.onClickAction = onClickDayItem(bottomSheet)
+
+            selectDaysAdapter.submitList(days)
+
+            bottomSheet.show(parentFragmentManager, "select_days_bottom_sheet")
+
+        }
+    }
+
+    private fun onClickDayItem(bottomSheet: GlobalBottomSheetDialogFragment): (GlobalMinimumInterface) -> Unit = {
+        if (it is DaysOfWeekImpl) {
+            binding.textInputLayoutSelectDay.editText?.setText(it.title)
+            taskFormViewModel.setDay(it)
+        } else {
+            Log.wtf("TaskFragment", "onClickDayItem: it is not DaysOfWeekImpl")
+        }
+        bottomSheet.closeDialog()
     }
 
     private fun spinnerRoutineTemplateOnClick(): () -> Unit = {
         lifecycleScope.launch(Dispatchers.Main) {
+            if (isDialogOpen) return@launch
+
             val routines = withContext(Dispatchers.IO) {
                 routineViewModel.getAll()
             }
@@ -142,17 +253,19 @@ class TaskFragment : Fragment() {
                 globalAdapter = routineTemplateAdapter
             )
             routineTemplateAdapter.onClickAction = onClickRoutineItem(bottomSheet)
+
             routineTemplateAdapter.submitList(routines)
 
-            if (!isDialogOpen) {
-                bottomSheet.show(parentFragmentManager, "routine_template_bottom_sheet")
-            }
+            bottomSheet.show(parentFragmentManager, "routine_template_bottom_sheet")
+
         }
     }
 
     private fun onClickRoutineItem(bottomSheet: GlobalBottomSheetDialogFragment): (GlobalMinimumInterface) -> Unit = {
         if (it is RoutineTable) {
             binding.textInputLayoutRoutineTemplate.editText?.setText(it.title)
+            taskFormViewModel.setRoutineTemplate(it)
+
         } else {
             Log.wtf("TaskFragment", "onClickRoutineItem: it is not RoutineTemplateImpl")
         }
@@ -163,14 +276,86 @@ class TaskFragment : Fragment() {
         DatetimeAppManager().setEditTextTimePickerDialog(
             requireContext(),
             parentFragmentManager,
-            binding.textInputLayoutStartTime
+            binding.textInputLayoutStartTime,
+            customSuccessAction = {
+                val startTime = binding.textInputLayoutStartTime.editText?.text.toString()
+                taskFormViewModel.setTimeStart(startTime)
+            }
         )
 
         DatetimeAppManager().setEditTextTimePickerDialog(
             requireContext(),
             parentFragmentManager,
-            binding.textInputLayoutEndTime
+            binding.textInputLayoutEndTime,
+            customSuccessAction = {
+                val endTime = binding.textInputLayoutEndTime.editText?.text.toString()
+                taskFormViewModel.setTimeEnd(endTime)
+            }
         )
+
+        setCustomSessionObserver()
+    }
+
+    private fun setCustomSessionObserver() {
+        taskFormViewModel.isCustomSession.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.groupCustomSession.visibility = View.VISIBLE
+
+                if (taskFormViewModel.isObserverActive) return@observe
+                taskFormViewModel.isObserverActive = true
+
+                taskFormViewModel.timeStart.observe(viewLifecycleOwner) {
+                    lifecycleScope.launch {
+                        val isActive = taskFormViewModel.getIsCustomSession()
+
+                        if (isActive) {
+                            val timeEnd = taskFormViewModel.getTimeEnd()
+
+                            if(timeEnd == null || timeEnd == "") return@launch
+
+                            checkTimeInteval(it, timeEnd)
+                        }
+
+                    }
+                }
+
+                taskFormViewModel.timeEnd.observe(viewLifecycleOwner) {
+                    lifecycleScope.launch {
+                        val isActive = taskFormViewModel.getIsCustomSession()
+
+                        if (isActive) {
+                            val timeStart = taskFormViewModel.getTimeStart()
+
+                            if(timeStart == null || timeStart == "") return@launch
+
+                            checkTimeInteval(timeStart, it)
+                        }
+
+                    }
+                }
+            } else {
+                binding.groupCustomSession.visibility = View.GONE
+
+                if (taskFormViewModel.isObserverActive) {
+                    taskFormViewModel.timeStart.removeObservers(viewLifecycleOwner)
+                    taskFormViewModel.timeEnd.removeObservers(viewLifecycleOwner)
+                    taskFormViewModel.isObserverActive = false
+                }
+            }
+        }
+
+    }
+
+    private fun checkTimeInteval(timeStart: String, timeEnd: String) {
+        val startTime = DatetimeAppManager().convertStringTimeToMinutes(timeStart)
+        val endTime = DatetimeAppManager().convertStringTimeToMinutes(timeEnd)
+
+        if (startTime >= endTime) {
+            val errorMsg = getString(R.string.error_time_interval)
+            binding.textInputLayoutEndTime.error = errorMsg
+        } else {
+            binding.textInputLayoutEndTime.error = null
+        }
     }
 
     private fun setupErrorMessages() {
