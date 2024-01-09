@@ -1,5 +1,6 @@
 package com.minizuure.todoplannereducationedition.services.database.temp
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
@@ -7,14 +8,15 @@ import com.minizuure.todoplannereducationedition.dialog_modal.model.DaysOfWeekIm
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 
 class TaskFormViewModel : ViewModel() {
-    val routineTemplate : MutableLiveData<RoutineTable> = MutableLiveData()
-    val day : MutableLiveData<DaysOfWeekImpl> = MutableLiveData()
-    val session : MutableLiveData<SessionTable> = MutableLiveData()
-    val isCustomSession : MutableLiveData<Boolean> = MutableLiveData()
-    val timeStart : MutableLiveData<String> = MutableLiveData()
-    val timeEnd : MutableLiveData<String> = MutableLiveData()
+    val routineTemplate : MutableLiveData<RoutineTable?> = MutableLiveData(null)
+    val day : MutableLiveData<DaysOfWeekImpl?> = MutableLiveData(null)
+    val session : MutableLiveData<SessionTable?> = MutableLiveData(null)
+    val isCustomSession : MutableLiveData<Boolean> = MutableLiveData(false)
+    val timeStart : MutableLiveData<String?> = MutableLiveData(null)
+    val timeEnd : MutableLiveData<String?> = MutableLiveData(null)
     var isObserverActive : Boolean = false
 
     fun setRoutineTemplate(routineTemplate : RoutineTable) {
@@ -22,7 +24,7 @@ class TaskFormViewModel : ViewModel() {
     }
 
     suspend fun getRoutineTemplate() : RoutineTable? {
-        return routineTemplate.asFlow().first()
+        return routineTemplate.asFlow().firstOrNull()
     }
 
     fun setDay(day :DaysOfWeekImpl) {
@@ -30,7 +32,8 @@ class TaskFormViewModel : ViewModel() {
     }
 
     suspend fun getDay() : DaysOfWeekImpl? {
-        return day.asFlow().first()
+        Log.d("TaskFormViewModel", "getDay: program reached")
+        return day.asFlow().firstOrNull()
     }
 
     fun setSession(sessionTable: SessionTable?) {
@@ -38,7 +41,7 @@ class TaskFormViewModel : ViewModel() {
     }
 
     suspend fun getSession() : SessionTable? {
-        return session.asFlow().first()
+        return session.asFlow().firstOrNull()
     }
 
     fun setIsCustomSession(isCustomSession : Boolean) {
@@ -46,7 +49,7 @@ class TaskFormViewModel : ViewModel() {
     }
 
     suspend fun getIsCustomSession() : Boolean {
-        return isCustomSession.asFlow().first() ?: false
+        return isCustomSession.asFlow().firstOrNull() ?: false
     }
 
     fun setTimeStart(text: String) {
@@ -54,7 +57,7 @@ class TaskFormViewModel : ViewModel() {
     }
 
     suspend fun getTimeStart() : String? {
-        return timeStart.asFlow().first()
+        return timeStart.asFlow().firstOrNull()
     }
 
     fun setTimeEnd(text: String) {
@@ -62,6 +65,6 @@ class TaskFormViewModel : ViewModel() {
     }
 
     suspend fun getTimeEnd() : String? {
-        return timeEnd.asFlow().first()
+        return timeEnd.asFlow().firstOrNull()
     }
 }

@@ -89,16 +89,41 @@ class TaskFragment : Fragment() {
 
     private fun setupDropdownTextField() {
         setRoutineTemplateDropDown()
+        setDayDropDown()
+        setSessionDropDown()
+    }
 
+    private fun setSessionDropDown() {
+        CustomTextField(requireContext()).setDropdownTextField(
+            binding.textInputLayoutSelectSession,
+            onClick = spinnerSelectSessionOnClick()
+        )
+
+        taskFormViewModel.session.observe(viewLifecycleOwner) {
+            taskFormViewModel.setIsCustomSession(false)
+            if (it != null) {
+                val text = "${it.timeStart} - ${it.timeEnd}"
+                binding.textInputLayoutSelectSession.editText?.setText(text)
+            } else {
+                binding.textInputLayoutSelectSession.editText?.setText("")
+            }
+        }
+    }
+
+    private fun setDayDropDown() {
         CustomTextField(requireContext()).setDropdownTextField(
             binding.textInputLayoutSelectDay,
             onClick = spinnerSelectDayOnClick()
         )
 
-        CustomTextField(requireContext()).setDropdownTextField(
-            binding.textInputLayoutSelectSession,
-            onClick = spinnerSelectSessionOnClick()
-        )
+        taskFormViewModel.day.observe(viewLifecycleOwner) {
+            taskFormViewModel.setSession(null)
+            clearDayError()
+        }
+    }
+
+    private fun clearDayError() {
+        binding.textInputLayoutSelectSession.error = null
     }
 
     private fun setRoutineTemplateDropDown() {
@@ -120,12 +145,16 @@ class TaskFragment : Fragment() {
         )
 
         taskFormViewModel.routineTemplate.observe(viewLifecycleOwner) {
-            binding.textInputLayoutRoutineTemplate.editText?.setText(it.title)
+            it?.let {
+                binding.textInputLayoutRoutineTemplate.editText?.setText(it.title)
+            }
         }
     }
 
     private fun spinnerSelectSessionOnClick(): () -> Unit = {
         lifecycleScope.launch {
+            Log.d("TaskFragment", "spinnerSelectSessionOnClicked, isDialogOpen: $isDialogOpen")
+
             if (isDialogOpen) return@launch
             if (taskFormViewModel.getRoutineTemplate() == null) {
                 Log.e("TaskFragment", "spinnerSelectSessionOnClick: routine is null")
@@ -133,6 +162,7 @@ class TaskFragment : Fragment() {
                 binding.textInputLayoutSelectSession.error = errorMsg
                 return@launch
             }
+
             if (taskFormViewModel.getDay() == null) {
                 Log.e("TaskFragment", "spinnerSelectSessionOnClick: day is null")
                 val errorMsg = getString(R.string.error_no_day_selected)
@@ -177,8 +207,8 @@ class TaskFragment : Fragment() {
     }
 
     private fun customSessionLogic(): () -> Unit = {
-        taskFormViewModel.setIsCustomSession(true)
         taskFormViewModel.setSession(null)
+        taskFormViewModel.setIsCustomSession(true)
         val text = getString(R.string.custom_session)
         binding.textInputLayoutSelectSession.editText?.setText(text)
     }
@@ -187,8 +217,6 @@ class TaskFragment : Fragment() {
     private fun onClickSessionItem(bottomSheet: GlobalBottomSheetDialogFragment): (GlobalMinimumInterface) -> Unit = {
         taskFormViewModel.setIsCustomSession(false)
         if (it is SessionTable) {
-            val text = "${it.timeStart} - ${it.timeEnd}"
-            binding.textInputLayoutSelectSession.editText?.setText(text)
             taskFormViewModel.setSession(it)
         } else {
             Log.wtf("TaskFragment", "onClickSessionItem: it is not SessionTable")
@@ -297,40 +325,45 @@ class TaskFragment : Fragment() {
     }
 
     private fun setCustomSessionObserver() {
-        taskFormViewModel.isCustomSession.observe(viewLifecycleOwner) {
-            if (it) {
+        taskFormViewModel.isCustomSession.observe(viewLifecycleOwner) { isCustomeSession ->
+            if (isCustomeSession) {
                 binding.groupCustomSession.visibility = View.VISIBLE
 
                 if (taskFormViewModel.isObserverActive) return@observe
                 taskFormViewModel.isObserverActive = true
 
                 taskFormViewModel.timeStart.observe(viewLifecycleOwner) {
-                    lifecycleScope.launch {
-                        val isActive = taskFormViewModel.getIsCustomSession()
+                    it?.let {
+                        lifecycleScope.launch {
+                            val isActive = taskFormViewModel.getIsCustomSession()
 
-                        if (isActive) {
-                            val timeEnd = taskFormViewModel.getTimeEnd()
+                            if (isActive) {
+                                val timeEnd = taskFormViewModel.getTimeEnd()
 
-                            if(timeEnd == null || timeEnd == "") return@launch
+                                if (timeEnd == null || timeEnd == "") return@launch
 
-                            checkTimeInteval(it, timeEnd)
+                                checkTimeInteval(it, timeEnd)
+                            }
+
                         }
-
                     }
+
                 }
 
                 taskFormViewModel.timeEnd.observe(viewLifecycleOwner) {
-                    lifecycleScope.launch {
-                        val isActive = taskFormViewModel.getIsCustomSession()
+                    it?.let {
+                        lifecycleScope.launch {
+                            val isActive = taskFormViewModel.getIsCustomSession()
 
-                        if (isActive) {
-                            val timeStart = taskFormViewModel.getTimeStart()
+                            if (isActive) {
+                                val timeStart = taskFormViewModel.getTimeStart()
 
-                            if(timeStart == null || timeStart == "") return@launch
+                                if(timeStart == null || timeStart == "") return@launch
 
-                            checkTimeInteval(timeStart, it)
+                                checkTimeInteval(timeStart, it)
+                            }
+
                         }
-
                     }
                 }
             } else {
