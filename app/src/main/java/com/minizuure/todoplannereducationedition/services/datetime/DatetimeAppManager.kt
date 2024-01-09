@@ -36,6 +36,10 @@ class DatetimeAppManager {
         return ZonedDateTime.now(zoneLocalTimeId)
     }
 
+    fun getTodayDayId() : Int {
+        return getLocalDateTime().dayOfWeek.value % 7
+    }
+
     /**
      * @return List of days of week in localized string, example ["Sunday", "Monday", "Tuesday", ...]
      */
@@ -65,6 +69,10 @@ class DatetimeAppManager {
 
     fun dayIdFromDayName(dayName: String) : Int {
         return getAllDaysOfWeek().indexOf(dayName)
+    }
+
+    fun dayNameFromDayId(dayId: Int) : String {
+        return getAllDaysOfWeek()[dayId]
     }
 
     private fun localizedUTC(dateTimeInUTCiso8601: String) : ZonedDateTime {
