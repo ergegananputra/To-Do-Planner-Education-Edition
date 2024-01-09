@@ -3,7 +3,9 @@ package com.minizuure.todoplannereducationedition.second_layer
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.minizuure.todoplannereducationedition.CustomSystemTweak
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.ActivityRoutineManagementBinding
@@ -13,16 +15,18 @@ import com.minizuure.todoplannereducationedition.second_layer.routines.RoutinesF
 import com.minizuure.todoplannereducationedition.second_layer.session.SessionFormFragment
 
 class RoutineManagementActivity : AppCompatActivity() {
+    private lateinit var routineNavController : NavController
+
     private val binding by lazy {
         ActivityRoutineManagementBinding.inflate(layoutInflater)
-    }
-    private val routineNavController by lazy {
-        findNavController(R.id.nav_host_fragment_routine_management)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        val navHostFragment = supportFragmentManager.findFragmentById(binding.navHostFragmentRoutineManagement.id) as NavHostFragment
+        routineNavController = navHostFragment.navController
 
         setSupportActionBar(binding.toolbarRoutineManagement)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -33,7 +37,6 @@ class RoutineManagementActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val routineNavController = findNavController(R.id.nav_host_fragment_routine_management)
         return if (routineNavController.currentDestination?.id == routineNavController.graph.startDestinationId) {
             finish()
             true

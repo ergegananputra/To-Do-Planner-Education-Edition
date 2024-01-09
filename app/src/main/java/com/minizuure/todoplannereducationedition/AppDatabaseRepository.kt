@@ -2,6 +2,10 @@ package com.minizuure.todoplannereducationedition
 
 import com.minizuure.todoplannereducationedition.services.database.ApplicationDatabase
 import com.minizuure.todoplannereducationedition.services.database.DeleteAllOperation
+import com.minizuure.todoplannereducationedition.services.database.notes.NotesTaskDao
+import com.minizuure.todoplannereducationedition.services.database.notes.NotesTaskTable
+import com.minizuure.todoplannereducationedition.services.database.notes.TodoNoteDao
+import com.minizuure.todoplannereducationedition.services.database.notes.TodoNoteTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTableDao
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
@@ -23,6 +27,8 @@ class AppDatabaseRepository(
     private val routineTableDao: RoutineTableDao,
     private val sessionTableDao: SessionTableDao,
     private val taskTableDao: TaskTableDao,
+    private val todoNoteTableDao: TodoNoteDao,
+    private val notesTaskTableDao: NotesTaskDao,
     private val deleteAllOperation: DeleteAllOperation
 ) {
     // Detele
@@ -73,8 +79,53 @@ class AppDatabaseRepository(
         }
     suspend fun getTasksByIndexDay(indexDay: Int) = withContext(Dispatchers.IO) { taskTableDao.getByIndexDay(indexDay) }
     suspend fun getTasksBySessionId(sessionId: Long) = withContext(Dispatchers.IO) { taskTableDao.getBySessionId(sessionId) }
-    suspend fun insertTask(taskTable: TaskTable) = withContext(Dispatchers.IO) { taskTableDao.insert(taskTable) }
+    suspend fun insertTask(taskTable: TaskTable) :Long = withContext(Dispatchers.IO) { taskTableDao.insert(taskTable) }
     suspend fun deleteTask(taskTable: TaskTable) = withContext(Dispatchers.IO) { taskTableDao.delete(taskTable) }
-    suspend fun updateTask(taskTable: TaskTable) = withContext(Dispatchers.IO) { taskTableDao.update(taskTable) }
+    suspend fun updateTask(taskTable: TaskTable) = withContext(Dispatchers.IO) {
+        taskTable.updatedAt = System.currentTimeMillis()
+        taskTableDao.update(taskTable)
+    }
+
+    // TodoNoteDao
+    suspend fun getAllTodoNotes() = withContext(Dispatchers.IO) { todoNoteTableDao.getAll() }
+    suspend fun getTodoNoteById(id: Long) = withContext(Dispatchers.IO) { todoNoteTableDao.getById(id) }
+    suspend fun getCountTodoNotes() = withContext(Dispatchers.IO) { todoNoteTableDao.getCount() }
+    suspend fun getTodoNoteByFkNoteId(fkNoteId: Long) = withContext(Dispatchers.IO) { todoNoteTableDao.getByFkNotesTaskId(fkNoteId) }
+    suspend fun insertTodoNotes(todoNoteTable: TodoNoteTable) : Long = withContext(Dispatchers.IO) { todoNoteTableDao.insert(todoNoteTable) }
+    suspend fun updateTodoNotes(todoNoteTable: TodoNoteTable) = withContext(Dispatchers.IO) {
+        val updateTime = System.currentTimeMillis()
+
+        todoNoteTable.updatedAt = updateTime
+        todoNoteTableDao.update(todoNoteTable)
+
+        val notes = getNotesTaskById(todoNoteTable.fkNotesTaskId) ?: return@withContext
+        notes.updatedAt = updateTime
+        notesTaskTableDao.update(notes)
+
+        val task = getTaskById(notes.fkTaskId) ?: return@withContext
+        task.updatedAt = updateTime
+        taskTableDao.update(task)
+    }
+    suspend fun deleteTodoNotes(todoNoteTable: TodoNoteTable) = withContext(Dispatchers.IO) { todoNoteTableDao.delete(todoNoteTable) }
+
+    // NotesTaskDao
+    suspend fun getAllNotesTasks() = withContext(Dispatchers.IO) { notesTaskTableDao.getAll() }
+    suspend fun getNotesTaskById(id: Long) = withContext(Dispatchers.IO) { notesTaskTableDao.getById(id) }
+    suspend fun getCountNotesTasks() = withContext(Dispatchers.IO) { notesTaskTableDao.getCount() }
+    suspend fun getNotesTaskByTaskId(taskId: Long) = withContext(Dispatchers.IO) { notesTaskTableDao.getByFkTaskId(taskId) }
+    suspend fun getNotesTaskByTaskIdAndCategory(taskId: Long, category: String) = withContext(Dispatchers.IO) { notesTaskTableDao.getByFkTaskIdAndCategory(taskId, category) }
+    suspend fun getCountNotesTaskByTaskIdAndCategory(taskId: Long, category: String) = withContext(Dispatchers.IO) { notesTaskTableDao.getCountByFkTaskIdAndCategory(taskId, category) }
+    suspend fun insertNotesTask(notesTaskTable: NotesTaskTable) : Long = withContext(Dispatchers.IO) { notesTaskTableDao.insert(notesTaskTable) }
+    suspend fun updateNotesTask(notesTaskTable: NotesTaskTable) = withContext(Dispatchers.IO) {
+        val updateTime = System.currentTimeMillis()
+        notesTaskTable.updatedAt = updateTime
+        notesTaskTableDao.update(notesTaskTable)
+
+        val task = getTaskById(notesTaskTable.fkTaskId) ?: return@withContext
+        task.updatedAt = updateTime
+        taskTableDao.update(task)
+    }
+    suspend fun deleteNotesTask(notesTaskTable: NotesTaskTable) = withContext(Dispatchers.IO) { notesTaskTableDao.delete(notesTaskTable) }
+
 
 }

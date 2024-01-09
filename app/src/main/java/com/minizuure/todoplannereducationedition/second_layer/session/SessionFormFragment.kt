@@ -76,7 +76,7 @@ class SessionFormFragment : Fragment() {
         }
 
         setupSessionTitle()
-        setupStartTimePicker()
+        setupTimePicker()
         setupDaysTag()
 
         setupSaveButton()
@@ -150,7 +150,7 @@ class SessionFormFragment : Fragment() {
         }
     }
 
-    private fun setupStartTimePicker() {
+    private fun setupTimePicker() {
         DatetimeAppManager().setEditTextTimePickerDialog(
             requireContext(),
             parentFragmentManager,

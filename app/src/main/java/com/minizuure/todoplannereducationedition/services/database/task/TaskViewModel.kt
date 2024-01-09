@@ -35,9 +35,9 @@ class TaskViewModel(
         return appDatabaseRepository.getTasksBySessionId(sessionId)
     }
 
-    suspend fun insert(taskTable: TaskTable) {
+    suspend fun insert(taskTable: TaskTable) : Long {
         Log.d("TaskViewModel", "insert task: $taskTable")
-        appDatabaseRepository.insertTask(taskTable)
+        return appDatabaseRepository.insertTask(taskTable)
     }
 
     suspend fun insert(
@@ -51,12 +51,12 @@ class TaskViewModel(
         locationAddress : String? = null,
         isSharedToCommunity : Boolean = false,
         communityId : String? = null
-    ) {
+    ) : Long {
         Log.d("TaskViewModel", "insert task with params: $title, $indexDay, $sessionId")
         var timeStart : String = startTime ?: "00:00"
         var timeEnd : String = endTime ?: "00:00"
 
-        if (isCustomSession) {
+        if (!isCustomSession) {
             val sessionTable = appDatabaseRepository.getSessionById(sessionId)
             Log.d("TaskViewModel", "sessionTable is not null: ${sessionTable != null} ${sessionTable?.timeStart} ${sessionTable?.timeEnd}")
 
@@ -67,7 +67,7 @@ class TaskViewModel(
 
         }
 
-        appDatabaseRepository.insertTask(
+        return appDatabaseRepository.insertTask(
             TaskTable(
                 title = title,
                 indexDay = indexDay,

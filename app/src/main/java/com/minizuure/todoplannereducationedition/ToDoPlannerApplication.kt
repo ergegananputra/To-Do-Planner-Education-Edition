@@ -20,6 +20,8 @@ class ToDoPlannerApplication : Application() {
             appDb.routineTableDao(),
             appDb.sessionTableDao(),
             appDb.taskTableDao(),
+            appDb.todoNoteTableDao(),
+            appDb.notesTaskTableDao(),
             appDb.deleteAllOperation()
         )
     }

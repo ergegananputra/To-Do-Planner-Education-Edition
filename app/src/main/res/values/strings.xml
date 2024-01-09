@@ -99,5 +99,27 @@
     <string name="usages">Usages</string>
     <string name="expired_in">Expired in</string>
     <string name="sessions_day_avg">sessions / day (avg)</string>
+    <string name="title">Title</string>
+    <string name="default_select_routines_template">Select Routines Template</string>
+    <string name="default_select_session">Select Session</string>
+    <string name="default_select_day">Select Day</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="location_name">Location Name</string>
+    <string name="google_maps_link">Google Maps Link</string>
+    <string name="share_to_community">Share to community</string>
+    <string name="default_community_name">Community Name</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="new_task">New Task</string>
+    <string name="select">Select</string>
+    <string name="error_no_routine_template_selected">Please select routine template first</string>
+    <string name="error_no_session_selected">Please select session first</string>
+    <string name="error_no_day_selected">Please select day first</string>
+    <string name="custom_session">Custom Session</string>
+    <string name="error_time_interval">End time must be greater than start time</string>
+    <string name="failed_to_create_task">Failed to create task</string>
+    <string name="error_msg_day_empty">You must select the day</string>
+    <string name="error_msg_time_is_not_valid">Time is not valid</string>
+    <string name="error_msg_community_empty">There is no community selected</string>
 
 </resources>

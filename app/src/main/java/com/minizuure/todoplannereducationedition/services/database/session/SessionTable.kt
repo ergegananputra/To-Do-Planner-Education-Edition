@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.GlobalMinimumInterface
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 
 /**
@@ -32,10 +33,10 @@ import com.minizuure.todoplannereducationedition.services.database.routine.Routi
 )
 data class SessionTable(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    override val id: Long,
 
     @ColumnInfo(name = "title")
-    var title: String,
+    override var title: String,
 
     @ColumnInfo(name = "time_start")
     var timeStart: String,
@@ -48,4 +49,4 @@ data class SessionTable(
 
     @ColumnInfo(name = "fk_routine_id")
     val fkRoutineId : Long = 0,
-)
+) : GlobalMinimumInterface
