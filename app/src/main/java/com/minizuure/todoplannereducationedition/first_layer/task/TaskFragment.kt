@@ -1,14 +1,18 @@
 package com.minizuure.todoplannereducationedition.first_layer.task
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
@@ -19,6 +23,7 @@ import com.minizuure.todoplannereducationedition.dialog_modal.adapter.GlobalAdap
 import com.minizuure.todoplannereducationedition.dialog_modal.model.DaysOfWeekImpl
 import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.GlobalMinimumInterface
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
+import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.DEFAULT_TASK_ID
 import com.minizuure.todoplannereducationedition.services.customtextfield.CustomTextField
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
@@ -26,6 +31,8 @@ import com.minizuure.todoplannereducationedition.services.database.routine.Routi
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
+import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
+import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.temp.TaskFormViewModel
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import com.minizuure.todoplannereducationedition.services.errormsgs.ErrorMsgManager
@@ -41,6 +48,7 @@ class TaskFragment : Fragment() {
     private val taskFormViewModel : TaskFormViewModel by activityViewModels()
     private lateinit var routineViewModel : RoutineViewModel
     private lateinit var sessionViewModel: SessionViewModel
+    private lateinit var taskViewModel : TaskViewModel
 
 
     private val binding by lazy {
@@ -71,6 +79,159 @@ class TaskFragment : Fragment() {
         setupTimePicker()
         setupCommunitySwitch()
         setupErrorMessages()
+
+        setupSaveButton()
+    }
+
+    private fun setupSaveButton() {
+        binding.buttonSaveTaskForm.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val taskId : Long = args.taskId
+                val title : String = binding.taskInputLayoutTitle.editText?.text.toString().trim()
+                val indexDay : Int? = taskFormViewModel.getDay()?.getId()
+                val sessionId : Long?= taskFormViewModel.getSession()?.id
+                val isCustomSession: Boolean = taskFormViewModel.getIsCustomSession()
+                val customTimeStart: String? = taskFormViewModel.getTimeStart()
+                val customTimeEnd: String? = taskFormViewModel.getTimeEnd()
+                val location: String = binding.teksInputLayoutLocation.editText?.text.toString().trim()
+                val locationLink : String= binding.textInputLayoutMapsLink.editText?.text.toString().trim()
+                val isCommunity: Boolean = binding.switchShareToCommunity.isChecked
+                val communityId : String? = null // TODO: setup community id
+
+                val isValid = validateTaskForm(
+                    title,
+                    indexDay,
+                    sessionId,
+                    isCustomSession,
+                    customTimeStart,
+                    customTimeEnd,
+                    isCommunity,
+                    communityId
+                )
+
+                if (!isValid) return@launch
+
+                if (taskId == DEFAULT_TASK_ID) {
+                    // Create New Task
+                    createNewTask(
+                        title,
+                        indexDay!!,
+                        sessionId!!,
+                        isCustomSession,
+                        customTimeStart,
+                        customTimeEnd,
+                        location,
+                        locationLink,
+                        isCommunity,
+                        communityId
+                    )
+
+                } else {
+                    // Update Existing Task
+                    Toast.makeText(requireContext(), "Update Existing Task", Toast.LENGTH_SHORT).show()
+                }
+
+
+                this.launch(Dispatchers.Main) {
+                    requireActivity().finish()
+                }
+            }
+
+
+        }
+
+    }
+
+    private fun validateTaskForm(
+        title: String,
+        indexDay: Int?,
+        sessionId: Long?,
+        customSession: Boolean,
+        customTimeStart: String?,
+        customTimeEnd: String?,
+        community: Boolean,
+        communityId: String?
+    ) : Boolean {
+        if (title.isEmpty()) {
+            val errorMsg = getString(R.string.error_msg_title_empty)
+            binding.taskInputLayoutTitle.error = errorMsg
+            return false
+        }
+
+        if (indexDay == null) {
+            val errorMsg = getString(R.string.error_msg_day_empty)
+            binding.textInputLayoutSelectDay.error = errorMsg
+            return false
+        }
+
+        if (sessionId == null) {
+            val errorMsg = getString(R.string.error_msg_session_empty)
+            binding.textInputLayoutSelectSession.error = errorMsg
+            return false
+        }
+
+        if (!customSession) return true
+
+        if (customTimeStart == null || customTimeStart == "") {
+            val errorMsg = getString(R.string.error_msg_time_is_not_valid)
+            binding.textInputLayoutStartTime.error = errorMsg
+            return false
+        }
+
+        if (customTimeEnd == null || customTimeEnd == "") {
+            val errorMsg = getString(R.string.error_msg_time_is_not_valid)
+            binding.textInputLayoutEndTime.error = errorMsg
+            return false
+        }
+
+        if (!community) return true
+
+        if (communityId == null || communityId == "") {
+            val errorMsg = getString(R.string.error_msg_community_empty)
+            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
+    }
+
+    private suspend fun createNewTask(
+        title: String,
+        indexDay: Int,
+        sessionId: Long,
+
+        customSession: Boolean,
+        customTimeStart: String?,
+        customTimeEnd: String?,
+
+        location: String,
+        locationLink: String?,
+
+        community: Boolean,
+        communityId: String?
+    ) {
+        val id = withContext(Dispatchers.IO) {
+            taskViewModel.insert(
+                title = title,
+                indexDay = indexDay,
+                sessionId = sessionId,
+                isCustomSession = customSession,
+                startTime = customTimeStart,
+                endTime = customTimeEnd,
+                locationName = location,
+                locationAddress = locationLink,
+                isSharedToCommunity = community,
+                communityId = communityId
+            )
+        }
+
+        if (id == DEFAULT_TASK_ID) {
+            Log.e("TaskFragment", "createNewTask: failed to insert task")
+            Toast.makeText(requireContext(), getString(R.string.failed_to_create_task), Toast.LENGTH_SHORT).show()
+            return
+        } else {
+            Log.d("TaskFragment", "createNewTask: success to insert task")
+        }
     }
 
     private fun setupViewModelFactory() {
@@ -81,6 +242,10 @@ class TaskFragment : Fragment() {
 
         val sessionFactory = SessionViewModelFactory(app.appRepository)
         sessionViewModel = ViewModelProvider(requireActivity(), sessionFactory)[SessionViewModel::class.java]
+
+        val taskFactory = TaskViewModelFactory(app.appRepository)
+        taskViewModel = ViewModelProvider(requireActivity(), taskFactory)[TaskViewModel::class.java]
+
     }
 
     private fun setupCommunitySwitch() {

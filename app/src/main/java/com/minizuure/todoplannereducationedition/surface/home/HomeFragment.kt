@@ -17,14 +17,6 @@ class HomeFragment : Fragment() {
     private val binding by lazy { FragmentHomeBinding.inflate(layoutInflater) }
 
 
-    private val launcherToAddTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            Log.d("HomeFragment", "onCreate: RESULT_OK")
-            //TODO: do something
-        }
-    }
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,9 +33,6 @@ class HomeFragment : Fragment() {
 
     private fun setupEfabAddTask() {
         binding.efabAddTask.setOnClickListener {
-//            val intentToTaskForm = Intent(requireActivity(), TaskManagementActivity::class.java)
-//            intentToTaskForm.putExtra(EXTRA_OPEN_TASK, true)
-//            launcherToAddTask.launch(intentToTaskForm)
             val destination = HomeFragmentDirections
                 .actionHomeFragmentToTaskManagementActivity(actionToOpen = OPEN_TASK, title = null)
             findNavController().navigate(destination)

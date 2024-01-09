@@ -5,4 +5,6 @@ import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.G
 data class DaysOfWeekImpl(
     override val id: Long,
     override var title: String
-) : GlobalMinimumInterface
+) : GlobalMinimumInterface {
+    fun getId() : Int = id.toInt()
+}

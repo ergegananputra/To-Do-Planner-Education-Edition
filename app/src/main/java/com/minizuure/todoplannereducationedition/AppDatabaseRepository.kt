@@ -73,7 +73,7 @@ class AppDatabaseRepository(
         }
     suspend fun getTasksByIndexDay(indexDay: Int) = withContext(Dispatchers.IO) { taskTableDao.getByIndexDay(indexDay) }
     suspend fun getTasksBySessionId(sessionId: Long) = withContext(Dispatchers.IO) { taskTableDao.getBySessionId(sessionId) }
-    suspend fun insertTask(taskTable: TaskTable) = withContext(Dispatchers.IO) { taskTableDao.insert(taskTable) }
+    suspend fun insertTask(taskTable: TaskTable) :Long = withContext(Dispatchers.IO) { taskTableDao.insert(taskTable) }
     suspend fun deleteTask(taskTable: TaskTable) = withContext(Dispatchers.IO) { taskTableDao.delete(taskTable) }
     suspend fun updateTask(taskTable: TaskTable) = withContext(Dispatchers.IO) { taskTableDao.update(taskTable) }
 
