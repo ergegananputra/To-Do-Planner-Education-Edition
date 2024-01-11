@@ -24,6 +24,7 @@ class MainTaskAdapter(
     private val routineViewModel : RoutineViewModel,
     private val sessionViewModel: SessionViewModel,
     private val taskViewModel : TaskViewModel,
+    private val onClickOpenDetail : (TaskTable) -> Unit
 ) : ListAdapter<TaskTable, MainTaskAdapter.MainTaskViewHolder>(MainTaskDiffUtil()){
     class MainTaskDiffUtil : DiffUtil.ItemCallback<TaskTable>(){
         override fun areItemsTheSame(oldItem: TaskTable, newItem: TaskTable): Boolean {
@@ -47,6 +48,9 @@ class MainTaskAdapter(
             setupTextTitle(item.title)
             setupTextLocation(item.locationName)
 
+            binding.cardViewMainItem.setOnClickListener {
+                onClickOpenDetail(item)
+            }
             //TODO: setup Quiz and To-Packs
         }
 

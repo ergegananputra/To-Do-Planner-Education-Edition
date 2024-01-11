@@ -12,12 +12,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentHomeBinding
+import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_TASK
+import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
 import com.minizuure.todoplannereducationedition.recycler.adapter.MainTaskAdapter
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
+import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModelFactory
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
@@ -30,14 +33,25 @@ class HomeFragment : Fragment() {
     private lateinit var sessionViewModel: SessionViewModel
     private lateinit var taskViewModel : TaskViewModel
 
-    private val mainTaskAdapter by lazy {
+    private val todayMainTaskAdapter by lazy {
         MainTaskAdapter(
             currentDate = DatetimeAppManager().getLocalDateTime(),
             scope = lifecycleScope,
             sessionViewModel = sessionViewModel,
             routineViewModel = routineViewModel,
-            taskViewModel = taskViewModel
+            taskViewModel = taskViewModel,
+            onClickOpenDetail = {setOnClickOpenDetail(it)}
         )
+    }
+
+    private fun setOnClickOpenDetail(taskTable: TaskTable) {
+        val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
+            actionToOpen = OPEN_DETAIL,
+            title = taskTable.title,
+            id = taskTable.id,
+            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime())
+        )
+        findNavController().navigate(destination)
     }
 
     override fun onCreateView(
@@ -75,7 +89,7 @@ class HomeFragment : Fragment() {
     private fun setupTodayRecyclerView() {
         binding.recyclerViewToday.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = mainTaskAdapter
+            adapter = todayMainTaskAdapter
         }
 
         updateAdapter()
@@ -84,14 +98,18 @@ class HomeFragment : Fragment() {
     private fun updateAdapter() {
         lifecycleScope.launch {
             val todayTask = taskViewModel.getByIndexDay(DatetimeAppManager().getTodayDayId())
-            mainTaskAdapter.submitList(todayTask)
+            todayMainTaskAdapter.submitList(todayTask)
         }
     }
 
     private fun setupEfabAddTask() {
         binding.efabAddTask.setOnClickListener {
             val destination = HomeFragmentDirections
-                .actionHomeFragmentToTaskManagementActivity(actionToOpen = OPEN_TASK, title = null)
+                .actionHomeFragmentToTaskManagementActivity(
+                    actionToOpen = OPEN_TASK,
+                    title = null,
+                    selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime())
+                )
             findNavController().navigate(destination)
         }
     }

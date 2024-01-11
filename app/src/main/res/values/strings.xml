@@ -121,5 +121,9 @@
     <string name="error_msg_day_empty">You must select the day</string>
     <string name="error_msg_time_is_not_valid">Time is not valid</string>
     <string name="error_msg_community_empty">There is no community selected</string>
+    <string name="item_delete_from_routines">Delete from routines</string>
+    <string name="item_communities_settings">Communities Settings</string>
+    <string name="item_reset_this_section">Reset this section</string>
+    <string name="item_edit">Edit</string>
 
 </resources>

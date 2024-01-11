@@ -2,6 +2,7 @@ package com.minizuure.todoplannereducationedition.first_layer
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -16,6 +17,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.minizuure.todoplannereducationedition.CustomSystemTweak
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.ActivityTaskManagementBinding
+import com.minizuure.todoplannereducationedition.dialog_modal.ActionMoreTaskBottomDialogFragment
 import com.minizuure.todoplannereducationedition.first_layer.detail.DetailFragment
 import com.minizuure.todoplannereducationedition.first_layer.task.TaskFragment
 
@@ -51,10 +53,9 @@ class TaskManagementActivity : AppCompatActivity() {
         val fragment = when(toOpen) {
             OPEN_TASK -> {
                 TaskFragment.newInstance(args.id)
-
             }
             OPEN_DETAIL -> {
-                DetailFragment.newInstance(args.id, args.title ?: "")
+                DetailFragment.newInstance(args.id, args.title ?: "", args.selectedDatetimeISO)
             }
 
             else -> {
@@ -68,7 +69,7 @@ class TaskManagementActivity : AppCompatActivity() {
     }
 
     fun setToolbarTitle(fragment : Fragment, customTitle: String = "") {
-        //TODO: Tambahkan opsi untuk fragment lain
+        // TODO: Tambahkan opsi untuk fragment lain
         when (fragment) {
             is DetailFragment -> {
                 changeToolbarTitle(customTitle)
@@ -83,6 +84,38 @@ class TaskManagementActivity : AppCompatActivity() {
             }
 
             else -> changeToolbarTitle()
+        }
+
+        setupNavBarActionMenu(fragment)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.task_detail_menu, menu)
+        return true
+    }
+
+    private fun setupNavBarActionMenu(fragment: Fragment) {
+        when (fragment) {
+            is DetailFragment -> {
+                setupDetailNavBarActionMenu()
+            }
+            is TaskFragment -> {
+                // Todo : Setup Task NavBar Action Menu for TaskFragment
+            }
+        }
+    }
+
+    private fun setupDetailNavBarActionMenu() {
+        binding.toolbarDetail.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.item_more -> {
+                    val bottomSheet = ActionMoreTaskBottomDialogFragment(args.id)
+                    bottomSheet.show(supportFragmentManager, bottomSheet.tag)
+                    true
+                }
+
+                else -> false
+            }
         }
     }
 
