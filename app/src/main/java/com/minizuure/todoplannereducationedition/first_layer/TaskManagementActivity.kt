@@ -4,16 +4,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
-import androidx.activity.enableEdgeToEdge
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.navArgs
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.google.android.material.appbar.AppBarLayout
 import com.minizuure.todoplannereducationedition.CustomSystemTweak
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.ActivityTaskManagementBinding
@@ -41,7 +35,8 @@ class TaskManagementActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return if (taskNavController.currentDestination?.id == taskNavController.graph.startDestinationId) {
+        val previousBackStackEntry = taskNavController.previousBackStackEntry
+        return if (previousBackStackEntry?.destination?.id == taskNavController.graph.startDestinationId) {
             finish()
             true
         } else {
@@ -50,22 +45,29 @@ class TaskManagementActivity : AppCompatActivity() {
     }
 
     private fun setupFragment(toOpen: String) {
-        val fragment = when(toOpen) {
+        val destination = when(toOpen) {
             OPEN_TASK -> {
-                TaskFragment.newInstance(args.id)
+                DummyFragmentDirections.actionDummyFragmentToTaskFragment(
+                    taskId = args.id
+                )
             }
             OPEN_DETAIL -> {
-                DetailFragment.newInstance(args.id, args.title ?: "", args.selectedDatetimeISO)
+                DummyFragmentDirections.actionDummyFragmentToDetailFragment(
+                    taskDetailId = args.id,
+                    titleDetail = args.title ?: "",
+                    selectedDatetimeDetailIso = args.selectedDatetimeISO
+                )
             }
-
             else -> {
-                TaskFragment.newInstance()
+                null
             }
         }
 
-        supportFragmentManager.beginTransaction()
-            .replace(binding.navHostFragmentContainerViewTask.id, fragment)
-            .commit()
+        if (destination == null) {
+            finish()
+        } else {
+            taskNavController.navigate(destination)
+        }
     }
 
     fun setToolbarTitle(fragment : Fragment, customTitle: String = "") {
@@ -97,7 +99,7 @@ class TaskManagementActivity : AppCompatActivity() {
     private fun setupNavBarActionMenu(fragment: Fragment) {
         when (fragment) {
             is DetailFragment -> {
-                setupDetailNavBarActionMenu()
+                setupDetailNavBarActionMenu(fragment)
             }
             is TaskFragment -> {
                 // Todo : Setup Task NavBar Action Menu for TaskFragment
@@ -105,11 +107,15 @@ class TaskManagementActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupDetailNavBarActionMenu() {
+    private fun setupDetailNavBarActionMenu(fragment: DetailFragment) {
         binding.toolbarDetail.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.item_more -> {
-                    val bottomSheet = ActionMoreTaskBottomDialogFragment(args.id)
+                    val bottomSheet = ActionMoreTaskBottomDialogFragment(
+                        taskId = args.id,
+                        onEditAction = fragment.setOnEditTaskAction(),
+                        onDeleteAction = fragment.setOnDeleteTaskAction()
+                    )
                     bottomSheet.show(supportFragmentManager, bottomSheet.tag)
                     true
                 }

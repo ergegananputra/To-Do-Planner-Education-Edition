@@ -5,11 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.minizuure.todoplannereducationedition.databinding.ModalDetailTaskBottomSheetDialogBinding
 import com.minizuure.todoplannereducationedition.dialog_modal.preset.MinimumBottomSheetDialog
+import com.minizuure.todoplannereducationedition.first_layer.detail.DetailFragmentDirections
 
 class ActionMoreTaskBottomDialogFragment(
     private val taskId : Long,
+    private val onEditAction : () -> Unit,
+    private val onDeleteAction : () -> Unit,
 ) : MinimumBottomSheetDialog() {
     private val binding by lazy { ModalDetailTaskBottomSheetDialogBinding.inflate(layoutInflater) }
 
@@ -34,10 +38,7 @@ class ActionMoreTaskBottomDialogFragment(
 
     private fun setupDeleteButton() {
         binding.cardItemDeleteBottomSheet.setOnClickListener {
-            // TODO : Hapus seluruh task yang mirip dengan task ini,
-            //  include unique task (task with date).
-            //  Pastikan ada alert dialog untuk konfirmasi
-            Toast.makeText(requireContext(), "Delete $taskId", Toast.LENGTH_SHORT).show()
+            onDeleteAction()
             dismiss()
         }
     }
@@ -63,8 +64,7 @@ class ActionMoreTaskBottomDialogFragment(
 
     private fun setupEditButton() {
         binding.cardItemEditBottomSheet.setOnClickListener {
-            // TODO : Navigate to Task Form
-            Toast.makeText(requireContext(), "Edit $taskId", Toast.LENGTH_SHORT).show()
+            onEditAction()
             dismiss()
         }
     }

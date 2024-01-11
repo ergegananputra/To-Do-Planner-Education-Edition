@@ -89,6 +89,12 @@ class TaskViewModel(
         appDatabaseRepository.deleteTask(taskTable)
     }
 
+    suspend fun deleteById(id: Long) {
+        Log.d("TaskViewModel", "delete task by id: $id")
+        val taskTable = appDatabaseRepository.getTaskById(id) ?: return
+        appDatabaseRepository.deleteTask(taskTable)
+    }
+
     suspend fun update(taskTable: TaskTable) {
         Log.d("TaskViewModel", "update task: $taskTable")
         appDatabaseRepository.updateTask(taskTable)

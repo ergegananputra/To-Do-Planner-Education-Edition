@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
@@ -28,6 +29,7 @@ import com.minizuure.todoplannereducationedition.services.database.routine.Routi
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
+import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.temp.TaskFormViewModel
@@ -41,7 +43,6 @@ import kotlinx.coroutines.withContext
 private const val ARG_TASK_ID = "com.minizuure.todoplannereducationedition.first_layer.task.taskId"
 class TaskFragment : Fragment() {
     val args : TaskFragmentArgs by navArgs()
-    private var taskId: Long? = null
     private val taskFormViewModel : TaskFormViewModel by activityViewModels()
     private lateinit var routineViewModel : RoutineViewModel
     private lateinit var sessionViewModel: SessionViewModel
@@ -52,12 +53,7 @@ class TaskFragment : Fragment() {
         FragmentTaskBinding.inflate(layoutInflater)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            taskId = it.getLong(ARG_TASK_ID)
-        }
-    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,6 +74,46 @@ class TaskFragment : Fragment() {
         setupErrorMessages()
 
         setupSaveButton()
+
+        loadData()
+    }
+
+    private fun loadData() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            val task = withContext(Dispatchers.IO) { taskViewModel.getById(args.taskId) } ?: return@launch
+            val session = withContext(Dispatchers.IO) { sessionViewModel.getById(task.sessionId) } ?: return@launch
+            val routine = withContext(Dispatchers.IO) { routineViewModel.getById(session.fkRoutineId) } ?: return@launch
+
+            // title
+            binding.taskInputLayoutTitle.editText?.setText(task.title)
+
+            // routine template
+            taskFormViewModel.setRoutineTemplate(routine)
+
+            // day
+            val dayName = DatetimeAppManager().dayNameFromDayId(task.indexDay)
+            taskFormViewModel.setDay(DaysOfWeekImpl(task.indexDay.toLong(), dayName))
+            binding.textInputLayoutSelectDay.editText?.setText(dayName)
+
+            // is Custom Session
+            taskFormViewModel.setIsCustomSession(task.isCustomSession)
+
+            // session
+            taskFormViewModel.setSession(session)
+
+            // time start
+            task.startTime?.let { taskFormViewModel.setTimeStart(it) }
+
+            // time end
+            task.endTime?.let { taskFormViewModel.setTimeEnd(it) }
+
+            // location
+            binding.teksInputLayoutLocation.editText?.setText(task.locationName)
+
+            // location link
+            binding.textInputLayoutMapsLink.editText?.setText(task.locationAddress)
+
+        }
     }
 
     private fun setupSaveButton() {
@@ -125,12 +161,24 @@ class TaskFragment : Fragment() {
 
                 } else {
                     // Update Existing Task
-                    Toast.makeText(requireContext(), "Update Existing Task", Toast.LENGTH_SHORT).show()
+                    updateTask(
+                        taskId,
+                        title,
+                        indexDay!!,
+                        sessionId!!,
+                        isCustomSession,
+                        customTimeStart,
+                        customTimeEnd,
+                        location,
+                        locationLink,
+                        isCommunity,
+                        communityId
+                    )
                 }
 
 
                 this.launch(Dispatchers.Main) {
-                    requireActivity().finish()
+                    (requireActivity() as TaskManagementActivity).onSupportNavigateUp()
                 }
             }
 
@@ -190,6 +238,41 @@ class TaskFragment : Fragment() {
         }
 
         return true
+    }
+
+    private suspend fun updateTask(
+        taskId: Long,
+        title: String,
+        indexDay: Int,
+        sessionId: Long,
+
+        customSession: Boolean,
+        customTimeStart: String?,
+        customTimeEnd: String?,
+
+        location: String,
+        locationLink: String,
+
+        community: Boolean,
+        communityId: String?
+    ) {
+        withContext(Dispatchers.IO) {
+            taskViewModel.update(
+                TaskTable(
+                    id = taskId,
+                    title = title,
+                    indexDay = indexDay,
+                    sessionId = sessionId,
+                    isCustomSession = customSession,
+                    startTime = customTimeStart,
+                    endTime = customTimeEnd,
+                    locationName = location,
+                    locationAddress = locationLink,
+                    isSharedToCommunity = community,
+                    communityId = communityId,
+                )
+            )
+        }
     }
 
     private suspend fun createNewTask(

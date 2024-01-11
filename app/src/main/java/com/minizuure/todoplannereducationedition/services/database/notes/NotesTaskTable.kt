@@ -7,6 +7,20 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 
+/**
+ * [Last edited by ergegananputra 11 January 2024]
+ *
+ *
+ *
+ *
+ * @param id The id of the notesTaskTable.
+ * @param fkTaskId The id of the taskTable.
+ * @param dateISO8601 The date the notesTaskTable is active. Stored in ISO8601 format.
+ * @param category The category of the notesTaskTable example: Quiz, To-Pack, Memo.
+ * @param description The description of the notesTaskTable.
+ * @param updatedAt The time the notesTaskTable is updated. (automatic when use insert or update function)
+ *
+ */
 @Entity(
     tableName = "notes_task_table",
     foreignKeys = [
@@ -25,6 +39,9 @@ data class NotesTaskTable(
 
     @ColumnInfo(name = "fk_task_id")
     val fkTaskId : Long,
+
+    @ColumnInfo(name = "date_iso8601")
+    var dateISO8601 : String? = null,
 
     @ColumnInfo(name = "category")
     var category : String,
