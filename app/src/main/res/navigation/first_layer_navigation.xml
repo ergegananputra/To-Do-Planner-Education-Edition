@@ -21,12 +21,15 @@
         android:label="fragment_detail"
         tools:layout="@layout/fragment_detail" >
         <argument
-            android:name="task_id"
+            android:name="task_detail_id"
             app:argType="long"
             android:defaultValue="-1L" />
         <argument
-            android:name="title"
+            android:name="title_detail"
             app:argType="string" />
+        <argument
+            android:name="selected_datetime_detail_iso"
+            app:argType="com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime" />
     </fragment>
     <fragment
         android:id="@+id/rescheduleFragment"

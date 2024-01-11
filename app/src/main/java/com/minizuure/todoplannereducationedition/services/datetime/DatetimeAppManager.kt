@@ -23,14 +23,30 @@ import kotlin.math.abs
 
 /**
  * Datetime Package
+ * This package contains all the functions related to date and time.
+ * This package is used to manage date and time in the app.
+ * The format used in this app is ISO 8601.
+ *
  *
  * Based on this article :
  * @see "https://phrase.com/blog/posts/localized-date-time-android/"
  *
  */
-class DatetimeAppManager {
+class DatetimeAppManager(
+    private var zoneLocalTimeId: ZoneId = ZoneId.systemDefault(),
+    private var selectedDetailDatetimeISO: ZonedDateTime = ZonedDateTime.now(zoneLocalTimeId),
+    private var dateTimeFormatPattern: String = "dd LLLL yyyy"
+) {
 
-    private val zoneLocalTimeId: ZoneId = ZoneId.systemDefault()
+    constructor(zoneLocalTimeId: ZoneId) : this() {
+        this.zoneLocalTimeId = zoneLocalTimeId
+        this.selectedDetailDatetimeISO = ZonedDateTime.now(zoneLocalTimeId)
+    }
+
+    constructor(selectedDetailDatetimeISO: ZonedDateTime) : this() {
+        this.zoneLocalTimeId = selectedDetailDatetimeISO.zone
+        this.selectedDetailDatetimeISO = selectedDetailDatetimeISO
+    }
 
     fun getLocalDateTime() : ZonedDateTime {
         return ZonedDateTime.now(zoneLocalTimeId)
@@ -62,6 +78,14 @@ class DatetimeAppManager {
         }
     }
 
+    private fun ZonedDateTime.toReadable() : String {
+        return this.format(DateTimeFormatter.ofPattern(dateTimeFormatPattern))
+    }
+
+    fun toReadable() : String {
+        return selectedDetailDatetimeISO.toReadable()
+    }
+
     fun convertStringTimeToMinutes(time: String, delimiters : String = ":") : Int {
         val (hour, minute) = time.split(delimiters)
         return hour.toInt() * 60 + minute.toInt()
@@ -82,11 +106,15 @@ class DatetimeAppManager {
 
     fun convertIso8601ToReadableDate(dateTimeInUTCiso8601: String) : String {
         val localizedDateTime = localizedUTC(dateTimeInUTCiso8601)
-        return localizedDateTime.format(DateTimeFormatter.ofPattern("dd LLLL yyyy"))
+        return localizedDateTime.toReadable()
+    }
+
+    fun convertIso8601ToReadableDate(dateTimeInUTCiso8601: ZonedDateTime) : String {
+        return dateTimeInUTCiso8601.toReadable()
     }
 
     fun convertReadableDateToIso8601(readableDatetime: String) : String {
-        val readableDate = LocalDate.parse(readableDatetime, DateTimeFormatter.ofPattern("dd LLLL yyyy"))
+        val readableDate = LocalDate.parse(readableDatetime, DateTimeFormatter.ofPattern(dateTimeFormatPattern))
         val zonedDateTime = readableDate.atStartOfDay(zoneLocalTimeId)
         return zonedDateTime.toInstant().toString()
     }
@@ -228,7 +256,7 @@ class DatetimeAppManager {
             textInputLayoutDate.error = null
             picker.selection?.let { epoc ->
                 val selectedDate = Instant.ofEpochMilli(epoc).atZone(zoneLocalTimeId).toLocalDate()
-                val formattedSelectedDate = selectedDate.format(DateTimeFormatter.ofPattern("dd LLLL yyyy"))
+                val formattedSelectedDate = selectedDate.format(DateTimeFormatter.ofPattern(dateTimeFormatPattern))
                 textInputLayoutDate.editText?.setText(formattedSelectedDate)
             }
             customSuccessAction()

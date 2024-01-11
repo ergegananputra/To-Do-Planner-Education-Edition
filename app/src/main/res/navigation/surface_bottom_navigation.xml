@@ -45,5 +45,8 @@
             android:name="title"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="selectedDatetimeISO"
+            app:argType="com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime" />
     </activity>
 </navigation>

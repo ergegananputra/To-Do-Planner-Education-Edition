@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.ModalBottomSheetDialogBinding
 import com.minizuure.todoplannereducationedition.dialog_modal.adapter.GlobalAdapter
+import com.minizuure.todoplannereducationedition.dialog_modal.preset.MinimumBottomSheetDialog
 
 class GlobalBottomSheetDialogFragment(
     private val globalAdapter : GlobalAdapter,
@@ -16,7 +16,7 @@ class GlobalBottomSheetDialogFragment(
     private val useAdditionalButton : Boolean = false,
     private val additionalButtonText : String? = null,
     private val additionalButtonLogic : () -> Unit = {}
-) : BottomSheetDialogFragment() {
+) : MinimumBottomSheetDialog() {
 
     private val binding by lazy { ModalBottomSheetDialogBinding.inflate(layoutInflater)}
 
@@ -64,22 +64,5 @@ class GlobalBottomSheetDialogFragment(
         binding.textViewTitleBottomSheet.text = bottomSheetTitle
     }
 
-    override fun onStart() {
-        super.onStart()
-        isDialogOpen = true
-    }
-
-    override fun onStop() {
-        super.onStop()
-        isDialogOpen = false
-    }
-
-    fun closeDialog() {
-        dismiss()
-    }
-
-    companion object {
-        var isDialogOpen = false
-    }
 
 }
