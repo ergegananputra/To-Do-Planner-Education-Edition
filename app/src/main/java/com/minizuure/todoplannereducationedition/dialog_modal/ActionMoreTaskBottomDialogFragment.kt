@@ -5,11 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.minizuure.todoplannereducationedition.databinding.ModalDetailTaskBottomSheetDialogBinding
 import com.minizuure.todoplannereducationedition.dialog_modal.preset.MinimumBottomSheetDialog
+import com.minizuure.todoplannereducationedition.first_layer.detail.DetailFragmentDirections
 
 class ActionMoreTaskBottomDialogFragment(
     private val taskId : Long,
+    private val onEditAction : () -> Unit,
 ) : MinimumBottomSheetDialog() {
     private val binding by lazy { ModalDetailTaskBottomSheetDialogBinding.inflate(layoutInflater) }
 
@@ -63,8 +66,7 @@ class ActionMoreTaskBottomDialogFragment(
 
     private fun setupEditButton() {
         binding.cardItemEditBottomSheet.setOnClickListener {
-            // TODO : Navigate to Task Form
-            Toast.makeText(requireContext(), "Edit $taskId", Toast.LENGTH_SHORT).show()
+            onEditAction()
             dismiss()
         }
     }

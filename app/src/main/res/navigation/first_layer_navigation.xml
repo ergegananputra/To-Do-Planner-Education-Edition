@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/first_layer_navigation"
-    app:startDestination="@id/taskFragment">
+    app:startDestination="@id/dummyFragment">
 
     <fragment
         android:id="@+id/taskFragment"
@@ -30,6 +30,12 @@
         <argument
             android:name="selected_datetime_detail_iso"
             app:argType="com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime" />
+        <action
+            android:id="@+id/action_detailFragment_to_taskFragment"
+            app:destination="@id/taskFragment" />
+        <action
+            android:id="@+id/action_detailFragment_to_rescheduleFragment"
+            app:destination="@id/rescheduleFragment" />
     </fragment>
     <fragment
         android:id="@+id/rescheduleFragment"
@@ -40,5 +46,17 @@
             android:name="task_id"
             app:argType="long"
             android:defaultValue="-1L" />
+    </fragment>
+    <fragment
+        android:id="@+id/dummyFragment"
+        android:name="com.minizuure.todoplannereducationedition.first_layer.DummyFragment"
+        android:label="fragment_dummy"
+        tools:layout="@layout/fragment_dummy" >
+        <action
+            android:id="@+id/action_dummyFragment_to_taskFragment"
+            app:destination="@id/taskFragment" />
+        <action
+            android:id="@+id/action_dummyFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
 </navigation>
