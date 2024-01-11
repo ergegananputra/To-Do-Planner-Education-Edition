@@ -1,6 +1,5 @@
 package com.minizuure.todoplannereducationedition
 
-import com.minizuure.todoplannereducationedition.services.database.ApplicationDatabase
 import com.minizuure.todoplannereducationedition.services.database.DeleteAllOperation
 import com.minizuure.todoplannereducationedition.services.database.notes.NotesTaskDao
 import com.minizuure.todoplannereducationedition.services.database.notes.NotesTaskTable
@@ -31,7 +30,7 @@ class AppDatabaseRepository(
     private val notesTaskTableDao: NotesTaskDao,
     private val deleteAllOperation: DeleteAllOperation
 ) {
-    // Detele
+    // Delete
     private suspend fun deleteAllTasks() = withContext(Dispatchers.IO) { deleteAllOperation.deleteAllTasks() }
     private suspend fun deleteAllSessions() = withContext(Dispatchers.IO) { deleteAllOperation.deleteAllSessions() }
     private suspend fun deleteAllRoutines() = withContext(Dispatchers.IO) { deleteAllOperation.deleteAllRoutines() }

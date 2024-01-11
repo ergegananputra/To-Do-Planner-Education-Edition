@@ -5,7 +5,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * Penjelasan dan Tata Cara Penggunaan Class TaskTable terutama [dateISO8601].
+ * [Last edited by ergegananputra 11 January 2024]
+ *
+ *
+ * Penjelasan dan Tata Cara Penggunaan Class [TaskTable] terutama [dateISO8601].
  *
  *
  * Penjelasan [dateISO8601]

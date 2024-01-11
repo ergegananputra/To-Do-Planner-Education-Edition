@@ -13,6 +13,7 @@ import com.minizuure.todoplannereducationedition.first_layer.detail.DetailFragme
 class ActionMoreTaskBottomDialogFragment(
     private val taskId : Long,
     private val onEditAction : () -> Unit,
+    private val onDeleteAction : () -> Unit,
 ) : MinimumBottomSheetDialog() {
     private val binding by lazy { ModalDetailTaskBottomSheetDialogBinding.inflate(layoutInflater) }
 
@@ -37,10 +38,7 @@ class ActionMoreTaskBottomDialogFragment(
 
     private fun setupDeleteButton() {
         binding.cardItemDeleteBottomSheet.setOnClickListener {
-            // TODO : Hapus seluruh task yang mirip dengan task ini,
-            //  include unique task (task with date).
-            //  Pastikan ada alert dialog untuk konfirmasi
-            Toast.makeText(requireContext(), "Delete $taskId", Toast.LENGTH_SHORT).show()
+            onDeleteAction()
             dismiss()
         }
     }
