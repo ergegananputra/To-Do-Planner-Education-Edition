@@ -2,9 +2,11 @@ package com.minizuure.todoplannereducationedition.first_layer.detail
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +18,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentDetailBinding
+import com.minizuure.todoplannereducationedition.dialog_modal.TaskDetailBottomSheetDialogFragment
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
 import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
@@ -34,6 +37,25 @@ import kotlinx.coroutines.launch
 private const val ARG_DETAIL_ID = "task_detail_id"
 private const val ARG_DETAIL_TITLE = "title_detail"
 private const val ARG_DETAIL_SELECTED_DATE = "selected_datetime_detail_iso"
+
+/**
+ * Todo List [DetailFragment] :
+ *
+ *
+ * - [ ] Setup tags for task
+ * - [ ] Setup rescedule task navigation
+ * - [ ] Setup next plan quiz material
+ * - [ ] Setup next plan to pack
+ * - [ ] Setup Quiz material recycler view and connection to database. Check [setupQuizMaterial]
+ * - [ ] Setup To pack recycler view and connection to database. Check [setupToPack]
+ * - [ ] Setup memo and connection to database
+ * - [ ] Setup bottom more dialog -- reset this task*
+ * - [ ] Setup bottom more dialog -- communities setting*
+ *
+ *
+ * '*' : Terdapat hubungan ke kelas lainnya, [ActionMoreTaskBottomDialogFragment], [TaskDetailBottomSheetDialogFragment]
+ *
+ */
 class DetailFragment : Fragment() {
     val args : DetailFragmentArgs by navArgs()
     private lateinit var navController: NavController
@@ -71,7 +93,94 @@ class DetailFragment : Fragment() {
             setupTime(task, session)
             setupLocation(task)
             setupRoutineTemplateText(routine)
+            setupQuizMaterial(routine, args.selectedDatetimeDetailIso)
+            setupToPack(routine, args.selectedDatetimeDetailIso)
         }
+    }
+
+    private fun setupToPack(routine: RoutineTable, selectedDatetimeDetailIso: ParcelableZoneDateTime) {
+        val description = binding.textViewToPackDescription.text.toString().trim().isBlank().let {
+            if (it) null else binding.textViewToPackDescription.text.toString()
+        }
+        setAddToPack(routine, selectedDatetimeDetailIso, description)
+
+        // TODO : Set recycler view for to pack
+    }
+
+    private fun setAddToPack(routine: RoutineTable, selectedDatetimeDetailIso: ParcelableZoneDateTime, description: String?) {
+        binding.buttonAddToPack.setOnClickListener {
+            val bottomSheet = TaskDetailBottomSheetDialogFragment(
+                taskId = args.taskDetailId,
+                routine = routine,
+                currentDate = selectedDatetimeDetailIso.zoneDateTime,
+                isNextPlan = false,
+                title = getString(R.string.to_pack),
+                description = description,
+                onClickSaveAction = {isNextPlan, description, title, weekSelected, weeksDictionary ->
+                    setOnClickSaveAddToPack(isNextPlan, description, title, weekSelected, weeksDictionary)
+                }
+            )
+
+            bottomSheet.show(parentFragmentManager, "TaskDetailBottomSheetDialogFragment")
+        }
+    }
+
+    private fun setOnClickSaveAddToPack(
+        isNextPlan: Boolean,
+        description: String,
+        title: String,
+        weekSelected: Int,
+        weeksDictionary: Map<Int, String>
+    ) {
+        // TODO : Save to pack to database
+        Log.d("DetailFragment", "Save to pack : $description, $title, $weekSelected, $weeksDictionary")
+        Toast.makeText(requireActivity(), "Save to pack", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setupQuizMaterial(
+        routine: RoutineTable,
+        selectedDatetimeDetailIso: ParcelableZoneDateTime
+    ) {
+        val description = binding.textViewQuizMaterialDescription.text.toString().trim().isBlank().let {
+            if (it) null else binding.textViewQuizMaterialDescription.text.toString()
+        }
+        setAddQuizMaterial(routine, selectedDatetimeDetailIso, description)
+
+        // TODO : Set recycler view for quiz material
+    }
+
+    private fun setAddQuizMaterial(
+        routine: RoutineTable,
+        currentDate: ParcelableZoneDateTime,
+        description: String?,
+    ) {
+        binding.buttonAddQuizMaterial.setOnClickListener {
+            val bottomSheet = TaskDetailBottomSheetDialogFragment(
+                taskId = args.taskDetailId,
+                routine = routine,
+                currentDate = currentDate.zoneDateTime,
+                isNextPlan = false,
+                title = getString(R.string.quiz_materials_title),
+                description = description,
+                onClickSaveAction = { isNextPlan, description, title, weekSelected, weeksDictionary ->
+                    setOnClickSaveAddQuizMaterial(isNextPlan, description, title, weekSelected, weeksDictionary)
+                }
+            )
+
+            bottomSheet.show(parentFragmentManager, "TaskDetailBottomSheetDialogFragment")
+        }
+    }
+
+    private fun setOnClickSaveAddQuizMaterial(
+        isNextPlan: Boolean,
+        description: String,
+        title: String,
+        weekSelected: Int,
+        weeksDictionary: Map<Int, String>
+    ) {
+        // TODO : Save quiz material to database
+        Log.d("DetailFragment", "Save quiz material : $description, $title, $weekSelected, $weeksDictionary")
+        Toast.makeText(requireActivity(), "Save quiz material", Toast.LENGTH_SHORT).show()
     }
 
     private fun setupRoutineTemplateText(routine: RoutineTable) {
