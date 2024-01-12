@@ -35,7 +35,8 @@ import kotlin.math.abs
 class DatetimeAppManager(
     var zoneLocalTimeId: ZoneId = ZoneId.systemDefault(),
     var selectedDetailDatetimeISO: ZonedDateTime = ZonedDateTime.now(zoneLocalTimeId),
-    var dateTimeFormatPattern: String = "dd LLLL yyyy"
+    var dateTimeFormatPattern: String = "dd LLLL yyyy",
+    var dateISO8601inString : String = selectedDetailDatetimeISO.toInstant().toString(),
 ) {
 
     constructor(zoneLocalTimeId: ZoneId) : this() {
@@ -46,6 +47,11 @@ class DatetimeAppManager(
     constructor(selectedDetailDatetimeISO: ZonedDateTime) : this() {
         this.zoneLocalTimeId = selectedDetailDatetimeISO.zone
         this.selectedDetailDatetimeISO = selectedDetailDatetimeISO
+    }
+
+    constructor(dateISO8601inString: String) : this() {
+        this.dateISO8601inString = dateISO8601inString
+        this.selectedDetailDatetimeISO = localizedUTC(dateISO8601inString)
     }
 
     fun getLocalDateTime() : ZonedDateTime {

@@ -128,5 +128,7 @@
     <string name="delete_task_warning_message_confirmation">Please be aware that once you delete this task and all its associated notes and subtasks, it cannot be retrieved. Are you sure you want to proceed?</string>
     <string name="dialog_delete_task_warning_title">Delete Task</string>
     <string name="cancel">Cancel</string>
+    <string name="default_literal">Default</string>
+    <string name="edit_description">Edit description</string>
 
 </resources>
