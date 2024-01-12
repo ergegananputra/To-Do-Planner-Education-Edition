@@ -24,7 +24,10 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModelFactory
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
+import com.minizuure.todoplannereducationedition.services.notification.AndroidAlarmManager
+import com.minizuure.todoplannereducationedition.services.notification.ItemAlarmQueue
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
 
 
 class HomeFragment : Fragment() {
@@ -70,6 +73,30 @@ class HomeFragment : Fragment() {
         setupTodayRecyclerView() // TODO: Setup today recycler for NoteTask recycler
 
         // TODO: Setup upcoming recyler
+
+
+
+        // NOTE: Testing
+        androidDevelopmentAlarmTest()
+    }
+
+    private fun androidDevelopmentAlarmTest() {
+        val scheduler = AndroidAlarmManager(requireActivity())
+        val item = ItemAlarmQueue(
+            id = 1,
+            action = "ACTION",
+            time = ZonedDateTime.now().plusSeconds(5),
+            message = "MESSAGE",
+            monthCreated = 1,
+        )
+
+        binding.drawerToday.setOnClickListener {
+            scheduler.schedule(item)
+        }
+
+        binding.drawerUpcoming.setOnClickListener {
+            scheduler.cancel(item)
+        }
     }
 
     private fun setupViewModelFactory() {

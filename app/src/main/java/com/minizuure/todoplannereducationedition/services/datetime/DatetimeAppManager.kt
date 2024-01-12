@@ -33,9 +33,9 @@ import kotlin.math.abs
  *
  */
 class DatetimeAppManager(
-    private var zoneLocalTimeId: ZoneId = ZoneId.systemDefault(),
-    private var selectedDetailDatetimeISO: ZonedDateTime = ZonedDateTime.now(zoneLocalTimeId),
-    private var dateTimeFormatPattern: String = "dd LLLL yyyy"
+    var zoneLocalTimeId: ZoneId = ZoneId.systemDefault(),
+    var selectedDetailDatetimeISO: ZonedDateTime = ZonedDateTime.now(zoneLocalTimeId),
+    var dateTimeFormatPattern: String = "dd LLLL yyyy"
 ) {
 
     constructor(zoneLocalTimeId: ZoneId) : this() {
