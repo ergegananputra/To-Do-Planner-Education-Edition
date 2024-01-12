@@ -47,7 +47,7 @@ data class TaskTable(
     var indexDay : Int = 0,
 
     @ColumnInfo(name = "session_id")
-    var sessionId : Long = 0,
+    var sessionId : Long = CUSTOM_SESSION_ID,
 
     @ColumnInfo(name = "updated_at")
     var updatedAt: Long = System.currentTimeMillis(),
@@ -80,4 +80,8 @@ data class TaskTable(
     @ColumnInfo(name = "community_id")
     var communityId : String? = null,
 
-)
+) {
+    companion object {
+        const val CUSTOM_SESSION_ID = -1L
+    }
+}

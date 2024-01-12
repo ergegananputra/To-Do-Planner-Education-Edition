@@ -1,15 +1,16 @@
 package com.minizuure.todoplannereducationedition.first_layer.detail
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.minizuure.todoplannereducationedition.R
@@ -17,10 +18,13 @@ import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentDetailBinding
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
 import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
+import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
+import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
+import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModelFactory
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
@@ -57,7 +61,57 @@ class DetailFragment : Fragment() {
         navController = Navigation.findNavController(view)
         setupViewModelFactory()
 
-        setupDate()
+        lifecycleScope.launch {
+            val task = taskViewModel.getById(args.taskDetailId) ?: return@launch closeFragment()
+            val session = sessionViewModel.getById(task.sessionId) ?: return@launch closeFragment()
+            val routine = routineViewModel.getById(session.fkRoutineId) ?: return@launch closeFragment()
+
+
+            setupDate()
+            setupTime(task, session)
+            setupLocation(task)
+            setupRoutineTemplateText(routine)
+        }
+    }
+
+    private fun setupRoutineTemplateText(routine: RoutineTable) {
+        val routineNameText = routine.title
+        binding.textViewRoutineName.text = routineNameText
+    }
+
+    private fun setupLocation(task: TaskTable) {
+        if (task.locationName == null) return
+
+        binding.textViewLocation.text = task.locationName!!
+
+        binding.cardViewSessionInfo.setOnClickListener {
+            val link = task.locationAddress ?: return@setOnClickListener
+
+            if(link.contains("maps")) {
+                MaterialAlertDialogBuilder(requireActivity())
+                    .setTitle("Open another app")
+                    .setMessage("Do you want to open this link in web browser or goole maps? $link")
+                    .setNegativeButton("Yes") { _, _ ->
+                        val intentToGoogleMaps = Intent(Intent.ACTION_VIEW, link.toUri())
+                        startActivity(intentToGoogleMaps)
+                    }
+                    .setPositiveButton("No") { _, _ -> }
+            }
+        }
+    }
+
+    private fun setupTime(task: TaskTable, session: SessionTable) {
+        val timeIntervalText = if (task.isCustomSession) {
+            "${task.startTime} - ${task.endTime}"
+        } else {
+            "${session.timeStart} - ${session.timeEnd}"
+        }
+
+        binding.textViewSessionTime.text = timeIntervalText
+    }
+
+    private fun closeFragment() {
+        (requireActivity() as TaskManagementActivity).onSupportNavigateUp()
     }
 
     private fun setupViewModelFactory() {
@@ -99,7 +153,7 @@ class DetailFragment : Fragment() {
                     this.launch(Dispatchers.IO) {
                         taskViewModel.deleteById(args.taskDetailId)
                     }
-                    (requireActivity() as TaskManagementActivity).onSupportNavigateUp()
+                    closeFragment()
                 }
             }
             .show()
