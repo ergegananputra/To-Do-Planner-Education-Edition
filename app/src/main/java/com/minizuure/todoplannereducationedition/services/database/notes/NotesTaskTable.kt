@@ -5,7 +5,9 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.minizuure.todoplannereducationedition.services.database.TimeDatabaseAbstraction
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
+import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 
 
 /**
@@ -55,8 +57,5 @@ data class NotesTaskTable(
     var description : String,
 
     @ColumnInfo(name = "updated_at")
-    var updatedAt : Long = System.currentTimeMillis(),
-) {
-    fun getNewTimestamp() = System.currentTimeMillis()
-
-}
+    var updatedAt : String = DatetimeAppManager().dateISO8601inString,
+) : TimeDatabaseAbstraction()

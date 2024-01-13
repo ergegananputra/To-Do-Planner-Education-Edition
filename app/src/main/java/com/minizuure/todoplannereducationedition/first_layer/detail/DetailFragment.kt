@@ -41,6 +41,7 @@ import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppMa
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.format.DateTimeFormatter
 
 private const val ARG_DETAIL_ID = "task_detail_id"
 private const val ARG_DETAIL_TITLE = "title_detail"
@@ -50,11 +51,9 @@ private const val ARG_DETAIL_SELECTED_DATE = "selected_datetime_detail_iso"
  * Todo List [DetailFragment] :
  *
  *
- * - [ ] Setup tags for task
  * - [ ] Setup rescedule task navigation
  * - [ ] Setup next plan quiz material
  * - [ ] Setup next plan to pack
- * - [ ] Setup memo and connection to database
  * - [ ] Setup bottom more dialog -- reset this task*
  * - [ ] Setup bottom more dialog -- communities setting*
  *
@@ -158,14 +157,191 @@ class DetailFragment : Fragment() {
             val routine = routineViewModel.getById(session.fkRoutineId) ?: return@launch closeFragment()
 
 
+            setupChipTags(task, routine)
             setupDate()
             setupTime(task, session)
             setupLocation(task)
             setupRoutineTemplateText(routine)
             setupQuizMaterial(routine, args.selectedDatetimeDetailIso)
             setupToPack(routine, args.selectedDatetimeDetailIso)
+            setupMemo(routine)
+        }
+    }
+
+    private fun setupChipTags(task: TaskTable, routine: RoutineTable) {
+        lifecycleScope.launch {
+            val day = DatetimeAppManager().dayNameFromDayId(task.indexDay)
+            binding.chipDay.text = day
+
+            val quizCount = withContext(Dispatchers.IO) {
+                notesViewModel.note.getCountByFKTaskIdAndCategory(task.id, CATEGORY_QUIZ)
+            }
+            binding.chipQuiz.visibility = if (quizCount == 0) View.GONE else View.VISIBLE
+
+
+            val toPackCount = withContext(Dispatchers.IO) {
+                notesViewModel.note.getCountByFKTaskIdAndCategory(task.id, CATEGORY_TO_PACK)
+            }
+            binding.chipToPack.visibility = if (toPackCount == 0) View.GONE else View.VISIBLE
+
+            val routineTitle = routine.title
+            binding.chipRoutineName.text = routineTitle
+        }
+    }
+
+    private fun setupMemo(routine: RoutineTable) {
+        setupMemoClickAddButton()
+        setupMemoClickEditButton()
+        setupMemoClickSaveButton(routine)
+
+        lifecycleScope.launch {
+            val memoNote = withContext(Dispatchers.IO) {
+                notesViewModel.note.getByFKTaskIdAndCategory(
+                    args.taskDetailId,
+                    CATEGORY_MEMO
+                )
+            }
+            memoNoteEmptyMode()
+
+            memoNote?.let {
+                binding.textViewMemoDescription.setText(it.description)
+                memoNoteFilledMode()
+
+                val lastEdit = withContext(Dispatchers.IO) {
+                    val note = notesViewModel.note.getById(it.id)
+                    val updateAt = note?.updatedAt
+                    if (updateAt != null) {
+                        val date = DatetimeAppManager(updateAt)
+                        date.toReadable() + " | " + date.selectedDetailDatetimeISO.format(
+                            DateTimeFormatter.ofPattern("HH:mm"))
+                    } else {
+                        null
+                    }
+                } ?: return@launch
+
+
+                setMemoLastEdit(lastEdit)
+            }
+        }
+
+
+    }
+
+    private fun setupMemoClickSaveButton(routine: RoutineTable) {
+        binding.buttonSaveMemo.setOnClickListener {
+            val description = if (binding.textViewMemoDescription.text.toString().trim().isEmpty()) {
+                null
+            } else {
+                binding.textViewMemoDescription.text.toString().trim()
+            }
+
+
+            if (description.isNullOrEmpty()) {
+                memoNoteEmptyMode()
+                return@setOnClickListener
+            }
+
+            lifecycleScope.launch {
+                val memoNoteId = withContext(Dispatchers.IO) {
+                    notesViewModel.note.getByFKTaskIdAndCategory(
+                        args.taskDetailId,
+                        CATEGORY_MEMO
+                    )?.id
+                }
+
+                val noteId = if (memoNoteId == null) {
+                    // insert
+                    withContext(Dispatchers.IO) {
+                        notesViewModel.note.insert(
+                            fkTaskId = args.taskDetailId,
+                            category = CATEGORY_MEMO,
+                            description = description,
+                            date = DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, true).dateISO8601inString
+                        )
+                    }
+                } else {
+                    // update
+                    withContext(Dispatchers.IO) {
+                        notesViewModel.note.update(
+                            id = memoNoteId,
+                            description = description
+                        )
+
+                        memoNoteId
+                    }
+
+                }
+
+                memoNoteFilledMode()
+
+                val lastEdit = withContext(Dispatchers.IO) {
+                    val note = notesViewModel.note.getById(noteId)
+                    val updateAt = note?.updatedAt
+                    if (updateAt != null) {
+                        val date = DatetimeAppManager(updateAt)
+                        date.toReadable() + " | " + date.selectedDetailDatetimeISO.format(
+                            DateTimeFormatter.ofPattern("HH:mm"))
+                    } else {
+                        null
+                    }
+                } ?: return@launch
+
+
+                setMemoLastEdit(lastEdit)
+
+
+            }
 
         }
+    }
+
+    private fun setMemoLastEdit(hoursMinuteString: String) {
+        val lastEditText = "${getString(R.string.last_edited)} $hoursMinuteString, ${getString(R.string.saved)}"
+        binding.textViewMemoTime.text = lastEditText
+    }
+
+    private fun setupMemoClickEditButton() {
+        binding.buttonEditMemo.setOnClickListener {
+            memoNoteEditMode()
+            binding.textViewMemoTime.text = getString(R.string.editing)
+            binding.textViewMemoDescription.requestFocus()
+        }
+    }
+
+    private fun setupMemoClickAddButton() {
+        binding.buttonAddMemo.setOnClickListener {
+            memoNoteEditMode(true)
+            binding.textViewMemoTime.text = getString(R.string.editing)
+            binding.textViewMemoDescription.requestFocus()
+        }
+    }
+
+    private fun memoNoteEditMode(isFromClear : Boolean = false) {
+        binding.buttonEditMemo.visibility = View.GONE
+        binding.buttonAddMemo.visibility = View.GONE
+        binding.buttonSaveMemo.visibility = View.VISIBLE
+        binding.textViewMemoDescription.isEnabled = true
+        binding.textViewMemoTime.visibility = View.VISIBLE
+
+        if (isFromClear) {
+            binding.textViewMemoDescription.setText("")
+        }
+    }
+
+    private fun memoNoteEmptyMode() {
+        binding.buttonEditMemo.visibility = View.GONE
+        binding.buttonAddMemo.visibility = View.VISIBLE
+        binding.buttonSaveMemo.visibility = View.GONE
+        binding.textViewMemoDescription.isEnabled = false
+        binding.textViewMemoTime.visibility = View.GONE
+    }
+
+    private fun memoNoteFilledMode() {
+        binding.buttonEditMemo.visibility = View.VISIBLE
+        binding.buttonAddMemo.visibility = View.GONE
+        binding.buttonSaveMemo.visibility = View.GONE
+        binding.textViewMemoDescription.isEnabled = false
+        binding.textViewMemoTime.visibility = View.VISIBLE
     }
 
     private fun setupToPack(routine: RoutineTable, selectedDatetimeDetailIso: ParcelableZoneDateTime) {
@@ -215,6 +391,7 @@ class DetailFragment : Fragment() {
                 description = description,
                 onClickSaveAction = {isNextPlan, description, title, weekSelected, weeksDictionary ->
                     insertMemoAction(CATEGORY_TO_PACK,isNextPlan, description, title, weekSelected, weeksDictionary)
+                    binding.chipToPack.visibility = View.VISIBLE
                 }
             )
 
@@ -291,6 +468,7 @@ class DetailFragment : Fragment() {
                 description = currDesc,
                 onClickSaveAction = { isNextPlan, description, title, weekSelected, weeksDictionary ->
                     insertMemoAction(CATEGORY_QUIZ, isNextPlan, description, title, weekSelected, weeksDictionary)
+                    binding.chipQuiz.visibility = View.VISIBLE
                 }
             )
 
@@ -380,7 +558,6 @@ class DetailFragment : Fragment() {
                 }
             }
 
-            // TODO : Set recycler view for memo
 
             if (noteId == DEFAULT_NOTE_ID || title == null) return@launch
 

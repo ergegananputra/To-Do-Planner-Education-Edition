@@ -130,5 +130,8 @@
     <string name="cancel">Cancel</string>
     <string name="default_literal">Default</string>
     <string name="edit_description">Edit description</string>
+    <string name="editing">editing…</string>
+    <string name="last_edited">Last edited</string>
+    <string name="saved">saved</string>
 
 </resources>

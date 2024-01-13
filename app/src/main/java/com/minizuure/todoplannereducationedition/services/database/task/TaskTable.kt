@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.minizuure.todoplannereducationedition.services.database.CUSTOM_SESSION_ID
+import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 
 /**
  * [Last edited by ergegananputra 11 January 2024]
@@ -51,7 +52,7 @@ data class TaskTable(
     var sessionId : Long = CUSTOM_SESSION_ID,
 
     @ColumnInfo(name = "updated_at")
-    var updatedAt: Long = System.currentTimeMillis(),
+    var updatedAt: String = DatetimeAppManager().dateISO8601inString,
 
     // Additional Custom Session
 
@@ -81,4 +82,4 @@ data class TaskTable(
     @ColumnInfo(name = "community_id")
     var communityId : String? = null,
 
-)
+    )

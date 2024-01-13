@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d321a084c101157c1a5e13c2d1c7d3a4",
+    "identityHash": "70333ac79e359df84dbb65072a3730c6",
     "entities": [
       {
         "tableName": "routine_table",
@@ -134,7 +134,7 @@
       },
       {
         "tableName": "task_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `index_day` INTEGER NOT NULL, `session_id` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `is_custom_session` INTEGER NOT NULL, `time_start` TEXT, `time_end` TEXT, `location_name` TEXT, `location_link` TEXT, `is_shared_to_community` INTEGER NOT NULL, `community_id` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `index_day` INTEGER NOT NULL, `session_id` INTEGER NOT NULL, `updated_at` TEXT NOT NULL, `is_custom_session` INTEGER NOT NULL, `time_start` TEXT, `time_end` TEXT, `location_name` TEXT, `location_link` TEXT, `is_shared_to_community` INTEGER NOT NULL, `community_id` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -163,7 +163,7 @@
           {
             "fieldPath": "updatedAt",
             "columnName": "updated_at",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -220,7 +220,7 @@
       },
       {
         "tableName": "todo_note_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fk_notes_task_id` INTEGER NOT NULL, `is_checked` INTEGER NOT NULL, `description` TEXT NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`fk_notes_task_id`) REFERENCES `notes_task_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fk_notes_task_id` INTEGER NOT NULL, `is_checked` INTEGER NOT NULL, `description` TEXT NOT NULL, `updated_at` TEXT NOT NULL, FOREIGN KEY(`fk_notes_task_id`) REFERENCES `notes_task_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -249,7 +249,7 @@
           {
             "fieldPath": "updatedAt",
             "columnName": "updated_at",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -286,7 +286,7 @@
       },
       {
         "tableName": "notes_task_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fk_task_id` INTEGER NOT NULL, `date_iso8601` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`fk_task_id`) REFERENCES `task_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fk_task_id` INTEGER NOT NULL, `date_iso8601` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `updated_at` TEXT NOT NULL, FOREIGN KEY(`fk_task_id`) REFERENCES `task_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -321,7 +321,7 @@
           {
             "fieldPath": "updatedAt",
             "columnName": "updated_at",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -360,7 +360,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd321a084c101157c1a5e13c2d1c7d3a4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '70333ac79e359df84dbb65072a3730c6')"
     ]
   }
 }

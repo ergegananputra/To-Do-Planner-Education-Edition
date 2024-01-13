@@ -74,6 +74,9 @@ class DatetimeAppManager(
         this.selectedDetailDatetimeISO = localizedUTC(dateISO8601inString)
     }
 
+    /**
+     * @return ZonedDateTime of the current time in the local time zone. example: "2021-08-01T00:00:00.000+02:00[Europe/Paris]"
+     */
     fun getLocalDateTime() : ZonedDateTime {
         return ZonedDateTime.now(zoneLocalTimeId)
     }
