@@ -87,7 +87,7 @@ class TaskManagementActivity : AppCompatActivity() {
                 changeToolbarTitle(title,false)
             }
 
-            else -> changeToolbarTitle()
+            else -> changeToolbarTitle("Untitled", false)
         }
 
         setupNavBarActionMenu(fragment)
@@ -129,11 +129,9 @@ class TaskManagementActivity : AppCompatActivity() {
 
 
 
-    private fun changeToolbarTitle(title: String = "", isCollapsable: Boolean = true) {
+    private fun changeToolbarTitle(title: String, isCollapsable: Boolean = true) {
         if (isCollapsable) {
             Log.d("TaskManagementActivity", "changeToolbarTitle collapsable: $title")
-            setSupportActionBar(binding.toolbarDetail)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
             binding.collapsingToolbarTaskManagement.visibility = View.VISIBLE
             binding.toolbarNonCollapsingTaskManagement.visibility = View.GONE
@@ -142,10 +140,11 @@ class TaskManagementActivity : AppCompatActivity() {
             } else {
                 binding.collapsingToolbarTaskManagement.title = title
             }
+
+            setSupportActionBar(binding.toolbarDetail)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
         } else {
             Log.d("TaskManagementActivity", "changeToolbarTitle non collapsable: $title")
-            setSupportActionBar(binding.toolbarNonCollapsingTaskManagement)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
             binding.collapsingToolbarTaskManagement.visibility = View.GONE
             binding.toolbarNonCollapsingTaskManagement.visibility = View.VISIBLE
@@ -154,6 +153,9 @@ class TaskManagementActivity : AppCompatActivity() {
             } else {
                 binding.toolbarNonCollapsingTaskManagement.title = title
             }
+
+            setSupportActionBar(binding.toolbarNonCollapsingTaskManagement)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
     }
