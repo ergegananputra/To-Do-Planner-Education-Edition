@@ -11,6 +11,7 @@ import com.minizuure.todoplannereducationedition.services.database.session.Sessi
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTableDao
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTableDao
+import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -81,7 +82,7 @@ class AppDatabaseRepository(
     suspend fun insertTask(taskTable: TaskTable) :Long = withContext(Dispatchers.IO) { taskTableDao.insert(taskTable) }
     suspend fun deleteTask(taskTable: TaskTable) = withContext(Dispatchers.IO) { taskTableDao.delete(taskTable) }
     suspend fun updateTask(taskTable: TaskTable) = withContext(Dispatchers.IO) {
-        taskTable.updatedAt = System.currentTimeMillis()
+        taskTable.updatedAt = DatetimeAppManager().dateISO8601inString
         taskTableDao.update(taskTable)
     }
 
@@ -92,7 +93,7 @@ class AppDatabaseRepository(
     suspend fun getTodoNoteByFkNoteId(fkNoteId: Long) = withContext(Dispatchers.IO) { todoNoteTableDao.getByFkNotesTaskId(fkNoteId) }
     suspend fun insertTodoNotes(todoNoteTable: TodoNoteTable) : Long = withContext(Dispatchers.IO) { todoNoteTableDao.insert(todoNoteTable) }
     suspend fun updateTodoNotes(todoNoteTable: TodoNoteTable) = withContext(Dispatchers.IO) {
-        val updateTime = System.currentTimeMillis()
+        val updateTime = DatetimeAppManager().dateISO8601inString
 
         todoNoteTable.updatedAt = updateTime
         todoNoteTableDao.update(todoNoteTable)
@@ -116,7 +117,7 @@ class AppDatabaseRepository(
     suspend fun getCountNotesTaskByTaskIdAndCategory(taskId: Long, category: String) = withContext(Dispatchers.IO) { notesTaskTableDao.getCountByFkTaskIdAndCategory(taskId, category) }
     suspend fun insertNotesTask(notesTaskTable: NotesTaskTable) : Long = withContext(Dispatchers.IO) { notesTaskTableDao.insert(notesTaskTable) }
     suspend fun updateNotesTask(notesTaskTable: NotesTaskTable) = withContext(Dispatchers.IO) {
-        val updateTime = System.currentTimeMillis()
+        val updateTime = DatetimeAppManager().dateISO8601inString
         notesTaskTable.updatedAt = updateTime
         notesTaskTableDao.update(notesTaskTable)
 

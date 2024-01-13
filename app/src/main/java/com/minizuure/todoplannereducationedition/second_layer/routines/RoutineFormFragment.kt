@@ -1,12 +1,12 @@
 package com.minizuure.todoplannereducationedition.second_layer.routines
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asFlow
@@ -22,7 +22,7 @@ import com.minizuure.todoplannereducationedition.model.TempSession
 import com.minizuure.todoplannereducationedition.recycler.adapter.SessionDetailAdapter
 import com.minizuure.todoplannereducationedition.recycler.adapter.TempSessionDetailAdapter
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
-import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity.Companion.DEFAULT_ROUTINE_ID
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_ROUTINE_ID
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable

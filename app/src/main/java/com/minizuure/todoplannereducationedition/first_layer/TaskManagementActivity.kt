@@ -1,9 +1,10 @@
 package com.minizuure.todoplannereducationedition.first_layer
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -14,6 +15,7 @@ import com.minizuure.todoplannereducationedition.databinding.ActivityTaskManagem
 import com.minizuure.todoplannereducationedition.dialog_modal.ActionMoreTaskBottomDialogFragment
 import com.minizuure.todoplannereducationedition.first_layer.detail.DetailFragment
 import com.minizuure.todoplannereducationedition.first_layer.task.TaskFragment
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_TASK_ID
 
 class TaskManagementActivity : AppCompatActivity() {
     private val args : TaskManagementActivityArgs by navArgs()
@@ -85,7 +87,7 @@ class TaskManagementActivity : AppCompatActivity() {
                 changeToolbarTitle(title,false)
             }
 
-            else -> changeToolbarTitle()
+            else -> changeToolbarTitle("Untitled", false)
         }
 
         setupNavBarActionMenu(fragment)
@@ -127,10 +129,9 @@ class TaskManagementActivity : AppCompatActivity() {
 
 
 
-    private fun changeToolbarTitle(title: String = "", isCollapsable: Boolean = true) {
+    private fun changeToolbarTitle(title: String, isCollapsable: Boolean = true) {
         if (isCollapsable) {
-            setSupportActionBar(binding.toolbarDetail)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            Log.d("TaskManagementActivity", "changeToolbarTitle collapsable: $title")
 
             binding.collapsingToolbarTaskManagement.visibility = View.VISIBLE
             binding.toolbarNonCollapsingTaskManagement.visibility = View.GONE
@@ -139,9 +140,11 @@ class TaskManagementActivity : AppCompatActivity() {
             } else {
                 binding.collapsingToolbarTaskManagement.title = title
             }
-        } else {
-            setSupportActionBar(binding.toolbarNonCollapsingTaskManagement)
+
+            setSupportActionBar(binding.toolbarDetail)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        } else {
+            Log.d("TaskManagementActivity", "changeToolbarTitle non collapsable: $title")
 
             binding.collapsingToolbarTaskManagement.visibility = View.GONE
             binding.toolbarNonCollapsingTaskManagement.visibility = View.VISIBLE
@@ -150,6 +153,9 @@ class TaskManagementActivity : AppCompatActivity() {
             } else {
                 binding.toolbarNonCollapsingTaskManagement.title = title
             }
+
+            setSupportActionBar(binding.toolbarNonCollapsingTaskManagement)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
     }
@@ -157,8 +163,6 @@ class TaskManagementActivity : AppCompatActivity() {
 
 
     companion object {
-        const val DEFAULT_TASK_ID = -1L
-
         const val OPEN_TASK = "com.minizuure.todoplannereducationedition.first_layer.task"
         const val OPEN_DETAIL = "com.minizuure.todoplannereducationedition.first_layer.detail"
         const val OPEN_SCHEDULE = "com.minizuure.todoplannereducationedition.first_layer.schedule"

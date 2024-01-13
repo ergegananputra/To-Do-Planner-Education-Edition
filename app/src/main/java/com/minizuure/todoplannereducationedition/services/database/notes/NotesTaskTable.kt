@@ -5,12 +5,19 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.minizuure.todoplannereducationedition.services.database.TimeDatabaseAbstraction
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
+import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
+
 
 /**
  * [Last edited by ergegananputra 11 January 2024]
  *
  *
+ * The [dateISO8601] accuracy is only up to day.
+ *
+ *
+ * Use zonedDateTime.truncatedTo(ChronoUnit.DAYS) to get the date.
  *
  *
  * @param id The id of the notesTaskTable.
@@ -41,7 +48,7 @@ data class NotesTaskTable(
     val fkTaskId : Long,
 
     @ColumnInfo(name = "date_iso8601")
-    var dateISO8601 : String? = null,
+    var dateISO8601 : String,
 
     @ColumnInfo(name = "category")
     var category : String,
@@ -50,8 +57,5 @@ data class NotesTaskTable(
     var description : String,
 
     @ColumnInfo(name = "updated_at")
-    var updatedAt : Long = System.currentTimeMillis(),
-) {
-    fun getNewTimestamp() = System.currentTimeMillis()
-
-}
+    var updatedAt : String = DatetimeAppManager().dateISO8601inString,
+) : TimeDatabaseAbstraction()

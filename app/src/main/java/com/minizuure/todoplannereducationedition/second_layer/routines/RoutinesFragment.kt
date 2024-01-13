@@ -19,7 +19,7 @@ import com.minizuure.todoplannereducationedition.databinding.FragmentRoutinesBin
 import com.minizuure.todoplannereducationedition.recycler.adapter.RoutinesAdapter
 import com.minizuure.todoplannereducationedition.recycler.model.RoutinesItemPreview
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
-import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity.Companion.DEFAULT_ROUTINE_ID
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_ROUTINE_ID
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
