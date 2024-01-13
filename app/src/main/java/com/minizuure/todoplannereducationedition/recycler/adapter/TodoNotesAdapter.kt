@@ -1,6 +1,5 @@
 package com.minizuure.todoplannereducationedition.recycler.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,10 +9,8 @@ import com.minizuure.todoplannereducationedition.databinding.ItemDetailBinding
 import com.minizuure.todoplannereducationedition.services.database.notes.TodoNoteTable
 
 class TodoNotesAdapter(
-    private val context : Context,
-    var onClickAction : (Int, Long) -> Unit,
-    var onClickCheckBoxAction : (Int, Long, Boolean) -> Unit,
-    var onClickDeleteAction : (Int, Long) -> Unit,
+    var onClickCheckBoxAction : (Long, Boolean) -> Unit,
+    var onClickDeleteAction : (Long) -> Unit,
 ) : ListAdapter<TodoNoteTable, TodoNotesAdapter.TodoNoteViewHolder>(TodoNoteDiffUtils()) {
     class TodoNoteDiffUtils : DiffUtil.ItemCallback<TodoNoteTable>() {
         override fun areItemsTheSame(oldItem: TodoNoteTable, newItem: TodoNoteTable): Boolean {
@@ -29,18 +26,14 @@ class TodoNotesAdapter(
     inner class TodoNoteViewHolder(
         private val binding : ItemDetailBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(todoNoteTable: TodoNoteTable, position: Int) {
+        fun bind(todoNoteTable: TodoNoteTable) {
             binding.checkboxItemDetail.apply {
                 isChecked = todoNoteTable.isChecked
                 text = todoNoteTable.description
             }
 
-            binding.cardItemDetail.setOnClickListener {
-                onClickAction(position, todoNoteTable.id)
-            }
-
             binding.checkboxItemDetail.setOnClickListener {
-                onClickCheckBoxAction(position, todoNoteTable.id, binding.checkboxItemDetail.isChecked)
+                onClickCheckBoxAction(todoNoteTable.id, binding.checkboxItemDetail.isChecked)
             }
 
             binding.cardItemDetail.setOnLongClickListener {
@@ -53,7 +46,7 @@ class TodoNotesAdapter(
             }
 
             binding.buttonDeleteItemDetail.setOnClickListener {
-                onClickDeleteAction(position, todoNoteTable.id)
+                onClickDeleteAction(todoNoteTable.id)
             }
 
         }
@@ -81,6 +74,6 @@ class TodoNotesAdapter(
     }
 
     override fun onBindViewHolder(holder: TodoNoteViewHolder, position: Int) {
-        holder.bind(getItem(position), position)
+        holder.bind(getItem(position))
     }
 }

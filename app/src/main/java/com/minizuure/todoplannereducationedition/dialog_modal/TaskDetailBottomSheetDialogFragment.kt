@@ -21,7 +21,7 @@ class TaskDetailBottomSheetDialogFragment(
     private var title : String? = null,
     private var description : String? = null,
     private var todo : String? = null,
-    private val onClickSaveAction : (Boolean, String, String, Int, Map<String, Int>) -> Unit
+    private val onClickSaveAction : (Boolean, String, String?, Int, Map<String, Int>) -> Unit
 ) : MinimumBottomSheetDialog() {
     private val weeksDictionary : MutableMap<String, Int> = mutableMapOf()
     private var selectedWeek : Int = 0
@@ -61,12 +61,12 @@ class TaskDetailBottomSheetDialogFragment(
     private fun setupSaveButton() {
         binding.buttonSaveBottomSheet.setOnClickListener {
             selectedWeek = weeksDictionary[binding.textInputLayoutItemDateBottomSheet.editText?.text.toString()] ?: 0
-
+            val name = binding.textInputLayoutItemNameBottomSheet.editText?.text.toString().trim()
 
             onClickSaveAction(
                 isNextPlan,
                 binding.textInputLayoutDescriptionBottomSheet.editText?.text.toString(),
-                binding.textInputLayoutItemNameBottomSheet.editText?.text.toString(),
+                if (name == "") null else name,
                 selectedWeek,
                 weeksDictionary
             )
