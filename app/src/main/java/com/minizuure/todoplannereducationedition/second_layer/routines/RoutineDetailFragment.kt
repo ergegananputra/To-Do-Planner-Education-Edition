@@ -1,11 +1,11 @@
 package com.minizuure.todoplannereducationedition.second_layer.routines
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -19,6 +19,7 @@ import com.minizuure.todoplannereducationedition.recycler.adapter.SessionDetailA
 import com.minizuure.todoplannereducationedition.recycler.adapter.UsagesAdapter
 import com.minizuure.todoplannereducationedition.recycler.model.UsagesPreviewModel
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_ROUTINE_ID
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
@@ -128,7 +129,7 @@ class RoutineDetailFragment : Fragment() {
     private fun onClickSessionItem(it: SessionTable) {
         val destination = RoutineDetailFragmentDirections.actionRoutineDetailFragmentToSessionFormFragment(
             sessionId = it.id,
-            newRoutine = args.routineId == RoutineManagementActivity.DEFAULT_ROUTINE_ID,
+            newRoutine = args.routineId == DEFAULT_ROUTINE_ID,
             routineId = it.fkRoutineId,
             title = it.title,
             startTime = it.timeStart,
@@ -224,7 +225,7 @@ class RoutineDetailFragment : Fragment() {
 
     private fun setupAddSessionButton() {
         val destination = RoutineDetailFragmentDirections.actionRoutineDetailFragmentToSessionFormFragment(
-            newRoutine = args.routineId == RoutineManagementActivity.DEFAULT_ROUTINE_ID,
+            newRoutine = args.routineId == DEFAULT_ROUTINE_ID,
             routineId = args.routineId,
             title = null,
             startTime = null,

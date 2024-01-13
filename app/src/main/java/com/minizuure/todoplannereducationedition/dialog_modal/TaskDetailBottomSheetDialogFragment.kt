@@ -21,9 +21,9 @@ class TaskDetailBottomSheetDialogFragment(
     private var title : String? = null,
     private var description : String? = null,
     private var todo : String? = null,
-    private val onClickSaveAction : (Boolean, String, String, Int, Map<Int, String>) -> Unit
+    private val onClickSaveAction : (Boolean, String, String, Int, Map<String, Int>) -> Unit
 ) : MinimumBottomSheetDialog() {
-    private val weeksDictionary : MutableMap<Int, String> = mutableMapOf()
+    private val weeksDictionary : MutableMap<String, Int> = mutableMapOf()
     private var selectedWeek : Int = 0
 
     private val binding by lazy { ModalAddNotesTaskBottomSheetDialogBinding.inflate(layoutInflater) }
@@ -60,10 +60,7 @@ class TaskDetailBottomSheetDialogFragment(
 
     private fun setupSaveButton() {
         binding.buttonSaveBottomSheet.setOnClickListener {
-            selectedWeek =
-                weeksDictionary.values.indexOf(
-                    binding.textInputLayoutItemDateBottomSheet.editText?.text.toString()
-                ) + 1
+            selectedWeek = weeksDictionary[binding.textInputLayoutItemDateBottomSheet.editText?.text.toString()] ?: 0
 
 
             onClickSaveAction(
@@ -102,15 +99,15 @@ class TaskDetailBottomSheetDialogFragment(
         for (i in 1..weeks) {
             val dateTime = DatetimeAppManager(currentDate.plusWeeks(i.toLong())).toReadable()
             if (i == 1) {
-                weeksDictionary[i] = "Next week"
+                weeksDictionary["Next week"] = i
                 continue
             }
-            weeksDictionary[i] = "In $i weeks | $dateTime"
+            weeksDictionary[ "In $i weeks | $dateTime"] = i
         }
 
         (binding.textInputLayoutItemDateBottomSheet.editText
                     as? MaterialAutoCompleteTextView
-                    )?.setSimpleItems(weeksDictionary.values.toTypedArray())
+                    )?.setSimpleItems(weeksDictionary.keys.toTypedArray())
 
         binding.textInputLayoutItemDateBottomSheet.editText?.apply {
             isFocusable = false

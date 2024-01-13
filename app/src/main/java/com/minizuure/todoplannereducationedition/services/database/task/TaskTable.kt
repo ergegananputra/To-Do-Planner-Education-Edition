@@ -3,6 +3,7 @@ package com.minizuure.todoplannereducationedition.services.database.task
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.minizuure.todoplannereducationedition.services.database.CUSTOM_SESSION_ID
 
 /**
  * [Last edited by ergegananputra 11 January 2024]
@@ -80,8 +81,4 @@ data class TaskTable(
     @ColumnInfo(name = "community_id")
     var communityId : String? = null,
 
-) {
-    companion object {
-        const val CUSTOM_SESSION_ID = -1L
-    }
-}
+)

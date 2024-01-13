@@ -1,9 +1,10 @@
 package com.minizuure.todoplannereducationedition.first_layer
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -14,6 +15,7 @@ import com.minizuure.todoplannereducationedition.databinding.ActivityTaskManagem
 import com.minizuure.todoplannereducationedition.dialog_modal.ActionMoreTaskBottomDialogFragment
 import com.minizuure.todoplannereducationedition.first_layer.detail.DetailFragment
 import com.minizuure.todoplannereducationedition.first_layer.task.TaskFragment
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_TASK_ID
 
 class TaskManagementActivity : AppCompatActivity() {
     private val args : TaskManagementActivityArgs by navArgs()
@@ -129,6 +131,7 @@ class TaskManagementActivity : AppCompatActivity() {
 
     private fun changeToolbarTitle(title: String = "", isCollapsable: Boolean = true) {
         if (isCollapsable) {
+            Log.d("TaskManagementActivity", "changeToolbarTitle collapsable: $title")
             setSupportActionBar(binding.toolbarDetail)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -140,6 +143,7 @@ class TaskManagementActivity : AppCompatActivity() {
                 binding.collapsingToolbarTaskManagement.title = title
             }
         } else {
+            Log.d("TaskManagementActivity", "changeToolbarTitle non collapsable: $title")
             setSupportActionBar(binding.toolbarNonCollapsingTaskManagement)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -157,8 +161,6 @@ class TaskManagementActivity : AppCompatActivity() {
 
 
     companion object {
-        const val DEFAULT_TASK_ID = -1L
-
         const val OPEN_TASK = "com.minizuure.todoplannereducationedition.first_layer.task"
         const val OPEN_DETAIL = "com.minizuure.todoplannereducationedition.first_layer.detail"
         const val OPEN_SCHEDULE = "com.minizuure.todoplannereducationedition.first_layer.schedule"

@@ -1,12 +1,9 @@
 package com.minizuure.todoplannereducationedition.services.database
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
 import androidx.room.Database
 import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.minizuure.todoplannereducationedition.services.database.notes.NotesTaskDao
 import com.minizuure.todoplannereducationedition.services.database.notes.NotesTaskTable
 import com.minizuure.todoplannereducationedition.services.database.notes.TodoNoteDao
@@ -26,7 +23,7 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
         TodoNoteTable::class,
         NotesTaskTable::class
                ],
-    version = 2,
+    version = 1,
     exportSchema = true
 )
 abstract class ApplicationDatabase : RoomDatabase() {

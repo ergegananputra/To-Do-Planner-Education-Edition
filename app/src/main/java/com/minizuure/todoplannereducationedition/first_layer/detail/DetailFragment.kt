@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
@@ -21,6 +22,13 @@ import com.minizuure.todoplannereducationedition.databinding.FragmentDetailBindi
 import com.minizuure.todoplannereducationedition.dialog_modal.TaskDetailBottomSheetDialogFragment
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
 import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
+import com.minizuure.todoplannereducationedition.recycler.adapter.TodoNotesAdapter
+import com.minizuure.todoplannereducationedition.services.database.CATEGORY_MEMO
+import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
+import com.minizuure.todoplannereducationedition.services.database.CATEGORY_TO_PACK
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_NOTE_ID
+import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModel
+import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
@@ -33,6 +41,7 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskView
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val ARG_DETAIL_ID = "task_detail_id"
 private const val ARG_DETAIL_TITLE = "title_detail"
@@ -63,10 +72,42 @@ class DetailFragment : Fragment() {
     private lateinit var routineViewModel : RoutineViewModel
     private lateinit var sessionViewModel: SessionViewModel
     private lateinit var taskViewModel : TaskViewModel
+    private lateinit var notesViewModel : NoteViewModel
 
     private val binding by lazy {
         FragmentDetailBinding.inflate(layoutInflater)
     }
+
+    private val quizMaterialAdapter by lazy {
+        TodoNotesAdapter(
+            context = requireActivity(),
+            onClickAction = { postition, id ->
+                setOnClickTodoQuiz(postition, id)
+            },
+            onClickCheckBoxAction = { postition, id, isChecked ->
+                setOnClickCheckBoxTodoQuiz(postition, id, isChecked)
+            },
+            onClickDeleteAction = { postition, id ->
+                setOnClickDeleteTodoQuiz(postition, id)
+            }
+        )
+    }
+
+    private fun setOnClickDeleteTodoQuiz(postition: Int, id: Long) {
+        // TODO : Set on click delete todo quiz
+        Toast.makeText(requireActivity(), "Clicked delete todo quiz", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setOnClickCheckBoxTodoQuiz(postition: Int, id: Long, checked: Boolean) {
+        // TODO : Set on click checkbox todo quiz
+        Toast.makeText(requireActivity(), "Clicked checkbox todo quiz", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setOnClickTodoQuiz(postition: Int, todoId: Long) {
+        // TODO : Set on click todo quiz
+        Toast.makeText(requireActivity(), "Clicked todo quiz", Toast.LENGTH_SHORT).show()
+    }
+
 
 
     override fun onCreateView(
@@ -117,7 +158,7 @@ class DetailFragment : Fragment() {
                 title = getString(R.string.to_pack),
                 description = description,
                 onClickSaveAction = {isNextPlan, description, title, weekSelected, weeksDictionary ->
-                    setOnClickSaveAddToPack(isNextPlan, description, title, weekSelected, weeksDictionary)
+                    insertMemoAction(CATEGORY_TO_PACK,isNextPlan, description, title, weekSelected, weeksDictionary)
                 }
             )
 
@@ -125,45 +166,63 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun setOnClickSaveAddToPack(
-        isNextPlan: Boolean,
-        description: String,
-        title: String,
-        weekSelected: Int,
-        weeksDictionary: Map<Int, String>
-    ) {
-        // TODO : Save to pack to database
-        Log.d("DetailFragment", "Save to pack : $description, $title, $weekSelected, $weeksDictionary")
-        Toast.makeText(requireActivity(), "Save to pack", Toast.LENGTH_SHORT).show()
-    }
+
 
     private fun setupQuizMaterial(
         routine: RoutineTable,
         selectedDatetimeDetailIso: ParcelableZoneDateTime
     ) {
-        val description = binding.textViewQuizMaterialDescription.text.toString().trim().isBlank().let {
-            if (it) null else binding.textViewQuizMaterialDescription.text.toString()
-        }
-        setAddQuizMaterial(routine, selectedDatetimeDetailIso, description)
+        setAddQuizMaterial(routine, selectedDatetimeDetailIso)
 
-        // TODO : Set recycler view for quiz material
+        setupQuizRecyclerView()
+    }
+
+    private fun setupQuizRecyclerView() {
+        binding.recyclerViewQuizMaterials.apply{
+            layoutManager = LinearLayoutManager(requireActivity())
+            adapter = quizMaterialAdapter
+        }
+
+        updateMaterialQuizRecyclerViewData()
+    }
+
+    private fun updateMaterialQuizRecyclerViewData() {
+        lifecycleScope.launch {
+            val quizNote = notesViewModel.note.getByFKTaskIdAndCategory(
+                args.taskDetailId,
+                CATEGORY_QUIZ
+            )
+
+            quizNote?.let {
+                val todoList = withContext(Dispatchers.IO) {
+                    notesViewModel.todo.getByFKNoteId(quizNote.id)
+                } ?: return@launch
+
+                quizMaterialAdapter.submitList(todoList)
+            }
+
+        }
+
     }
 
     private fun setAddQuizMaterial(
         routine: RoutineTable,
         currentDate: ParcelableZoneDateTime,
-        description: String?,
     ) {
         binding.buttonAddQuizMaterial.setOnClickListener {
+            val currDesc = binding.textViewQuizMaterialDescription.text.toString().trim().isBlank().let {
+                if (it) null else binding.textViewQuizMaterialDescription.text.toString()
+            }
+
             val bottomSheet = TaskDetailBottomSheetDialogFragment(
                 taskId = args.taskDetailId,
                 routine = routine,
                 currentDate = currentDate.zoneDateTime,
                 isNextPlan = false,
                 title = getString(R.string.quiz_materials_title),
-                description = description,
+                description = currDesc,
                 onClickSaveAction = { isNextPlan, description, title, weekSelected, weeksDictionary ->
-                    setOnClickSaveAddQuizMaterial(isNextPlan, description, title, weekSelected, weeksDictionary)
+                    insertMemoAction(CATEGORY_QUIZ, isNextPlan, description, title, weekSelected, weeksDictionary)
                 }
             )
 
@@ -171,16 +230,84 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun setOnClickSaveAddQuizMaterial(
+    private fun insertMemoAction(
+        targetAction : String,
         isNextPlan: Boolean,
         description: String,
-        title: String,
+        title: String?,
         weekSelected: Int,
-        weeksDictionary: Map<Int, String>
+        weeksDictionary: Map<String, Int>
     ) {
-        // TODO : Save quiz material to database
-        Log.d("DetailFragment", "Save quiz material : $description, $title, $weekSelected, $weeksDictionary")
-        Toast.makeText(requireActivity(), "Save quiz material", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            // get note id
+            var noteId = withContext(Dispatchers.IO) {
+                notesViewModel.note.getByFKTaskIdAndCategory(args.taskDetailId, targetAction)?.id
+            }
+
+            if (noteId != null) {
+                // update Note
+                val result = withContext(Dispatchers.IO) {
+                    notesViewModel.note.update(
+                        id = noteId!!,
+                        description = description,
+                    )
+                }
+
+                if (result) Log.d("DetailFragment", "update memo success. id : $noteId")
+                else Log.d("DetailFragment", "update memo failed. id : $noteId")
+
+            } else {
+                // insert Note
+                val zoneDateTime = args.selectedDatetimeDetailIso.zoneDateTime
+                val date = DatetimeAppManager(zoneDateTime, true).dateISO8601inString
+                noteId = withContext(Dispatchers.IO) {
+                    notesViewModel.note.insert(
+                        fkTaskId = args.taskDetailId,
+                        category = targetAction,
+                        description = description,
+                        date = date
+                    )
+                }
+            }
+
+
+            when(targetAction) {
+                CATEGORY_QUIZ -> {
+                    binding.textViewQuizMaterialDescription.text = description
+                }
+                CATEGORY_TO_PACK -> {
+                    binding.textViewToPackDescription.text = description
+                }
+                CATEGORY_MEMO -> {
+                    binding.textViewMemoDescription.setText(description)
+                }
+            }
+
+            // TODO : Set recycler view for memo
+
+            if (noteId == DEFAULT_NOTE_ID || title == null) return@launch
+
+            // Quiz and To Pack only
+
+            notesViewModel.todo.insert(
+                fkNoteTaskId = noteId,
+                isChecked = false,
+                description = title
+            )
+
+            when(targetAction) {
+                CATEGORY_QUIZ -> {
+                    updateMaterialQuizRecyclerViewData()
+                }
+                CATEGORY_TO_PACK -> {
+                    // TODO : Set update to pack recycler view
+                }
+            }
+
+
+        }
+
+
     }
 
     private fun setupRoutineTemplateText(routine: RoutineTable) {
@@ -235,6 +362,8 @@ class DetailFragment : Fragment() {
         val taskFactory = TaskViewModelFactory(app.appRepository)
         taskViewModel = ViewModelProvider(requireActivity(), taskFactory)[TaskViewModel::class.java]
 
+        val notesFactory = NoteViewModelFactory(app.appRepository)
+        notesViewModel = ViewModelProvider(requireActivity(), notesFactory)[NoteViewModel::class.java]
     }
 
     private fun setupDate() {

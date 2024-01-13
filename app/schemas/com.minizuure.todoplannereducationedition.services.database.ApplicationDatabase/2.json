@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "bf1e80144993fe3f588bf1362cb3f90f",
+    "identityHash": "d321a084c101157c1a5e13c2d1c7d3a4",
     "entities": [
       {
         "tableName": "routine_table",
@@ -286,7 +286,7 @@
       },
       {
         "tableName": "notes_task_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fk_task_id` INTEGER NOT NULL, `date_iso8601` TEXT, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`fk_task_id`) REFERENCES `task_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fk_task_id` INTEGER NOT NULL, `date_iso8601` TEXT NOT NULL, `category` TEXT NOT NULL, `description` TEXT NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`fk_task_id`) REFERENCES `task_table`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -304,7 +304,7 @@
             "fieldPath": "dateISO8601",
             "columnName": "date_iso8601",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "category",
@@ -360,7 +360,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bf1e80144993fe3f588bf1362cb3f90f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd321a084c101157c1a5e13c2d1c7d3a4')"
     ]
   }
 }

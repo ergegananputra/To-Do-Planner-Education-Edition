@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
@@ -21,8 +20,8 @@ import com.minizuure.todoplannereducationedition.dialog_modal.model.DaysOfWeekIm
 import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.GlobalMinimumInterface
 import com.minizuure.todoplannereducationedition.dialog_modal.preset.MinimumBottomSheetDialog.Companion.isDialogOpen
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
-import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.DEFAULT_TASK_ID
 import com.minizuure.todoplannereducationedition.services.customtextfield.CustomTextField
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_TASK_ID
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory

@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.minizuure.todoplannereducationedition.CustomSystemTweak
 import com.minizuure.todoplannereducationedition.R
@@ -13,6 +12,8 @@ import com.minizuure.todoplannereducationedition.second_layer.routines.RoutineDe
 import com.minizuure.todoplannereducationedition.second_layer.routines.RoutineFormFragment
 import com.minizuure.todoplannereducationedition.second_layer.routines.RoutinesFragment
 import com.minizuure.todoplannereducationedition.second_layer.session.SessionFormFragment
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_ROUTINE_ID
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_SESSION_ID
 
 class RoutineManagementActivity : AppCompatActivity() {
     private lateinit var routineNavController : NavController
@@ -99,10 +100,6 @@ class RoutineManagementActivity : AppCompatActivity() {
         }
     }
 
-    companion object {
-        const val DEFAULT_ROUTINE_ID = -1L
-        const val DEFAULT_SESSION_ID = -1L
-    }
 
 
 }

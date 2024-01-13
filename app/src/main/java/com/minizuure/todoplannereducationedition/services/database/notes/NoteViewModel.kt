@@ -2,10 +2,13 @@ package com.minizuure.todoplannereducationedition.services.database.notes
 
 import androidx.lifecycle.ViewModel
 import com.minizuure.todoplannereducationedition.AppDatabaseRepository
+import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 
 class NoteViewModel(
     private val appDatabaseRepository: AppDatabaseRepository
 ) : ViewModel() {
+    val note = Note()
+    val todo = Todo()
 
     inner class Note {
         suspend fun getAll() : List<NotesTaskTable> {
@@ -32,20 +35,57 @@ class NoteViewModel(
             return appDatabaseRepository.getCountNotesTaskByTaskIdAndCategory(fkTaskId, category)
         }
 
+        /**
+         * To get the date converted to ISO8601 ZonedDateTime to String,
+         * use [DatetimeAppManager] and set accuracy to day
+         *
+         *
+         * example:
+         * ```kotlin
+         * // zonedDatetime from fragment args parcelable
+         * val zonedDatetime : ZonedDateTime = args.selectedDatetimeDetailIso.zoneDateTime
+         * val date : String = DatetimeAppManager(zonedDatetime, true).dateISO8601inString
+         * ```
+         *
+         *
+         * @return The id of the inserted notesTaskTable. (-1L if failed)
+         */
         suspend fun insert(note: NotesTaskTable) : Long {
             return appDatabaseRepository.insertNotesTask(note)
         }
 
+        /**
+         * To get the date converted to ISO8601 ZonedDateTime to String,
+         * use [DatetimeAppManager] and set accuracy to day
+         *
+         *
+         * example:
+         * ```kotlin
+         * // zonedDatetime from fragment args parcelable
+         * val zonedDatetime : ZonedDateTime = args.selectedDatetimeDetailIso.zoneDateTime
+         * val date : String = DatetimeAppManager(zonedDatetime, true).dateISO8601inString
+         * ```
+         *
+         *
+         *
+         * @param fkTaskId The id of the taskTable.
+         * @param date The date the notesTaskTable is active. Stored in ISO8601 format.
+         * @param category The category of the notesTaskTable example: Quiz, To-Pack, Memo.
+         * @param description The description of the notesTaskTable.
+         * @return The id of the inserted notesTaskTable. (-1L if failed)
+         */
         suspend fun insert(
             fkTaskId : Long,
             category : String,
             description : String,
+            date : String
         ) : Long {
             return appDatabaseRepository.insertNotesTask(
                 NotesTaskTable(
                     fkTaskId = fkTaskId,
                     category = category,
-                    description = description
+                    description = description,
+                    dateISO8601 = date
                 )
             )
         }

@@ -18,6 +18,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 import kotlin.math.abs
 
@@ -44,10 +45,29 @@ class DatetimeAppManager(
         this.selectedDetailDatetimeISO = ZonedDateTime.now(zoneLocalTimeId)
     }
 
-    constructor(selectedDetailDatetimeISO: ZonedDateTime) : this() {
-        this.zoneLocalTimeId = selectedDetailDatetimeISO.zone
-        this.selectedDetailDatetimeISO = selectedDetailDatetimeISO
+
+    /**
+     * [accuracyOnlyUpToDays] is used to set the accuracy of the date.
+     * If [accuracyOnlyUpToDays] is true, the accuracy is only up to days.
+     * If [accuracyOnlyUpToDays] is false, the accuracy is up to seconds.
+     * See more in [NoteViewModel.note] for the usage example
+     *
+     *
+     *
+     * @param selectedDetailDatetimeISO : ZonedDateTime
+     * @param accuracyOnlyUpToDays : Boolean
+     */
+    constructor(selectedDetailDatetimeISO: ZonedDateTime, accuracyOnlyUpToDays : Boolean = false) : this() {
+        val zoneDateTime =
+            if (accuracyOnlyUpToDays) selectedDetailDatetimeISO.truncatedTo(ChronoUnit.DAYS)
+            else selectedDetailDatetimeISO
+
+        this.zoneLocalTimeId = zoneDateTime.zone
+        this.selectedDetailDatetimeISO = zoneDateTime
+        this.dateISO8601inString = zoneDateTime.toInstant().toString()
     }
+
+
 
     constructor(dateISO8601inString: String) : this() {
         this.dateISO8601inString = dateISO8601inString
