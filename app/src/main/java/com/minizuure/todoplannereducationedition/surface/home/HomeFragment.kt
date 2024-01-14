@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,6 +15,8 @@ import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActiv
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_TASK
 import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
 import com.minizuure.todoplannereducationedition.recycler.adapter.MainTaskAdapter
+import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModel
+import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
@@ -35,6 +36,7 @@ class HomeFragment : Fragment() {
     private lateinit var routineViewModel : RoutineViewModel
     private lateinit var sessionViewModel: SessionViewModel
     private lateinit var taskViewModel : TaskViewModel
+    private lateinit var noteViewModel: NoteViewModel
 
     private val todayMainTaskAdapter by lazy {
         MainTaskAdapter(
@@ -43,6 +45,7 @@ class HomeFragment : Fragment() {
             sessionViewModel = sessionViewModel,
             routineViewModel = routineViewModel,
             taskViewModel = taskViewModel,
+            notesViewModel = noteViewModel,
             onClickOpenDetail = {setOnClickOpenDetail(it)}
         )
     }
@@ -111,6 +114,9 @@ class HomeFragment : Fragment() {
         val taskFactory = TaskViewModelFactory(app.appRepository)
         taskViewModel = ViewModelProvider(requireActivity(), taskFactory)[TaskViewModel::class.java]
 
+        val noteFactory = NoteViewModelFactory(app.appRepository)
+        noteViewModel = ViewModelProvider(requireActivity(), noteFactory)[NoteViewModel::class.java]
+
     }
 
     private fun setupTodayRecyclerView() {
@@ -138,6 +144,15 @@ class HomeFragment : Fragment() {
                     selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime())
                 )
             findNavController().navigate(destination)
+        }
+
+
+        binding.nestedScrollViewHome.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            if (scrollY > oldScrollY) {
+                binding.efabAddTask.shrink()
+            } else {
+                binding.efabAddTask.extend()
+            }
         }
     }
 
