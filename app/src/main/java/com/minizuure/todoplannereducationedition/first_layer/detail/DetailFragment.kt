@@ -20,8 +20,11 @@ import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentDetailBinding
 import com.minizuure.todoplannereducationedition.dialog_modal.TaskDetailBottomSheetDialogFragment
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
+import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL_GO_TO_PACK
+import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL_GO_TO_QUIZ
 import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
 import com.minizuure.todoplannereducationedition.recycler.adapter.TodoNotesAdapter
+import com.minizuure.todoplannereducationedition.services.animator.ObjectBlink
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_MEMO
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_TO_PACK
@@ -46,6 +49,7 @@ import java.time.format.DateTimeFormatter
 private const val ARG_DETAIL_ID = "task_detail_id"
 private const val ARG_DETAIL_TITLE = "title_detail"
 private const val ARG_DETAIL_SELECTED_DATE = "selected_datetime_detail_iso"
+private const val ARG_DETAIL_SET_GO_TO = "set_go_to"
 
 /**
  * Todo List [DetailFragment] :
@@ -150,6 +154,7 @@ class DetailFragment : Fragment() {
         (activity as TaskManagementActivity).setToolbarTitle(this, args.titleDetail)
         navController = Navigation.findNavController(view)
         setupViewModelFactory()
+        setScrollGoTo()
 
         lifecycleScope.launch {
             val task = taskViewModel.getById(args.taskDetailId) ?: return@launch closeFragment()
@@ -165,6 +170,48 @@ class DetailFragment : Fragment() {
             setupQuizMaterial(routine, args.selectedDatetimeDetailIso)
             setupToPack(routine, args.selectedDatetimeDetailIso)
             setupMemo(routine)
+        }
+    }
+
+    private fun setScrollGoTo() {
+        val scrollTo = args.setGoTo ?: return
+        when(scrollTo) {
+            OPEN_DETAIL_GO_TO_QUIZ -> {
+                lifecycleScope.launch {
+                    (activity as TaskManagementActivity).binding.appBarLayoutTaskManagement.setExpanded(false, true)
+
+                    binding.nestedScrollViewDetail.post {
+                        binding.nestedScrollViewDetail.smoothScrollTo(0, binding.recyclerViewQuizMaterials.top, 1000)
+                    }
+
+                    val quizTitleAnimator = ObjectBlink(binding.textViewQuizMaterialLabel)
+                        .setAsBlink(
+                            duration = 750L,
+                            repeat = 16
+                        )
+
+                    quizTitleAnimator.start()
+                }
+
+            }
+            OPEN_DETAIL_GO_TO_PACK -> {
+                lifecycleScope.launch {
+                    (activity as TaskManagementActivity).binding.appBarLayoutTaskManagement.setExpanded(false, true)
+
+                    binding.nestedScrollViewDetail.post {
+                        binding.nestedScrollViewDetail.smoothScrollTo(0, binding.recyclerViewToPack.top, 1000)
+                    }
+
+                    val toPackTitleAnimator = ObjectBlink(binding.textViewToPackLabel)
+                        .setAsBlink(
+                            duration = 750L,
+                            repeat = 16
+                        )
+
+                    toPackTitleAnimator.start()
+                }
+
+            }
         }
     }
 
@@ -683,12 +730,13 @@ class DetailFragment : Fragment() {
          * @return A new instance of fragment DetailFragment.
          */
         @JvmStatic
-        fun newInstance(taskDetailId: Long = -1L, titleDetail: String, selectedDetailDatetimeISO : ParcelableZoneDateTime) =
+        fun newInstance(taskDetailId: Long = -1L, titleDetail: String, selectedDetailDatetimeISO : ParcelableZoneDateTime, setGoTo : String? = null) =
             DetailFragment().apply {
                 arguments = Bundle().apply {
                     putLong(ARG_DETAIL_ID, taskDetailId)
                     putString(ARG_DETAIL_TITLE, titleDetail)
                     putParcelable(ARG_DETAIL_SELECTED_DATE, selectedDetailDatetimeISO)
+                    putString(ARG_DETAIL_SET_GO_TO, setGoTo)
                 }
             }
     }

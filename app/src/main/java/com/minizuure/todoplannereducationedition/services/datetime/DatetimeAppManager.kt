@@ -82,7 +82,7 @@ class DatetimeAppManager(
     }
 
     fun getTodayDayId() : Int {
-        return getLocalDateTime().dayOfWeek.value % 7
+        return selectedDetailDatetimeISO.dayOfWeek.value % 7
     }
 
     /**
