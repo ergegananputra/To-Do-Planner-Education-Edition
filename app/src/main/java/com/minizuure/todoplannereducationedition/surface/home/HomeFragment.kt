@@ -30,7 +30,10 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskView
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import com.minizuure.todoplannereducationedition.services.notification.AndroidAlarmManager
 import com.minizuure.todoplannereducationedition.services.notification.ItemAlarmQueue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.LocalTime
 import java.time.ZonedDateTime
 
 
@@ -43,7 +46,7 @@ class HomeFragment : Fragment() {
 
     private val todayMainTaskAdapter by lazy {
         MainTaskAdapter(
-            currentDate = DatetimeAppManager().getLocalDateTime(),
+            currentDate = DatetimeAppManager().selectedDetailDatetimeISO,
             scope = lifecycleScope,
             sessionViewModel = sessionViewModel,
             routineViewModel = routineViewModel,
@@ -55,33 +58,95 @@ class HomeFragment : Fragment() {
         )
     }
 
-    private fun setOnClickOpenToPackInDetail(taskTable: TaskTable) {
+    private val upComingMainTaskAdapter by lazy {
+        MainTaskAdapter(
+            currentDate = DatetimeAppManager().selectedDetailDatetimeISO.plusDays(1),
+            scope = lifecycleScope,
+            sessionViewModel = sessionViewModel,
+            routineViewModel = routineViewModel,
+            taskViewModel = taskViewModel,
+            notesViewModel = noteViewModel,
+            onClickOpenDetail = { setOnClickOpenDetailUpcoming(it)},
+            onClickOpenQuizInDetail = {setOnClickOpenQuizInDetailUpcoming(it)},
+            onClickOpenToPackInDetail = { setOnClickOpenToPackInDetailUpcoming(it) }
+        )
+    }
+
+    /**
+     * Set on click open to pack in detail upcoming.
+     * Note: The interval is the difference between today and the day the task is active.
+     * this only works up to 7 days.
+     *
+     *
+     * Please tweak the code if you want to make it work for more than 7 days.
+     */
+    private fun setOnClickOpenToPackInDetailUpcoming(it: TaskTable) {
+        val todayIndex = DatetimeAppManager().getTodayDayId()
+        val interval =
+            if (todayIndex <= it.indexDay) it.indexDay - todayIndex
+            else 7 + it.indexDay - todayIndex
+        setOnClickOpenToPackInDetail(it, interval)
+    }
+
+    /**
+     * Set on click open quiz in detail upcoming.
+     * Note: The interval is the difference between today and the day the task is active.
+     * this only works up to 7 days.
+     *
+     *
+     * Please tweak the code if you want to make it work for more than 7 days.
+     */
+    private fun setOnClickOpenQuizInDetailUpcoming(it: TaskTable) {
+        val todayIndex = DatetimeAppManager().getTodayDayId()
+        val interval =
+            if (todayIndex <= it.indexDay) it.indexDay - todayIndex
+            else 7 + it.indexDay - todayIndex
+        setOnClickOpenQuizInDetail(it, interval)
+    }
+
+    /**
+     * Set on click open detail upcoming.
+     * Note: The interval is the difference between today and the day the task is active.
+     * this only works up to 7 days.
+     *
+     *
+     * Please tweak the code if you want to make it work for more than 7 days.
+     */
+    private fun setOnClickOpenDetailUpcoming(it: TaskTable) {
+        val todayIndex = DatetimeAppManager().getTodayDayId()
+        val interval =
+            if (todayIndex <= it.indexDay) it.indexDay - todayIndex
+            else 7 + it.indexDay - todayIndex
+        setOnClickOpenDetail(it, interval)
+    }
+
+    private fun setOnClickOpenToPackInDetail(taskTable: TaskTable, interval: Int = 0) {
         val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
             actionToOpen = OPEN_DETAIL_GO_TO_PACK,
             title = taskTable.title,
             id = taskTable.id,
-            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime())
+            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime().plusDays(interval.toLong()))
         )
         findNavController().navigate(destination)
     }
 
 
-    private fun setOnClickOpenQuizInDetail(taskTable: TaskTable) {
+    private fun setOnClickOpenQuizInDetail(taskTable: TaskTable, interval: Int = 0) {
         val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
             actionToOpen = OPEN_DETAIL_GO_TO_QUIZ,
             title = taskTable.title,
             id = taskTable.id,
-            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime())
+            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime().plusDays(interval.toLong()))
         )
         findNavController().navigate(destination)
     }
 
-    private fun setOnClickOpenDetail(taskTable: TaskTable) {
+    private fun setOnClickOpenDetail(taskTable: TaskTable, interval: Int = 0) {
         val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
             actionToOpen = OPEN_DETAIL,
             title = taskTable.title,
             id = taskTable.id,
-            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime())
+            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime().plusDays(interval.toLong()))
         )
         findNavController().navigate(destination)
     }
@@ -103,23 +168,59 @@ class HomeFragment : Fragment() {
         setupTodayRecyclerView()
 
         // TODO: Setup upcoming recyler
-
+        setupUpcomingSection()
+        setupUpcomingRecyclerView()
 
 
         // NOTE: Testing
         androidDevelopmentAlarmTest()
     }
 
+
+
+    private fun setupUpcomingSection() {
+        binding.buttonExpandableUpcoming.setOnClickListener {
+            upcomingDrawerAnimation()
+        }
+        binding.drawerUpcoming.setOnClickListener {
+            upcomingDrawerAnimation()
+        }
+        binding.textViewDrawerUpcoming.setOnClickListener {
+            upcomingDrawerAnimation()
+        }
+    }
+
+    private fun upcomingDrawerAnimation() {
+        TransitionManager.beginDelayedTransition(binding.constraintLayoutHome)
+        if (binding.recyclerViewUpcoming.visibility == View.VISIBLE) {
+            binding.recyclerViewUpcoming.visibility = View.GONE
+            binding.buttonExpandableUpcoming.isActivated = true
+        } else {
+            binding.recyclerViewUpcoming.visibility = View.VISIBLE
+            binding.buttonExpandableUpcoming.isActivated = false
+        }
+    }
+
     private fun setupTodaySection() {
         binding.buttonExpandableToday.setOnClickListener {
-            TransitionManager.beginDelayedTransition(binding.constraintLayoutHome)
-            if (binding.recyclerViewToday.visibility == View.VISIBLE) {
-                binding.recyclerViewToday.visibility = View.GONE
-                it.isActivated = true
-            } else {
-                binding.recyclerViewToday.visibility = View.VISIBLE
-                it.isActivated = false
-            }
+            todayDrawerAnimation()
+        }
+        binding.drawerToday.setOnClickListener {
+            todayDrawerAnimation()
+        }
+        binding.textViewDrawerToday.setOnClickListener {
+            todayDrawerAnimation()
+        }
+    }
+
+    private fun todayDrawerAnimation() {
+        TransitionManager.beginDelayedTransition(binding.constraintLayoutHome)
+        if (binding.recyclerViewToday.visibility == View.VISIBLE) {
+            binding.recyclerViewToday.visibility = View.GONE
+            binding.buttonExpandableToday.isActivated = true
+        } else {
+            binding.recyclerViewToday.visibility = View.VISIBLE
+            binding.buttonExpandableToday.isActivated = false
         }
     }
 
@@ -159,18 +260,56 @@ class HomeFragment : Fragment() {
 
     }
 
+    private fun setupUpcomingRecyclerView() {
+        binding.recyclerViewUpcoming.apply {
+            layoutManager = LinearLayoutManager(requireActivity())
+            adapter = upComingMainTaskAdapter
+        }
+
+
+        updateUpcomingAdapter()
+    }
+
+    private fun updateUpcomingAdapter() {
+        lifecycleScope.launch {
+            val today = DatetimeAppManager().selectedDetailDatetimeISO
+            val upcomingTask = mutableListOf<TaskTable>()
+            val dayOne = withContext(Dispatchers.IO) {
+                taskViewModel.getByIndexDay(DatetimeAppManager(today.plusDays(1)).getTodayDayId())
+            }
+            val dayTwo = withContext(Dispatchers.IO) {
+                taskViewModel.getByIndexDay(DatetimeAppManager(today.plusDays(2)).getTodayDayId())
+            }
+            val dayThree = withContext(Dispatchers.IO) {
+                taskViewModel.getByIndexDay(DatetimeAppManager(today.plusDays(3)).getTodayDayId())
+            }
+
+            upcomingTask.addAll(dayOne + dayTwo + dayThree)
+
+            upComingMainTaskAdapter.submitList(upcomingTask)
+        }
+    }
+
     private fun setupTodayRecyclerView() {
         binding.recyclerViewToday.apply {
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = LinearLayoutManager(requireActivity())
             adapter = todayMainTaskAdapter
         }
 
-        updateAdapter()
+        updateQuizAdapter()
     }
 
-    private fun updateAdapter() {
+    private fun updateQuizAdapter() {
         lifecycleScope.launch {
-            val todayTask = taskViewModel.getByIndexDay(DatetimeAppManager().getTodayDayId())
+            val todayTask = withContext(Dispatchers.IO) {
+                val tasks = taskViewModel.getByIndexDay(DatetimeAppManager().getTodayDayId())
+                tasks.sortedWith(
+                    compareBy {
+                        LocalTime.parse(it.startTime)
+                            .isBefore(DatetimeAppManager().selectedDetailDatetimeISO.toLocalTime())
+                    }
+                )
+            }
             todayMainTaskAdapter.submitList(todayTask)
         }
     }

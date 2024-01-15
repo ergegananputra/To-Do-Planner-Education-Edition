@@ -49,7 +49,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/chip_current_day"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/chip_current_day"
-                app:srcCompat="@drawable/ic_schedule_fill"
+                app:srcCompat="@drawable/ic_schedule_24"
                 app:tint="?attr/colorPrimary" />
 
             <com.google.android.material.button.MaterialButton
@@ -308,7 +308,7 @@
         android:id="@+id/group_quiz_material_detail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:constraint_referenced_ids="card_quiz_material_detail, button_tags_quiz"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

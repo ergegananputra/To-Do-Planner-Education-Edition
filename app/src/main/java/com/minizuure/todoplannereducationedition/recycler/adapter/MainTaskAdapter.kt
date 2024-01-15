@@ -1,5 +1,6 @@
 package com.minizuure.todoplannereducationedition.recycler.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.CardScheduleBinding
 import com.minizuure.todoplannereducationedition.services.animator.ObjectFade
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
@@ -53,7 +53,7 @@ class MainTaskAdapter(
 
         fun bind(item: TaskTable) {
             setupIconTime(item)
-            setupTextTIme(item.sessionId, item.isCustomSession, item.startTime, item.endTime)
+            setupTextTime(item.sessionId, item.isCustomSession, item.startTime, item.endTime)
             setupIconCommunity(item.isSharedToCommunity)
             setupTextDay(item.indexDay)
             setupTextTitle(item.title)
@@ -67,7 +67,7 @@ class MainTaskAdapter(
             setupToPackDetail(item)
             setupTagsVisibility(item)
 
-            //TODO : Open Quiz and ToPack Detail
+            //TODO : Open Quiz and ToPack Detail for upcoming
         }
 
         private fun setupTagsVisibility(item: TaskTable) {
@@ -305,7 +305,7 @@ class MainTaskAdapter(
             }
         }
 
-        private fun setupTextTIme(
+        private fun setupTextTime(
             sessionId: Long,
             customSession: Boolean,
             startTime: String?,
@@ -330,21 +330,18 @@ class MainTaskAdapter(
         private fun setupIconTime(item: TaskTable) {
             val timeEnd = DatetimeAppManager().convertStringTimeToMinutes(item.endTime!!)
             val localDate = DatetimeAppManager().getLocalDateTime()
-            val currTime = DatetimeAppManager().convertStringTimeToMinutes(
-                "${localDate.hour}:${localDate.minute}"
-            )
 
-            val isForward = localDate.isAfter(currentDate)
+            val currTime = localDate.hour * 60 + localDate.minute
+
+
+            val isForward = localDate.isBefore(currentDate)
+            Log.d("MainTaskAdapter", "isForward: $isForward from ${item.title}")
             if (isForward) {
-                binding.imageViewIconScheduleCard.setImageResource(R.drawable.ic_schedule_fill)
+                binding.imageViewIconScheduleCard.isActivated = true
                 return
             }
 
-            if (currTime < timeEnd) {
-                binding.imageViewIconScheduleCard.setImageResource(R.drawable.ic_schedule_fill)
-            } else {
-                binding.imageViewIconScheduleCard.setImageResource(R.drawable.ic_schedule_outline)
-            }
+            binding.imageViewIconScheduleCard.isActivated = currTime < timeEnd
         }
 
 
