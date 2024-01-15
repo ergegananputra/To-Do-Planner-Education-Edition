@@ -154,7 +154,7 @@ class DetailFragment : Fragment() {
         (activity as TaskManagementActivity).setToolbarTitle(this, args.titleDetail)
         navController = Navigation.findNavController(view)
         setupViewModelFactory()
-        setScrollGoTO()
+        setScrollGoTo()
 
         lifecycleScope.launch {
             val task = taskViewModel.getById(args.taskDetailId) ?: return@launch closeFragment()
@@ -173,7 +173,7 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun setScrollGoTO() {
+    private fun setScrollGoTo() {
         val scrollTo = args.setGoTo ?: return
         when(scrollTo) {
             OPEN_DETAIL_GO_TO_QUIZ -> {
