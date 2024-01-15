@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.CardScheduleBinding
+import com.minizuure.todoplannereducationedition.services.animator.ObjectFade
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_TO_PACK
 import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModel
@@ -126,19 +127,27 @@ class MainTaskAdapter(
         }
 
         private fun showQuizDetail() {
-            binding.cardQuizMaterialDetail.visibility = View.VISIBLE
+            ObjectFade(binding.cardQuizMaterialDetail)
+                .fadeIn()
+                .start()
         }
 
         private fun hideQuizDetail() {
-            binding.cardQuizMaterialDetail.visibility = View.GONE
+            ObjectFade(binding.cardQuizMaterialDetail)
+                .fadeOut()
+                .start()
         }
 
         private fun showToPackDetail() {
-            binding.cardToPackDetail.visibility = View.VISIBLE
+            ObjectFade(binding.cardToPackDetail)
+                .fadeIn()
+                .start()
         }
 
         private fun hideToPackDetail() {
-            binding.cardToPackDetail.visibility = View.GONE
+            ObjectFade(binding.cardToPackDetail)
+                .fadeOut()
+                .start()
         }
 
         private fun setupToPackDetail(item: TaskTable) {
