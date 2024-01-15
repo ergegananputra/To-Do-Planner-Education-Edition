@@ -34,7 +34,9 @@ class MainTaskAdapter(
     private val sessionViewModel: SessionViewModel,
     private val taskViewModel : TaskViewModel,
     private val notesViewModel: NoteViewModel,
-    private val onClickOpenDetail : (TaskTable) -> Unit
+    private val onClickOpenDetail : (TaskTable) -> Unit,
+    private val onClickOpenQuizInDetail : (TaskTable) -> Unit,
+    private val onClickOpenToPackInDetail : (TaskTable) -> Unit
 ) : ListAdapter<TaskTable, MainTaskAdapter.MainTaskViewHolder>(MainTaskDiffUtil()){
     class MainTaskDiffUtil : DiffUtil.ItemCallback<TaskTable>(){
         override fun areItemsTheSame(oldItem: TaskTable, newItem: TaskTable): Boolean {
@@ -140,6 +142,7 @@ class MainTaskAdapter(
         }
 
         private fun setupToPackDetail(item: TaskTable) {
+            setupToPackOpenInDetail(item)
             val toPackMaterialAdapter = TodoNotesAdapter(
                 onClickCheckBoxAction = { _, _ -> },
                 onClickDeleteAction = { _ -> }
@@ -159,7 +162,14 @@ class MainTaskAdapter(
             }
         }
 
+        private fun setupToPackOpenInDetail(taskTable: TaskTable) {
+            binding.buttonToPackOpenInDetail.setOnClickListener {
+                onClickOpenToPackInDetail(taskTable)
+            }
+        }
+
         private fun setupQuizDetail(item: TaskTable) {
+            setupQuizOpenInDetail(item)
             val quizMaterialAdapter = TodoNotesAdapter(
                 onClickCheckBoxAction = { _, _ -> },
                 onClickDeleteAction = { _ -> }
@@ -176,7 +186,14 @@ class MainTaskAdapter(
 
                     binding.textViewQuizShortDescription.text = it.description
                     setupQuizMaterial(quizMaterialAdapter, it.id)
+
                 }
+            }
+        }
+
+        private fun setupQuizOpenInDetail(item: TaskTable) {
+            binding.buttonQuizOpenInDetail.setOnClickListener {
+                onClickOpenQuizInDetail(item)
             }
         }
 

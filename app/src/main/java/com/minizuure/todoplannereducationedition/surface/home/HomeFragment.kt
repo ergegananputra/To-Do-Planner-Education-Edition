@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentHomeBinding
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL
+import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL_GO_TO_PACK
+import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL_GO_TO_QUIZ
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_TASK
 import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
 import com.minizuure.todoplannereducationedition.recycler.adapter.MainTaskAdapter
@@ -46,8 +48,31 @@ class HomeFragment : Fragment() {
             routineViewModel = routineViewModel,
             taskViewModel = taskViewModel,
             notesViewModel = noteViewModel,
-            onClickOpenDetail = {setOnClickOpenDetail(it)}
+            onClickOpenDetail = {setOnClickOpenDetail(it)},
+            onClickOpenQuizInDetail = {setOnClickOpenQuizInDetail(it)},
+            onClickOpenToPackInDetail = {setOnClickOpenToPackInDetail(it)},
         )
+    }
+
+    private fun setOnClickOpenToPackInDetail(taskTable: TaskTable) {
+        val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
+            actionToOpen = OPEN_DETAIL_GO_TO_PACK,
+            title = taskTable.title,
+            id = taskTable.id,
+            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime())
+        )
+        findNavController().navigate(destination)
+    }
+
+
+    private fun setOnClickOpenQuizInDetail(taskTable: TaskTable) {
+        val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
+            actionToOpen = OPEN_DETAIL_GO_TO_QUIZ,
+            title = taskTable.title,
+            id = taskTable.id,
+            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime())
+        )
+        findNavController().navigate(destination)
     }
 
     private fun setOnClickOpenDetail(taskTable: TaskTable) {

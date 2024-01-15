@@ -21,7 +21,7 @@ class TaskManagementActivity : AppCompatActivity() {
     private val args : TaskManagementActivityArgs by navArgs()
     private lateinit var taskNavController : NavController
 
-    private val binding by lazy {
+    val binding by lazy {
         ActivityTaskManagementBinding.inflate(layoutInflater)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +57,24 @@ class TaskManagementActivity : AppCompatActivity() {
                 DummyFragmentDirections.actionDummyFragmentToDetailFragment(
                     taskDetailId = args.id,
                     titleDetail = args.title ?: "",
-                    selectedDatetimeDetailIso = args.selectedDatetimeISO
+                    selectedDatetimeDetailIso = args.selectedDatetimeISO,
+                    setGoTo = null
+                )
+            }
+            OPEN_DETAIL_GO_TO_QUIZ -> {
+                DummyFragmentDirections.actionDummyFragmentToDetailFragment(
+                    taskDetailId = args.id,
+                    titleDetail = args.title ?: "",
+                    selectedDatetimeDetailIso = args.selectedDatetimeISO,
+                    setGoTo = OPEN_DETAIL_GO_TO_QUIZ
+                )
+            }
+            OPEN_DETAIL_GO_TO_PACK  -> {
+                DummyFragmentDirections.actionDummyFragmentToDetailFragment(
+                    taskDetailId = args.id,
+                    titleDetail = args.title ?: "",
+                    selectedDatetimeDetailIso = args.selectedDatetimeISO,
+                    setGoTo = OPEN_DETAIL_GO_TO_PACK
                 )
             }
             else -> {
@@ -165,6 +182,8 @@ class TaskManagementActivity : AppCompatActivity() {
     companion object {
         const val OPEN_TASK = "com.minizuure.todoplannereducationedition.first_layer.task"
         const val OPEN_DETAIL = "com.minizuure.todoplannereducationedition.first_layer.detail"
+        const val OPEN_DETAIL_GO_TO_PACK = "com.minizuure.todoplannereducationedition.first_layer.detail.go_to_pack"
+        const val OPEN_DETAIL_GO_TO_QUIZ = "com.minizuure.todoplannereducationedition.first_layer.detail.go_to_quiz"
         const val OPEN_SCHEDULE = "com.minizuure.todoplannereducationedition.first_layer.schedule"
     }
 }

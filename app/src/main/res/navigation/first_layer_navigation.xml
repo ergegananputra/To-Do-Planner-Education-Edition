@@ -36,6 +36,10 @@
         <action
             android:id="@+id/action_detailFragment_to_rescheduleFragment"
             app:destination="@id/rescheduleFragment" />
+        <argument
+            android:name="set_go_to"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/rescheduleFragment"

@@ -131,7 +131,7 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button_tags_to_pack"
         style="@style/Tags.ToPack"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="To-Pack"

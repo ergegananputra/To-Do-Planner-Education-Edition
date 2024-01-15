@@ -1,6 +1,5 @@
 package com.minizuure.todoplannereducationedition.second_layer.session
 
-import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +17,7 @@ import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentSessionFormBinding
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
+import com.minizuure.todoplannereducationedition.services.animator.ObjectBlink
 import com.minizuure.todoplannereducationedition.services.database.DEFAULT_ROUTINE_ID
 import com.minizuure.todoplannereducationedition.services.database.DEFAULT_SESSION_ID
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
@@ -40,11 +40,8 @@ class SessionFormFragment : Fragment() {
     private lateinit var sessionViewModel: SessionViewModel
 
     private val selectedDaysAnimator by lazy {
-        ObjectAnimator.ofFloat(binding.textViewSelectedDaysLabel, View.ALPHA, 0.5f, 1f).apply {
-            duration = 500
-            repeatCount = 4
-            repeatMode = ObjectAnimator.REVERSE
-        }
+        ObjectBlink(binding.textViewSelectedDaysLabel)
+            .setAsBlink()
     }
 
     private fun startAnimationSelectedDaysLabel() {
