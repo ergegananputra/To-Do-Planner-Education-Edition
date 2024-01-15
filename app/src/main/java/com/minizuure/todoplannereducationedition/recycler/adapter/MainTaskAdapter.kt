@@ -24,10 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 
-/**
- * TODO LIST [MainTaskAdapter]
- * [MainTaskAdapter] needs to be able to show and navigate the quiz and toPack detail
- */
+
 class MainTaskAdapter(
     private var currentDate : ZonedDateTime,
     private val scope : CoroutineScope,
