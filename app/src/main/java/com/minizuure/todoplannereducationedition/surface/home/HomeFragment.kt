@@ -176,6 +176,12 @@ class HomeFragment : Fragment() {
         androidDevelopmentAlarmTest()
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateUpcomingAdapter()
+        updateQuizAdapter()
+    }
+
 
 
     private fun setupUpcomingSection() {
@@ -305,7 +311,7 @@ class HomeFragment : Fragment() {
                 val tasks = taskViewModel.getByIndexDay(DatetimeAppManager().getTodayDayId())
                 tasks.sortedWith(
                     compareBy {
-                        LocalTime.parse(it.startTime)
+                        LocalTime.parse(it.endTime)
                             .isBefore(DatetimeAppManager().selectedDetailDatetimeISO.toLocalTime())
                     }
                 )
