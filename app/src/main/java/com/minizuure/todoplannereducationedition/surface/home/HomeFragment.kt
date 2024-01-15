@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.TransitionManager
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentHomeBinding
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL
@@ -50,7 +51,7 @@ class HomeFragment : Fragment() {
             notesViewModel = noteViewModel,
             onClickOpenDetail = {setOnClickOpenDetail(it)},
             onClickOpenQuizInDetail = {setOnClickOpenQuizInDetail(it)},
-            onClickOpenToPackInDetail = {setOnClickOpenToPackInDetail(it)},
+            onClickOpenToPackInDetail = {setOnClickOpenToPackInDetail(it)}
         )
     }
 
@@ -98,7 +99,8 @@ class HomeFragment : Fragment() {
         setupViewModelFactory()
 
         setupEfabAddTask()
-        setupTodayRecyclerView() // TODO: Setup today recycler for NoteTask recycler
+        setupTodaySection()
+        setupTodayRecyclerView()
 
         // TODO: Setup upcoming recyler
 
@@ -106,6 +108,19 @@ class HomeFragment : Fragment() {
 
         // NOTE: Testing
         androidDevelopmentAlarmTest()
+    }
+
+    private fun setupTodaySection() {
+        binding.buttonExpandableToday.setOnClickListener {
+            TransitionManager.beginDelayedTransition(binding.constraintLayoutHome)
+            if (binding.recyclerViewToday.visibility == View.VISIBLE) {
+                binding.recyclerViewToday.visibility = View.GONE
+                it.isActivated = true
+            } else {
+                binding.recyclerViewToday.visibility = View.VISIBLE
+                it.isActivated = false
+            }
+        }
     }
 
     private fun androidDevelopmentAlarmTest() {
