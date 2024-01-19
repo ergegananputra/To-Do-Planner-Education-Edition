@@ -167,7 +167,6 @@ class HomeFragment : Fragment() {
         setupTodaySection()
         setupTodayRecyclerView()
 
-        // TODO: Setup upcoming recyler
         setupUpcomingSection()
         setupUpcomingRecyclerView()
 
@@ -280,14 +279,20 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             val today = DatetimeAppManager().selectedDetailDatetimeISO
             val upcomingTask = mutableListOf<TaskTable>()
+
+            val dateDayOne = DatetimeAppManager(today.plusDays(1))
+            val dateDayTwo = DatetimeAppManager(today.plusDays(2))
+            val dateDayThree = DatetimeAppManager(today.plusDays(3))
+
+
             val dayOne = withContext(Dispatchers.IO) {
-                taskViewModel.getByIndexDay(DatetimeAppManager(today.plusDays(1)).getTodayDayId())
+                taskViewModel.getByIndexDay(dateDayOne.getTodayDayId(), dateDayOne.selectedDetailDatetimeISO)
             }
             val dayTwo = withContext(Dispatchers.IO) {
-                taskViewModel.getByIndexDay(DatetimeAppManager(today.plusDays(2)).getTodayDayId())
+                taskViewModel.getByIndexDay(dateDayTwo.getTodayDayId(), dateDayTwo.selectedDetailDatetimeISO)
             }
             val dayThree = withContext(Dispatchers.IO) {
-                taskViewModel.getByIndexDay(DatetimeAppManager(today.plusDays(3)).getTodayDayId())
+                taskViewModel.getByIndexDay(dateDayThree.getTodayDayId(), dateDayThree.selectedDetailDatetimeISO)
             }
 
             upcomingTask.addAll(dayOne + dayTwo + dayThree)
@@ -308,14 +313,19 @@ class HomeFragment : Fragment() {
     private fun updateQuizAdapter() {
         lifecycleScope.launch {
             val todayTask = withContext(Dispatchers.IO) {
-                val tasks = taskViewModel.getByIndexDay(DatetimeAppManager().getTodayDayId())
-                tasks.sortedWith(
-                    compareBy {
-                        LocalTime.parse(it.endTime)
-                            .isBefore(DatetimeAppManager().selectedDetailDatetimeISO.toLocalTime())
-                    }
-                )
+                val today = DatetimeAppManager()
+                val tasks = taskViewModel.getByIndexDay(today.getTodayDayId(), today.selectedDetailDatetimeISO)
+                tasks
             }
+            todayMainTaskAdapter.submitList(todayTask)
+
+            val session = sessionViewModel.getAll()
+            todayTask.sortedWith(
+                compareBy {
+                    LocalTime.parse(session.first { session -> session.id == it.sessionId }.timeEnd)
+                        .isBefore(DatetimeAppManager().selectedDetailDatetimeISO.toLocalTime())
+                }
+            )
             todayMainTaskAdapter.submitList(todayTask)
         }
     }

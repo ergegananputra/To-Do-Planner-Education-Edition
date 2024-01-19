@@ -3,6 +3,7 @@ package com.minizuure.todoplannereducationedition.services.database.task
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.minizuure.todoplannereducationedition.AppDatabaseRepository
+import java.time.ZonedDateTime
 
 class TaskViewModel(
     private val appDatabaseRepository: AppDatabaseRepository
@@ -25,9 +26,9 @@ class TaskViewModel(
         return appDatabaseRepository.getPaginatedTasks(limit, offset)
     }
 
-    suspend fun getByIndexDay(indexDay: Int) : List<TaskTable> {
+    suspend fun getByIndexDay(indexDay: Int, selectedDateTime: ZonedDateTime) : List<TaskTable> {
         Log.d("TaskViewModel", "get tasks by index day: $indexDay")
-        return appDatabaseRepository.getTasksByIndexDay(indexDay)
+        return appDatabaseRepository.getTasksByIndexDay(indexDay, selectedDateTime)
     }
 
     suspend fun getBySessionId(sessionId: Long) : List<TaskTable> {
@@ -44,37 +45,16 @@ class TaskViewModel(
         title : String,
         indexDay : Int,
         sessionId : Long,
-        isCustomSession : Boolean = false,
-        startTime : String? = null,
-        endTime : String? = null,
         locationName : String? = null,
         locationAddress : String? = null,
         isSharedToCommunity : Boolean = false,
         communityId : String? = null
     ) : Long {
-        Log.d("TaskViewModel", "insert task with params: $title, $indexDay, $sessionId")
-        var timeStart : String = startTime ?: "00:00"
-        var timeEnd : String = endTime ?: "00:00"
-
-        if (!isCustomSession) {
-            val sessionTable = appDatabaseRepository.getSessionById(sessionId)
-            Log.d("TaskViewModel", "sessionTable is not null: ${sessionTable != null} ${sessionTable?.timeStart} ${sessionTable?.timeEnd}")
-
-            if (sessionTable != null) {
-                timeStart = sessionTable.timeStart
-                timeEnd = sessionTable.timeEnd
-            }
-
-        }
-
         return appDatabaseRepository.insertTask(
             TaskTable(
                 title = title,
                 indexDay = indexDay,
                 sessionId = sessionId,
-                isCustomSession = isCustomSession,
-                startTime = timeStart,
-                endTime = timeEnd,
                 locationName = locationName,
                 locationAddress = locationAddress,
                 isSharedToCommunity = isSharedToCommunity,

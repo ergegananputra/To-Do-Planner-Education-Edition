@@ -1,7 +1,6 @@
 package com.minizuure.todoplannereducationedition
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatActivity
 import com.minizuure.todoplannereducationedition.services.database.ApplicationDatabase
 
 

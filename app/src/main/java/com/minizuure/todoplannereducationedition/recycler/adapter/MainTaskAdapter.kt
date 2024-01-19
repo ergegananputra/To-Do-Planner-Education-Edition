@@ -14,6 +14,7 @@ import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_TO_PACK
 import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
+import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
@@ -52,8 +53,6 @@ class MainTaskAdapter(
     ) : RecyclerView.ViewHolder(binding.root){
 
         fun bind(item: TaskTable) {
-            setupIconTime(item)
-            setupTextTime(item.sessionId, item.isCustomSession, item.startTime, item.endTime)
             setupIconCommunity(item.isSharedToCommunity)
             setupTextDay(item.indexDay)
             setupTextTitle(item.title)
@@ -67,7 +66,16 @@ class MainTaskAdapter(
             setupToPackDetail(item)
             setupTagsVisibility(item)
 
-            //TODO : Open Quiz and ToPack Detail for upcoming
+
+            scope.launch {
+                val session = withContext(Dispatchers.IO) {
+                    sessionViewModel.getById(item.sessionId)
+                } ?: return@launch
+
+                setupIconTime(item, session.timeEnd)
+                setupTextTime(session)
+            }
+
         }
 
         private fun setupTagsVisibility(item: TaskTable) {
@@ -305,30 +313,14 @@ class MainTaskAdapter(
             }
         }
 
-        private fun setupTextTime(
-            sessionId: Long,
-            customSession: Boolean,
-            startTime: String?,
-            endTime: String?
-        ) {
-            if (customSession) {
-                val time = "$startTime - $endTime"
-                binding.textViewDatetimeScheduleCard.text = time
-                return
-            }
-
-            scope.launch {
-                val session = withContext(Dispatchers.IO) { sessionViewModel.getById(sessionId) }
-                session?.let {
-                    val time = "${session.timeStart} - ${session.timeEnd}"
-                    binding.textViewDatetimeScheduleCard.text = time
-                }
-            }
+        private fun setupTextTime(session: SessionTable) {
+            val time = "${session.timeStart} - ${session.timeEnd}"
+            binding.textViewDatetimeScheduleCard.text = time
         }
 
 
-        private fun setupIconTime(item: TaskTable) {
-            val timeEnd = DatetimeAppManager().convertStringTimeToMinutes(item.endTime!!)
+        private fun setupIconTime(item: TaskTable, endTime: String) {
+            val timeEnd = DatetimeAppManager().convertStringTimeToMinutes(endTime)
             val localDate = DatetimeAppManager().getLocalDateTime()
 
             val currTime = localDate.hour * 60 + localDate.minute

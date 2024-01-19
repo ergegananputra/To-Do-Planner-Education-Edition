@@ -3,7 +3,7 @@ package com.minizuure.todoplannereducationedition.services.database.task
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.minizuure.todoplannereducationedition.services.database.CUSTOM_SESSION_ID
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_SESSION_ID
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 
 /**
@@ -27,9 +27,6 @@ import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppMa
  * @param indexDay The day the task is active. Stored in integer format.
  * @param sessionId to make relation with session, it's not must because sometimes user choose custom session.
  * @param updatedAt The time the task is updated.
- * @param isCustomSession to check if user choose custom session or not.
- * @param startTime The time the task starts.
- * @param endTime The time the task ends.
  * @param locationName The name of the location.
  * @param locationAddress The address of the location.
  * @param isSharedToCommunity to check if user share this task to community or not.
@@ -49,21 +46,10 @@ data class TaskTable(
     var indexDay : Int = 0,
 
     @ColumnInfo(name = "session_id")
-    var sessionId : Long = CUSTOM_SESSION_ID,
+    var sessionId : Long = DEFAULT_SESSION_ID,
 
     @ColumnInfo(name = "updated_at")
     var updatedAt: String = DatetimeAppManager().dateISO8601inString,
-
-    // Additional Custom Session
-
-    @ColumnInfo(name = "is_custom_session")
-    var isCustomSession : Boolean = false,
-
-    @ColumnInfo(name = "time_start")
-    var startTime : String? = null,
-
-    @ColumnInfo(name = "time_end")
-    var endTime : String? = null,
 
     // Additional Location
 

@@ -23,7 +23,7 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
         TodoNoteTable::class,
         NotesTaskTable::class
                ],
-    version = 2,
+    version = 5,
     exportSchema = true
 )
 abstract class ApplicationDatabase : RoomDatabase() {

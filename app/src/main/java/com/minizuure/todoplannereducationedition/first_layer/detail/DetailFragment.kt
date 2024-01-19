@@ -164,7 +164,7 @@ class DetailFragment : Fragment() {
 
             setupChipTags(task, routine)
             setupDate()
-            setupTime(task, session)
+            setupTime(session)
             setupLocation(task)
             setupRoutineTemplateText(routine)
             setupQuizMaterial(routine, args.selectedDatetimeDetailIso)
@@ -657,13 +657,8 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun setupTime(task: TaskTable, session: SessionTable) {
-        val timeIntervalText = if (task.isCustomSession) {
-            "${task.startTime} - ${task.endTime}"
-        } else {
-            "${session.timeStart} - ${session.timeEnd}"
-        }
-
+    private fun setupTime(session: SessionTable) {
+        val timeIntervalText = "${session.timeStart} - ${session.timeEnd}"
         binding.textViewSessionTime.text = timeIntervalText
     }
 

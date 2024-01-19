@@ -17,10 +17,22 @@ interface TaskTableDao : BaseIODao<TaskTable> {
     @Query("SELECT * FROM task_table WHERE id = :id")
     suspend fun getById(id: Long): TaskTable?
 
-    @Query("SELECT * FROM task_table WHERE index_day = :indexDay")
-    suspend fun getByIndexDay(indexDay: Int): List<TaskTable>
+    @Query("""
+        SELECT task_table.* 
+        FROM task_table 
+        JOIN session_table ON task_table.session_id = session_table.id
+        JOIN routine_table ON session_table.fk_routine_id =  routine_table.id
+        WHERE task_table.index_day = :indexDay AND routine_table.id IN (:fkRoutinesIds)
+        """
+    )
+    suspend fun getByIndexDay(indexDay: Int, fkRoutinesIds: List<Long>): List<TaskTable>
 
-    @Query("SELECT * FROM task_table WHERE is_custom_session = 1 AND session_id = :sessionId")
+    @Query("""
+        SELECT * 
+        FROM task_table 
+        WHERE session_id = :sessionId
+        """
+    )
     suspend fun getBySessionId(sessionId: Long): List<TaskTable>
 
 
