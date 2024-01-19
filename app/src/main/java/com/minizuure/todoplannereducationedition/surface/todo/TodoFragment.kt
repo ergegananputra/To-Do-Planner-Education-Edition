@@ -5,6 +5,8 @@ import android.text.format.DateUtils.isToday
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -42,7 +44,7 @@ class TodoFragment : Fragment() {
 
     private val selectedDateMainTaskAdapter by lazy {
         MainTaskAdapter(
-            currentDate = DatetimeAppManager().selectedDetailDatetimeISO,
+            currentDate = getSelectedDate(),
             scope = lifecycleScope,
             notesViewModel = noteViewModel,
             onClickOpenDetail = {setOnClickOpenDetail(it)},
@@ -103,7 +105,19 @@ class TodoFragment : Fragment() {
         setupDateArrowButtons()
         setupRecyclerView()
         setupEfabAddTask()
+
+        setupSearchBar()
     }
+
+    private fun setupSearchBar() {
+        // TODO: Search bar
+        binding.searchBarTodo.editText?.doAfterTextChanged { text ->
+            val searchQuery = text.toString().trim()
+            updateQuizAdapterWithResult(searchQuery)
+        }
+    }
+
+
 
     private fun setupDateArrowButtons() {
         binding.buttonDatetimeArrowLeft.setOnClickListener {
@@ -156,7 +170,7 @@ class TodoFragment : Fragment() {
             val selectedDateTasks = withContext(Dispatchers.IO) {
                 val selectedDate = getSelectedDate()
                 val tasks = taskViewModel.getJoinSessionByIndexDay(DatetimeAppManager(selectedDate).getTodayDayId(), selectedDate)
-
+                selectedDateMainTaskAdapter.setNewCurrentDate(selectedDate)
                 selectedDateMainTaskAdapter.submitList(tasks)
 
                 if (isToday(selectedDate.toInstant().toEpochMilli())) {
@@ -176,6 +190,11 @@ class TodoFragment : Fragment() {
 
 
         }
+    }
+
+    private fun updateQuizAdapterWithResult(searchQuery: String) {
+        //TODO: Search result from database
+        Toast.makeText(requireContext(), "Search result for $searchQuery", Toast.LENGTH_SHORT).show()
     }
 
     private fun setupCalendarDialog() {
