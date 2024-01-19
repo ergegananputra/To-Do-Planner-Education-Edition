@@ -12,12 +12,8 @@ import com.minizuure.todoplannereducationedition.databinding.CardScheduleBinding
 import com.minizuure.todoplannereducationedition.services.animator.ObjectFade
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_TO_PACK
+import com.minizuure.todoplannereducationedition.services.database.join.TaskAndSessionJoin
 import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModel
-import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
-import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
-import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
-import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
-import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,20 +25,17 @@ import java.time.ZonedDateTime
 class MainTaskAdapter(
     private var currentDate : ZonedDateTime,
     private val scope : CoroutineScope,
-    private val routineViewModel : RoutineViewModel,
-    private val sessionViewModel: SessionViewModel,
-    private val taskViewModel : TaskViewModel,
     private val notesViewModel: NoteViewModel,
-    private val onClickOpenDetail : (TaskTable) -> Unit,
-    private val onClickOpenQuizInDetail : (TaskTable) -> Unit,
-    private val onClickOpenToPackInDetail : (TaskTable) -> Unit
-) : ListAdapter<TaskTable, MainTaskAdapter.MainTaskViewHolder>(MainTaskDiffUtil()){
-    class MainTaskDiffUtil : DiffUtil.ItemCallback<TaskTable>(){
-        override fun areItemsTheSame(oldItem: TaskTable, newItem: TaskTable): Boolean {
+    private val onClickOpenDetail : (TaskAndSessionJoin) -> Unit,
+    private val onClickOpenQuizInDetail : (TaskAndSessionJoin) -> Unit,
+    private val onClickOpenToPackInDetail : (TaskAndSessionJoin) -> Unit
+) : ListAdapter<TaskAndSessionJoin, MainTaskAdapter.MainTaskViewHolder>(MainTaskDiffUtil()){
+    class MainTaskDiffUtil : DiffUtil.ItemCallback<TaskAndSessionJoin>(){
+        override fun areItemsTheSame(oldItem: TaskAndSessionJoin, newItem: TaskAndSessionJoin): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: TaskTable, newItem: TaskTable): Boolean {
+        override fun areContentsTheSame(oldItem: TaskAndSessionJoin, newItem: TaskAndSessionJoin): Boolean {
             return oldItem.toString() == newItem.toString()
         }
 
@@ -52,7 +45,15 @@ class MainTaskAdapter(
         private val binding : CardScheduleBinding
     ) : RecyclerView.ViewHolder(binding.root){
 
-        fun bind(item: TaskTable) {
+        fun bind(item: TaskAndSessionJoin) {
+
+            setupTagsVisibility(item)
+            setupQuizDetail(item)
+            setupToPackDetail(item)
+
+            setupIconTime(item, item.sessionTimeEnd)
+            setupTextTime(item)
+
             setupIconCommunity(item.isSharedToCommunity)
             setupTextDay(item.indexDay)
             setupTextTitle(item.title)
@@ -62,23 +63,11 @@ class MainTaskAdapter(
                 onClickOpenDetail(item)
             }
 
-            setupQuizDetail(item)
-            setupToPackDetail(item)
-            setupTagsVisibility(item)
 
-
-            scope.launch {
-                val session = withContext(Dispatchers.IO) {
-                    sessionViewModel.getById(item.sessionId)
-                } ?: return@launch
-
-                setupIconTime(item, session.timeEnd)
-                setupTextTime(session)
-            }
 
         }
 
-        private fun setupTagsVisibility(item: TaskTable) {
+        private fun setupTagsVisibility(item: TaskAndSessionJoin) {
             scope.launch {
                 val countQuiz = withContext(Dispatchers.IO) {
                     notesViewModel.note.getCountByFKTaskIdAndCategory(item.id, CATEGORY_QUIZ)
@@ -88,22 +77,22 @@ class MainTaskAdapter(
                 }
 
                 if (countQuiz > 0) {
-                    binding.groupQuizMaterialDetail.visibility = View.VISIBLE
+                    binding.buttonTagsQuiz.visibility = View.VISIBLE
                     hideQuizDetail()
 
                     setQuizTagsListener()
                 } else {
-                    binding.groupQuizMaterialDetail.visibility = View.GONE
+                    binding.buttonTagsQuiz.visibility = View.GONE
                     hideQuizDetail()
                 }
 
                 if (countToPack > 0) {
-                    binding.groupToPackDetail.visibility = View.VISIBLE
+                    binding.buttonTagsToPack.visibility = View.VISIBLE
                     hideToPackDetail()
 
                     setToPackTagsListener()
                 } else {
-                    binding.groupToPackDetail.visibility = View.GONE
+                    binding.buttonTagsToPack.visibility = View.GONE
                     hideToPackDetail()
                 }
             }
@@ -155,7 +144,7 @@ class MainTaskAdapter(
                 .start()
         }
 
-        private fun setupToPackDetail(item: TaskTable) {
+        private fun setupToPackDetail(item: TaskAndSessionJoin) {
             setupToPackOpenInDetail(item)
             val toPackMaterialAdapter = TodoNotesAdapter(
                 onClickCheckBoxAction = { _, _ -> },
@@ -176,13 +165,13 @@ class MainTaskAdapter(
             }
         }
 
-        private fun setupToPackOpenInDetail(taskTable: TaskTable) {
+        private fun setupToPackOpenInDetail(taskAndSessionJoinTable: TaskAndSessionJoin) {
             binding.buttonToPackOpenInDetail.setOnClickListener {
-                onClickOpenToPackInDetail(taskTable)
+                onClickOpenToPackInDetail(taskAndSessionJoinTable)
             }
         }
 
-        private fun setupQuizDetail(item: TaskTable) {
+        private fun setupQuizDetail(item: TaskAndSessionJoin) {
             setupQuizOpenInDetail(item)
             val quizMaterialAdapter = TodoNotesAdapter(
                 onClickCheckBoxAction = { _, _ -> },
@@ -205,7 +194,7 @@ class MainTaskAdapter(
             }
         }
 
-        private fun setupQuizOpenInDetail(item: TaskTable) {
+        private fun setupQuizOpenInDetail(item: TaskAndSessionJoin) {
             binding.buttonQuizOpenInDetail.setOnClickListener {
                 onClickOpenQuizInDetail(item)
             }
@@ -313,13 +302,13 @@ class MainTaskAdapter(
             }
         }
 
-        private fun setupTextTime(session: SessionTable) {
-            val time = "${session.timeStart} - ${session.timeEnd}"
+        private fun setupTextTime(item: TaskAndSessionJoin) {
+            val time = "${item.sessionTimeStart} - ${item.sessionTimeEnd}"
             binding.textViewDatetimeScheduleCard.text = time
         }
 
 
-        private fun setupIconTime(item: TaskTable, endTime: String) {
+        private fun setupIconTime(item: TaskAndSessionJoin, endTime: String) {
             val timeEnd = DatetimeAppManager().convertStringTimeToMinutes(endTime)
             val localDate = DatetimeAppManager().getLocalDateTime()
 

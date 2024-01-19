@@ -18,13 +18,13 @@ import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActiv
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_TASK
 import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
 import com.minizuure.todoplannereducationedition.recycler.adapter.MainTaskAdapter
+import com.minizuure.todoplannereducationedition.services.database.join.TaskAndSessionJoin
 import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModel
 import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
-import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModelFactory
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
@@ -48,9 +48,6 @@ class HomeFragment : Fragment() {
         MainTaskAdapter(
             currentDate = DatetimeAppManager().selectedDetailDatetimeISO,
             scope = lifecycleScope,
-            sessionViewModel = sessionViewModel,
-            routineViewModel = routineViewModel,
-            taskViewModel = taskViewModel,
             notesViewModel = noteViewModel,
             onClickOpenDetail = {setOnClickOpenDetail(it)},
             onClickOpenQuizInDetail = {setOnClickOpenQuizInDetail(it)},
@@ -62,9 +59,6 @@ class HomeFragment : Fragment() {
         MainTaskAdapter(
             currentDate = DatetimeAppManager().selectedDetailDatetimeISO.plusDays(1),
             scope = lifecycleScope,
-            sessionViewModel = sessionViewModel,
-            routineViewModel = routineViewModel,
-            taskViewModel = taskViewModel,
             notesViewModel = noteViewModel,
             onClickOpenDetail = { setOnClickOpenDetailUpcoming(it)},
             onClickOpenQuizInDetail = {setOnClickOpenQuizInDetailUpcoming(it)},
@@ -80,7 +74,7 @@ class HomeFragment : Fragment() {
      *
      * Please tweak the code if you want to make it work for more than 7 days.
      */
-    private fun setOnClickOpenToPackInDetailUpcoming(it: TaskTable) {
+    private fun setOnClickOpenToPackInDetailUpcoming(it: TaskAndSessionJoin) {
         val todayIndex = DatetimeAppManager().getTodayDayId()
         val interval =
             if (todayIndex <= it.indexDay) it.indexDay - todayIndex
@@ -96,7 +90,7 @@ class HomeFragment : Fragment() {
      *
      * Please tweak the code if you want to make it work for more than 7 days.
      */
-    private fun setOnClickOpenQuizInDetailUpcoming(it: TaskTable) {
+    private fun setOnClickOpenQuizInDetailUpcoming(it: TaskAndSessionJoin) {
         val todayIndex = DatetimeAppManager().getTodayDayId()
         val interval =
             if (todayIndex <= it.indexDay) it.indexDay - todayIndex
@@ -112,7 +106,7 @@ class HomeFragment : Fragment() {
      *
      * Please tweak the code if you want to make it work for more than 7 days.
      */
-    private fun setOnClickOpenDetailUpcoming(it: TaskTable) {
+    private fun setOnClickOpenDetailUpcoming(it: TaskAndSessionJoin) {
         val todayIndex = DatetimeAppManager().getTodayDayId()
         val interval =
             if (todayIndex <= it.indexDay) it.indexDay - todayIndex
@@ -120,32 +114,32 @@ class HomeFragment : Fragment() {
         setOnClickOpenDetail(it, interval)
     }
 
-    private fun setOnClickOpenToPackInDetail(taskTable: TaskTable, interval: Int = 0) {
+    private fun setOnClickOpenToPackInDetail(taskAndSessionJoinTable: TaskAndSessionJoin, interval: Int = 0) {
         val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
             actionToOpen = OPEN_DETAIL_GO_TO_PACK,
-            title = taskTable.title,
-            id = taskTable.id,
+            title = taskAndSessionJoinTable.title,
+            id = taskAndSessionJoinTable.id,
             selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime().plusDays(interval.toLong()))
         )
         findNavController().navigate(destination)
     }
 
 
-    private fun setOnClickOpenQuizInDetail(taskTable: TaskTable, interval: Int = 0) {
+    private fun setOnClickOpenQuizInDetail(taskAndSessionJoinTable: TaskAndSessionJoin, interval: Int = 0) {
         val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
             actionToOpen = OPEN_DETAIL_GO_TO_QUIZ,
-            title = taskTable.title,
-            id = taskTable.id,
+            title = taskAndSessionJoinTable.title,
+            id = taskAndSessionJoinTable.id,
             selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime().plusDays(interval.toLong()))
         )
         findNavController().navigate(destination)
     }
 
-    private fun setOnClickOpenDetail(taskTable: TaskTable, interval: Int = 0) {
+    private fun setOnClickOpenDetail(taskAndSessionJoinTable: TaskAndSessionJoin, interval: Int = 0) {
         val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
             actionToOpen = OPEN_DETAIL,
-            title = taskTable.title,
-            id = taskTable.id,
+            title = taskAndSessionJoinTable.title,
+            id = taskAndSessionJoinTable.id,
             selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime().plusDays(interval.toLong()))
         )
         findNavController().navigate(destination)
@@ -278,7 +272,7 @@ class HomeFragment : Fragment() {
     private fun updateUpcomingAdapter() {
         lifecycleScope.launch {
             val today = DatetimeAppManager().selectedDetailDatetimeISO
-            val upcomingTask = mutableListOf<TaskTable>()
+            val upcomingTask = mutableListOf<TaskAndSessionJoin>()
 
             val dateDayOne = DatetimeAppManager(today.plusDays(1))
             val dateDayTwo = DatetimeAppManager(today.plusDays(2))
@@ -286,13 +280,13 @@ class HomeFragment : Fragment() {
 
 
             val dayOne = withContext(Dispatchers.IO) {
-                taskViewModel.getByIndexDay(dateDayOne.getTodayDayId(), dateDayOne.selectedDetailDatetimeISO)
+                taskViewModel.getJoinSessionByIndexDay(dateDayOne.getTodayDayId(), dateDayOne.selectedDetailDatetimeISO)
             }
             val dayTwo = withContext(Dispatchers.IO) {
-                taskViewModel.getByIndexDay(dateDayTwo.getTodayDayId(), dateDayTwo.selectedDetailDatetimeISO)
+                taskViewModel.getJoinSessionByIndexDay(dateDayTwo.getTodayDayId(), dateDayTwo.selectedDetailDatetimeISO)
             }
             val dayThree = withContext(Dispatchers.IO) {
-                taskViewModel.getByIndexDay(dateDayThree.getTodayDayId(), dateDayThree.selectedDetailDatetimeISO)
+                taskViewModel.getJoinSessionByIndexDay(dateDayThree.getTodayDayId(), dateDayThree.selectedDetailDatetimeISO)
             }
 
             upcomingTask.addAll(dayOne + dayTwo + dayThree)
@@ -314,15 +308,14 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             val todayTask = withContext(Dispatchers.IO) {
                 val today = DatetimeAppManager()
-                val tasks = taskViewModel.getByIndexDay(today.getTodayDayId(), today.selectedDetailDatetimeISO)
+                val tasks = taskViewModel.getJoinSessionByIndexDay(today.getTodayDayId(), today.selectedDetailDatetimeISO)
                 tasks
             }
             todayMainTaskAdapter.submitList(todayTask)
 
-            val session = sessionViewModel.getAll()
             todayTask.sortedWith(
                 compareBy {
-                    LocalTime.parse(session.first { session -> session.id == it.sessionId }.timeEnd)
+                    LocalTime.parse(it.sessionTimeEnd)
                         .isBefore(DatetimeAppManager().selectedDetailDatetimeISO.toLocalTime())
                 }
             )

@@ -3,6 +3,7 @@ package com.minizuure.todoplannereducationedition.services.database.task
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.minizuure.todoplannereducationedition.AppDatabaseRepository
+import com.minizuure.todoplannereducationedition.services.database.join.TaskAndSessionJoin
 import java.time.ZonedDateTime
 
 class TaskViewModel(
@@ -29,6 +30,11 @@ class TaskViewModel(
     suspend fun getByIndexDay(indexDay: Int, selectedDateTime: ZonedDateTime) : List<TaskTable> {
         Log.d("TaskViewModel", "get tasks by index day: $indexDay")
         return appDatabaseRepository.getTasksByIndexDay(indexDay, selectedDateTime)
+    }
+
+    suspend fun getJoinSessionByIndexDay(indexDay: Int, selectedDateTime: ZonedDateTime) : List<TaskAndSessionJoin> {
+        Log.d("TaskViewModel", "get tasks by index day: $indexDay")
+        return appDatabaseRepository.getTaskAndSessionJoinByIndexDay(indexDay, selectedDateTime)
     }
 
     suspend fun getBySessionId(sessionId: Long) : List<TaskTable> {

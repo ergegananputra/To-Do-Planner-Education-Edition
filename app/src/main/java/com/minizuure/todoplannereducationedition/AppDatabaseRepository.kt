@@ -88,6 +88,17 @@ class AppDatabaseRepository(
 
         taskTableDao.getByIndexDay(indexDay, validRoutineIds)
     }
+
+    suspend fun getTaskAndSessionJoinByIndexDay(indexDay: Int, selectedDate : ZonedDateTime) = withContext(Dispatchers.IO) {
+        val routines = routineTableDao.getAll()
+        val validRoutineIds = routines.filter {
+            val endTime = DatetimeAppManager(it.date_end).selectedDetailDatetimeISO
+            selectedDate.isBefore(endTime) || selectedDate.isEqual(endTime)
+        }.map { it.id }
+
+        taskTableDao.getTaskAndSessionJoinByIndexDay(indexDay, validRoutineIds)
+    }
+
     suspend fun getTasksBySessionId(sessionId: Long) = withContext(Dispatchers.IO) { taskTableDao.getBySessionId(sessionId) }
     suspend fun insertTask(taskTable: TaskTable) :Long = withContext(Dispatchers.IO) { taskTableDao.insert(taskTable) }
     suspend fun deleteTask(taskTable: TaskTable) = withContext(Dispatchers.IO) { taskTableDao.delete(taskTable) }

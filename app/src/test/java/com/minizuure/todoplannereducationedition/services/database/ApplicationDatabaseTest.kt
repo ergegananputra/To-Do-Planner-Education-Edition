@@ -1,7 +1,5 @@
 package com.minizuure.todoplannereducationedition.services.database
 
-import junit.framework.TestCase
-import org.junit.jupiter.api.Assertions.*
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -11,11 +9,11 @@ import com.minizuure.todoplannereducationedition.services.database.session.Sessi
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTableDao
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTableDao
+import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Before
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 
 /**
@@ -80,16 +78,16 @@ class ApplicationDatabaseTest : TestCase() {
         val sessionTableFromDatabase = sessionTableDao.getAll()
         assertThat(sessionTableFromDatabase.contains(sessionTable).toString(), true)
 
-        val sesionForRoutine = sessionTableDao.getSessionsForRoutine(1)
+        val sesionForRoutine = sessionTableDao.getSessionsForRoutine(1, true)
         assertThat(sesionForRoutine.contains(sessionTable).toString(), true)
 
 
         val taskTable = TaskTable(
-            1,
-            "Task - Unit Test Case 1",
-            3,
-            1,
-            false,
+            id = 1,
+            title = "Task - Unit Test Case 1",
+            indexDay = 3,
+            sessionId = 1,
+            isSharedToCommunity = false
         )
         taskTableDao.insert(taskTable)
         val taskTableDb = taskTableDao.getBySessionId(1)
