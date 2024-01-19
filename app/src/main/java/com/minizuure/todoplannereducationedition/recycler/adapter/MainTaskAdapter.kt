@@ -30,6 +30,9 @@ class MainTaskAdapter(
     private val onClickOpenQuizInDetail : (TaskAndSessionJoin) -> Unit,
     private val onClickOpenToPackInDetail : (TaskAndSessionJoin) -> Unit
 ) : ListAdapter<TaskAndSessionJoin, MainTaskAdapter.MainTaskViewHolder>(MainTaskDiffUtil()){
+    fun setNewCurrentDate(currentDate: ZonedDateTime) {
+        this.currentDate = currentDate
+    }
     class MainTaskDiffUtil : DiffUtil.ItemCallback<TaskAndSessionJoin>(){
         override fun areItemsTheSame(oldItem: TaskAndSessionJoin, newItem: TaskAndSessionJoin): Boolean {
             return oldItem.id == newItem.id
@@ -310,18 +313,23 @@ class MainTaskAdapter(
 
         private fun setupIconTime(item: TaskAndSessionJoin, endTime: String) {
             val timeEnd = DatetimeAppManager().convertStringTimeToMinutes(endTime)
-            val localDate = DatetimeAppManager().getLocalDateTime()
-
-            val currTime = localDate.hour * 60 + localDate.minute
+            val localDate = DatetimeAppManager().selectedDetailDatetimeISO
 
 
             val isForward = localDate.isBefore(currentDate)
-            Log.d("MainTaskAdapter", "isForward: $isForward from ${item.title}")
+            Log.d(
+                "MainTaskAdapter",
+                "\n${item.title}" +
+                        "\nisForward: $isForward" +
+                        "\nlocalDate: $localDate" +
+                        "\ncurrentDate: $currentDate"
+            )
             if (isForward) {
                 binding.imageViewIconScheduleCard.isActivated = true
                 return
             }
 
+            val currTime = localDate.hour * 60 + localDate.minute
             binding.imageViewIconScheduleCard.isActivated = currTime < timeEnd
         }
 
