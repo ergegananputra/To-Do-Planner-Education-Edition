@@ -25,14 +25,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.search.SearchBar
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/search_bar_todo"
+            style="@style/SearchBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/search_here"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:endIconMode="clear_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/SearchBar.Text"
+                android:hint="@string/search_routines"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_filter_chip"
@@ -140,13 +155,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:contentDescription="@string/previous_day"
             app:icon="@drawable/ic_arrow_left"
             app:iconTint="?attr/colorOnBackground"
-            android:contentDescription="@string/previous_day"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_datetime_arrow_right"
@@ -154,29 +168,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:contentDescription="@string/next_day"
             app:icon="@drawable/ic_arrow_right"
             app:iconTint="?attr/colorOnBackground"
-            android:contentDescription="@string/next_day"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/text_view_datetime_todo"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_layout_datetime_todo"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_calendar"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:drawablePadding="16dp"
-            android:gravity="center"
-            android:text="@string/dd_mm_yyyy_format"
-            android:textAppearance="?attr/textAppearanceLabelLarge"
-            android:textColor="?attr/colorOnBackground"
-            app:layout_constraintBottom_toBottomOf="@+id/button_datetime_arrow_left"
+            android:gravity="center_vertical"
+            android:padding="0dp"
+            app:hintEnabled="false"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button_datetime_arrow_right"
             app:layout_constraintStart_toEndOf="@+id/button_datetime_arrow_left"
-            app:layout_constraintTop_toTopOf="@+id/button_datetime_arrow_left" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:startIconDrawable="@drawable/ic_calendar">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="48dp"
+                android:paddingEnd="16dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

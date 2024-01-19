@@ -30,9 +30,9 @@ class SessionViewModel(
         return appDatabaseRepository.getByRoutineId(routineId)
     }
 
-    suspend fun insert(sessionTable: SessionTable) {
+    suspend fun insert(sessionTable: SessionTable) : Long {
         Log.d("SessionViewModel", "insert session: $sessionTable")
-        appDatabaseRepository.insertSession(sessionTable)
+        return appDatabaseRepository.insertSession(sessionTable)
     }
 
     suspend fun insert(
@@ -40,18 +40,19 @@ class SessionViewModel(
         timeStart : String,
         timeEnd : String,
         selectedDays : String,
-        fkRoutineId : Long
-    ) {
+        fkRoutineId : Long,
+        isCustomSession: Boolean = false
+    ) : Long {
         Log.d("SessionViewModel", "insert session with params: $title, $timeStart, $timeEnd, $selectedDays, $fkRoutineId")
         val sessionTable = SessionTable(
-            id = 0,
             title = title,
             timeStart = timeStart,
             timeEnd = timeEnd,
             selectedDays = selectedDays,
-            fkRoutineId = fkRoutineId
+            fkRoutineId = fkRoutineId,
+            isCustomSession = isCustomSession
         )
-        appDatabaseRepository.insertSession(sessionTable)
+        return appDatabaseRepository.insertSession(sessionTable)
     }
 
     suspend fun delete(sessionTable: SessionTable) {
@@ -64,6 +65,26 @@ class SessionViewModel(
         appDatabaseRepository.updateSession(sessionTable)
     }
 
+    suspend fun updateCustomSession(
+        sessionId: Long,
+        isCustomSession: Boolean,
+        timeStart: String = "",
+        timeEnd: String = "",
+    ) {
+        Log.d("SessionViewModel", "update custom session status: $sessionId, $isCustomSession")
+        val sessionTable = appDatabaseRepository.getSessionById(sessionId)
+        if (sessionTable != null && isCustomSession) {
+            sessionTable.isCustomSession = true
+            sessionTable.timeStart = timeStart
+            sessionTable.timeEnd = timeEnd
+            appDatabaseRepository.updateSession(sessionTable)
+        }
+        else if (sessionTable != null) {
+            sessionTable.isCustomSession = false
+            appDatabaseRepository.updateSession(sessionTable)
+        }
+    }
+
     suspend fun search(searchQuery: String) : List<SessionTable> {
         Log.d("SessionViewModel", "search sessions with query: $searchQuery")
         return appDatabaseRepository.searchSessions(searchQuery)
@@ -74,9 +95,9 @@ class SessionViewModel(
         return appDatabaseRepository.countSessionsForRoutine(routineId)
     }
 
-    suspend fun getSessionsForRoutine(routineId: Long) : List<SessionTable> {
+    suspend fun getSessionsForRoutine(routineId: Long, isCustomSessionIncluded : Boolean) : List<SessionTable> {
         Log.d("SessionViewModel", "get sessions for routine: $routineId")
-        return appDatabaseRepository.getSessionsForRoutine(routineId)
+        return appDatabaseRepository.getSessionsForRoutine(routineId, isCustomSessionIncluded)
     }
 
 }

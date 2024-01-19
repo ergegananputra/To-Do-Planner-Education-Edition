@@ -25,6 +25,6 @@ interface SessionTableDao : BaseIODao<SessionTable> {
     @Query("SELECT COUNT(*) FROM session_table WHERE fk_routine_id = :routineId")
     suspend fun countSessionsForRoutine(routineId: Long): Int
 
-    @Query("SELECT * FROM session_table WHERE fk_routine_id = :routineId")
-    suspend fun getSessionsForRoutine(routineId: Long): List<SessionTable>
+    @Query("SELECT * FROM session_table WHERE fk_routine_id = :routineId AND is_custom_session = :isCustomSessionIncluded")
+    suspend fun getSessionsForRoutine(routineId: Long, isCustomSessionIncluded : Boolean): List<SessionTable>
 }

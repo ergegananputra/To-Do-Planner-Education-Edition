@@ -22,7 +22,6 @@ const val CATEGORY_MEMO = "Category_Memo"
 const val DEFAULT_TASK_ID = -1L
 const val DEFAULT_ROUTINE_ID = -1L
 const val DEFAULT_SESSION_ID = -1L
-const val CUSTOM_SESSION_ID = -1L
 
 const val DEFAULT_NOTE_ID = -1L
 

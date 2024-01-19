@@ -74,6 +74,13 @@ class DatetimeAppManager(
         this.selectedDetailDatetimeISO = localizedUTC(dateISO8601inString)
     }
 
+    constructor(readableDatetime: String, fromReadable : Boolean) : this() {
+        if (fromReadable) {
+            this.selectedDetailDatetimeISO = LocalDate.parse(readableDatetime, DateTimeFormatter.ofPattern(dateTimeFormatPattern)).atStartOfDay(zoneLocalTimeId)
+            this.dateISO8601inString = this.selectedDetailDatetimeISO.toInstant().toString()
+        }
+    }
+
     /**
      * @return ZonedDateTime of the current time in the local time zone. example: "2021-08-01T00:00:00.000+02:00[Europe/Paris]"
      */

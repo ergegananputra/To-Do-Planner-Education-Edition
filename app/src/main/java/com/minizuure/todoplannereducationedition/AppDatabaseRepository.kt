@@ -14,6 +14,7 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.time.ZonedDateTime
 
 /**
  * AppDatabaseRepository
@@ -67,7 +68,7 @@ class AppDatabaseRepository(
     suspend fun updateSession(sessionTable: SessionTable) = withContext(Dispatchers.IO) { sessionTableDao.update(sessionTable) }
     suspend fun searchSessions(searchQuery: String) = withContext(Dispatchers.IO) { sessionTableDao.search("%$searchQuery%") }
     suspend fun countSessionsForRoutine(routineId: Long) = withContext(Dispatchers.IO) { sessionTableDao.countSessionsForRoutine(routineId) }
-    suspend fun getSessionsForRoutine(routineId: Long) = withContext(Dispatchers.IO) { sessionTableDao.getSessionsForRoutine(routineId) }
+    suspend fun getSessionsForRoutine(routineId: Long, isCustomSessionIncluded : Boolean) = withContext(Dispatchers.IO) { sessionTableDao.getSessionsForRoutine(routineId, isCustomSessionIncluded) }
 
 
     // TaskTableDao
@@ -77,7 +78,27 @@ class AppDatabaseRepository(
         withContext(Dispatchers.IO) {
             taskTableDao.getPaginated(limit, offset)
         }
-    suspend fun getTasksByIndexDay(indexDay: Int) = withContext(Dispatchers.IO) { taskTableDao.getByIndexDay(indexDay) }
+    suspend fun getTasksByIndexDay(indexDay: Int, selectedDate : ZonedDateTime) = withContext(Dispatchers.IO) {
+        val routines = routineTableDao.getAll()
+        val validRoutineIds = routines.filter {
+            val endTime = DatetimeAppManager(it.date_end).selectedDetailDatetimeISO
+            selectedDate.isBefore(endTime) || selectedDate.isEqual(endTime)
+        }.map { it.id }
+
+
+        taskTableDao.getByIndexDay(indexDay, validRoutineIds)
+    }
+
+    suspend fun getTaskAndSessionJoinByIndexDay(indexDay: Int, selectedDate : ZonedDateTime) = withContext(Dispatchers.IO) {
+        val routines = routineTableDao.getAll()
+        val validRoutineIds = routines.filter {
+            val endTime = DatetimeAppManager(it.date_end).selectedDetailDatetimeISO
+            selectedDate.isBefore(endTime) || selectedDate.isEqual(endTime)
+        }.map { it.id }
+
+        taskTableDao.getTaskAndSessionJoinByIndexDay(indexDay, validRoutineIds)
+    }
+
     suspend fun getTasksBySessionId(sessionId: Long) = withContext(Dispatchers.IO) { taskTableDao.getBySessionId(sessionId) }
     suspend fun insertTask(taskTable: TaskTable) :Long = withContext(Dispatchers.IO) { taskTableDao.insert(taskTable) }
     suspend fun deleteTask(taskTable: TaskTable) = withContext(Dispatchers.IO) { taskTableDao.delete(taskTable) }

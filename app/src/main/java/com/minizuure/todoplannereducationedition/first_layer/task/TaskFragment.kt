@@ -21,6 +21,7 @@ import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.G
 import com.minizuure.todoplannereducationedition.dialog_modal.preset.MinimumBottomSheetDialog.Companion.isDialogOpen
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
 import com.minizuure.todoplannereducationedition.services.customtextfield.CustomTextField
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_SESSION_ID
 import com.minizuure.todoplannereducationedition.services.database.DEFAULT_TASK_ID
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
@@ -95,16 +96,16 @@ class TaskFragment : Fragment() {
             binding.textInputLayoutSelectDay.editText?.setText(dayName)
 
             // is Custom Session
-            taskFormViewModel.setIsCustomSession(task.isCustomSession)
+            taskFormViewModel.setIsCustomSession(session.isCustomSession)
 
             // session
             taskFormViewModel.setSession(session)
 
             // time start
-            task.startTime?.let { taskFormViewModel.setTimeStart(it) }
+            session.timeStart.let { taskFormViewModel.setTimeStart(it) }
 
             // time end
-            task.endTime?.let { taskFormViewModel.setTimeEnd(it) }
+            session.timeStart.let { taskFormViewModel.setTimeEnd(it) }
 
             // location
             binding.teksInputLayoutLocation.editText?.setText(task.locationName)
@@ -121,7 +122,7 @@ class TaskFragment : Fragment() {
                 val taskId : Long = args.taskId
                 val title : String = binding.taskInputLayoutTitle.editText?.text.toString().trim()
                 val indexDay : Int? = taskFormViewModel.getDay()?.getId()
-                val sessionId : Long?= taskFormViewModel.getSession()?.id
+                val sessionId : Long = taskFormViewModel.getSession()?.id ?: DEFAULT_SESSION_ID
                 val isCustomSession: Boolean = taskFormViewModel.getIsCustomSession()
                 val customTimeStart: String? = taskFormViewModel.getTimeStart()
                 val customTimeEnd: String? = taskFormViewModel.getTimeEnd()
@@ -130,16 +131,18 @@ class TaskFragment : Fragment() {
                 val isCommunity: Boolean = binding.switchShareToCommunity.isChecked
                 val communityId : String? = null // TODO: setup community id
 
-                val isValid = validateTaskForm(
-                    title,
-                    indexDay,
-                    sessionId,
-                    isCustomSession,
-                    customTimeStart,
-                    customTimeEnd,
-                    isCommunity,
-                    communityId
-                )
+                val isValid = withContext(Dispatchers.Main) {
+                    validateTaskForm(
+                        title,
+                        indexDay,
+                        sessionId,
+                        isCustomSession,
+                        customTimeStart,
+                        customTimeEnd,
+                        isCommunity,
+                        communityId
+                    )
+                }
 
                 if (!isValid) return@launch
 
@@ -148,7 +151,7 @@ class TaskFragment : Fragment() {
                     createNewTask(
                         title,
                         indexDay!!,
-                        sessionId!!,
+                        sessionId,
                         isCustomSession,
                         customTimeStart,
                         customTimeEnd,
@@ -164,7 +167,7 @@ class TaskFragment : Fragment() {
                         taskId,
                         title,
                         indexDay!!,
-                        sessionId!!,
+                        sessionId,
                         isCustomSession,
                         customTimeStart,
                         customTimeEnd,
@@ -208,7 +211,7 @@ class TaskFragment : Fragment() {
             return false
         }
 
-        if (sessionId == null) {
+        if (sessionId == null && !customSession) {
             val errorMsg = getString(R.string.error_msg_session_empty)
             binding.textInputLayoutSelectSession.error = errorMsg
             return false
@@ -262,16 +265,41 @@ class TaskFragment : Fragment() {
                     title = title,
                     indexDay = indexDay,
                     sessionId = sessionId,
-                    isCustomSession = customSession,
-                    startTime = customTimeStart,
-                    endTime = customTimeEnd,
                     locationName = location,
                     locationAddress = locationLink,
                     isSharedToCommunity = community,
                     communityId = communityId,
                 )
             )
+
+            if (customSession) {
+                sessionViewModel.updateCustomSession(
+                    sessionId,
+                    true,
+                    customTimeStart!!,
+                    customTimeEnd!!
+                )
+            }
         }
+    }
+
+    private suspend fun createCustomSession(indexDay: Int, customTimeStart: String, customTimeEnd: String) : Long{
+        val routine = withContext(Dispatchers.IO) { taskFormViewModel.getRoutineTemplate() } ?: return DEFAULT_SESSION_ID
+
+        val selectedDay = "0000000"
+        val newSelectedDay = selectedDay.mapIndexed { index, char ->
+            if (index == indexDay) '1' else char
+        }.joinToString("")
+
+        return sessionViewModel.insert(
+            title = "Custom",
+            timeStart = customTimeStart,
+            timeEnd = customTimeEnd,
+            selectedDays = newSelectedDay,
+            fkRoutineId = routine.id,
+            isCustomSession = true
+
+        )
     }
 
     private suspend fun createNewTask(
@@ -290,18 +318,31 @@ class TaskFragment : Fragment() {
         communityId: String?
     ) {
         val id = withContext(Dispatchers.IO) {
-            taskViewModel.insert(
+            val id = taskViewModel.insert(
                 title = title,
                 indexDay = indexDay,
                 sessionId = sessionId,
-                isCustomSession = customSession,
-                startTime = customTimeStart,
-                endTime = customTimeEnd,
                 locationName = location,
                 locationAddress = locationLink,
                 isSharedToCommunity = community,
                 communityId = communityId
             )
+
+            if (customSession) {
+                lifecycleScope.launch {
+                    val task = withContext(Dispatchers.IO) { taskViewModel.getById(id)!!}
+                    val newSessionId = createCustomSession(indexDay, customTimeStart!!, customTimeEnd!!)
+                    task.sessionId = newSessionId
+                    taskViewModel.update(task)
+
+                    Log.d("TaskFragment", "createNewTask: success to create custom session \n" +
+                            "New Session ID : $newSessionId\n" +
+                            "Detail : \n${task.toString()}")
+                }
+
+            }
+
+            id
         }
 
         if (id == DEFAULT_TASK_ID) {
@@ -417,7 +458,10 @@ class TaskFragment : Fragment() {
             val selectedDayId = taskFormViewModel.getDay()!!.id
 
             val sessionsFiltered = withContext(Dispatchers.IO) {
-                sessionViewModel.getSessionsForRoutine(taskFormViewModel.getRoutineTemplate()!!.id)
+                sessionViewModel.getSessionsForRoutine(
+                    taskFormViewModel.getRoutineTemplate()!!.id,
+                    isCustomSessionIncluded = false
+                )
             }.filter { session ->
                 session.selectedDays[selectedDayId.toInt()] == '1'
             }
