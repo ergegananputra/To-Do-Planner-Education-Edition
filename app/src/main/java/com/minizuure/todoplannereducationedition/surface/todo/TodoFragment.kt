@@ -34,7 +34,21 @@ import kotlinx.coroutines.withContext
 import java.time.LocalTime
 import java.time.ZonedDateTime
 
-
+/**
+ * TodoFragment adalah tempat untuk mencari task dan menambahkan task baru.
+ * Pada TodoFragment, user dapat melihat task pada tanggal tertentu.
+ *
+ *
+ * Status : Belum Selesai, MVP Done
+ *
+ *
+ * Development TODO List :
+ * - Search bar & Result
+ * - Quiz Filter
+ * - To Pack Filter
+ * - All Event Filter
+ * - Community Filter
+ */
 class TodoFragment : Fragment() {
     private val binding by lazy { FragmentTodoBinding.inflate(layoutInflater) }
     private lateinit var routineViewModel : RoutineViewModel
