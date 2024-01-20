@@ -209,7 +209,7 @@ class TodoFragment : Fragment() {
         updateQuizAdapter()
     }
 
-    private fun updateQuizAdapter() {
+    private fun updateQuizAdapter(forceUpdate: Boolean = false) {
         lifecycleScope.launch {
             val selectedDateTasks = withContext(Dispatchers.IO) {
                 val selectedDate = getSelectedDate()
@@ -231,7 +231,7 @@ class TodoFragment : Fragment() {
 
             selectedDateMainTaskAdapter.submitList(selectedDateTasks)
 
-
+            if (forceUpdate) selectedDateMainTaskAdapter.notifyDataSetChanged()
 
         }
     }
@@ -254,7 +254,7 @@ class TodoFragment : Fragment() {
     }
 
     private fun setOnSuccessDatetimePickerDialog(): () -> Unit = {
-        updateQuizAdapter()
+        updateQuizAdapter(forceUpdate = true)
     }
 
     private fun setupEfabAddTask() {

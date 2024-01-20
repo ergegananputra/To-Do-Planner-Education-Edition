@@ -77,14 +77,17 @@
                 android:id="@+id/text_view_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:ellipsize="marquee"
                 android:maxLines="2"
                 android:text="Metode dan Model Pengembangan Perangkat Lunak"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textColor="?attr/colorOnSurface"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/chip_current_day" />
+                app:layout_constraintTop_toBottomOf="@+id/chip_current_day"
+                app:layout_constraintVertical_bias="0.0" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/card_icon_location_on"
@@ -311,7 +314,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="card_quiz_material_detail, button_tags_quiz"
+        app:constraint_referenced_ids="card_quiz_material_detail, button_to_pack_next_plan"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

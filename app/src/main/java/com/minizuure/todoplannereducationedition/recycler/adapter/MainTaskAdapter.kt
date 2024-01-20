@@ -72,11 +72,12 @@ class MainTaskAdapter(
 
         private fun setupTagsVisibility(item: TaskAndSessionJoin) {
             scope.launch {
+                val dateTimeString = DatetimeAppManager(currentDate, true).dateISO8601inString
                 val countQuiz = withContext(Dispatchers.IO) {
-                    notesViewModel.note.getCountByFKTaskIdAndCategory(item.id, CATEGORY_QUIZ)
+                    notesViewModel.note.getCountByFKTaskIdAndCategory(item.id, CATEGORY_QUIZ, dateTimeString)
                 }
                 val countToPack = withContext(Dispatchers.IO) {
-                    notesViewModel.note.getCountByFKTaskIdAndCategory(item.id, CATEGORY_TO_PACK)
+                    notesViewModel.note.getCountByFKTaskIdAndCategory(item.id, CATEGORY_TO_PACK, dateTimeString)
                 }
 
                 if (countQuiz > 0) {
@@ -155,8 +156,10 @@ class MainTaskAdapter(
             )
 
             scope.launch {
+                val dateTimeString = DatetimeAppManager(currentDate, true).dateISO8601inString
+
                 val toPackNote = withContext(Dispatchers.IO) {
-                    notesViewModel.note.getByFKTaskIdAndCategory(item.id, CATEGORY_TO_PACK)
+                    notesViewModel.note.getByFKTaskIdAndCategory(item.id, CATEGORY_TO_PACK, dateTimeString)
                 }
 
                 toPackNote?.let {
@@ -184,7 +187,9 @@ class MainTaskAdapter(
 
             scope.launch {
                 val quizNote = withContext(Dispatchers.IO) {
-                    notesViewModel.note.getByFKTaskIdAndCategory(item.id, CATEGORY_QUIZ)
+                    val dateTimeString = DatetimeAppManager(currentDate, true).dateISO8601inString
+
+                    notesViewModel.note.getByFKTaskIdAndCategory(item.id, CATEGORY_QUIZ, dateTimeString)
                 }
 
                 quizNote?.let {
@@ -284,6 +289,11 @@ class MainTaskAdapter(
 
         private fun setupTextLocation(locationName: String?) {
             locationName?.let {
+                if (locationName.isBlank()) {
+                    binding.cardIconLocationOn.visibility = View.GONE
+                    binding.cardTextLocation.visibility = View.GONE
+                    return@let
+                }
                 binding.cardTextLocation.text = it
             }
         }

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -44,6 +45,7 @@ import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppMa
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 private const val ARG_DETAIL_ID = "task_detail_id"
@@ -56,8 +58,6 @@ private const val ARG_DETAIL_SET_GO_TO = "set_go_to"
  *
  *
  * - [ ] Setup rescedule task navigation
- * - [ ] Setup next plan quiz material
- * - [ ] Setup next plan to pack
  * - [ ] Setup bottom more dialog -- reset this task*
  * - [ ] Setup bottom more dialog -- communities setting*
  *
@@ -170,7 +170,52 @@ class DetailFragment : Fragment() {
             setupQuizMaterial(routine, args.selectedDatetimeDetailIso)
             setupToPack(routine, args.selectedDatetimeDetailIso)
             setupMemo(routine)
+            setupRescheduleButton(task, routine, session)
+            setupNextPlanQuizMaterial(routine)
+            setupNextPlanToPack(routine)
         }
+    }
+
+    private fun setupNextPlanToPack(routine: RoutineTable) {
+        binding.buttonToPackNextPlan.setOnClickListener {
+            val bottomSheet = TaskDetailBottomSheetDialogFragment(
+                taskId = args.taskDetailId,
+                routine = routine,
+                currentDate = args.selectedDatetimeDetailIso.zoneDateTime,
+                isNextPlan = true,
+                title = getString(R.string.to_pack),
+                description = null,
+                onClickSaveAction = { isNextPlan, description, title, weekSelected, weeksDictionary ->
+                    Log.d("DetailFragment", "setupNextPlanToPack: $isNextPlan, $description, $title, $weekSelected, $weeksDictionary")
+                    insertMemoAction(CATEGORY_TO_PACK, isNextPlan, description, title, weekSelected, weeksDictionary)
+                }
+            )
+
+            bottomSheet.show(parentFragmentManager, "TaskDetailBottomSheetDialogFragment")
+        }
+    }
+
+    private fun setupNextPlanQuizMaterial(routine: RoutineTable) {
+        binding.buttonQuizNextPlan.setOnClickListener {
+            val bottomSheet = TaskDetailBottomSheetDialogFragment(
+                taskId = args.taskDetailId,
+                routine = routine,
+                currentDate = args.selectedDatetimeDetailIso.zoneDateTime,
+                isNextPlan = true,
+                title = getString(R.string.quiz_materials_title),
+                description = null,
+                onClickSaveAction = { isNextPlan, description, title, weekSelected, weeksDictionary ->
+                    Log.d("DetailFragment", "setupNextPlanQuizMaterial: $isNextPlan, $description, $title, $weekSelected, $weeksDictionary")
+                    insertMemoAction(CATEGORY_QUIZ, isNextPlan, description, title, weekSelected, weeksDictionary)
+                }
+            )
+
+            bottomSheet.show(parentFragmentManager, "TaskDetailBottomSheetDialogFragment")
+        }
+    }
+
+    private fun setupRescheduleButton(task: TaskTable, routine: RoutineTable, session: SessionTable) {
+        // TODO : Setup reschedule button
     }
 
     private fun setScrollGoTo() {
@@ -218,16 +263,17 @@ class DetailFragment : Fragment() {
     private fun setupChipTags(task: TaskTable, routine: RoutineTable) {
         lifecycleScope.launch {
             val day = DatetimeAppManager().dayNameFromDayId(task.indexDay)
+            val dateTimeString = DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, true).dateISO8601inString
             binding.chipDay.text = day
 
             val quizCount = withContext(Dispatchers.IO) {
-                notesViewModel.note.getCountByFKTaskIdAndCategory(task.id, CATEGORY_QUIZ)
+                notesViewModel.note.getCountByFKTaskIdAndCategory(task.id, CATEGORY_QUIZ, dateTimeString)
             }
             binding.chipQuiz.visibility = if (quizCount == 0) View.GONE else View.VISIBLE
 
 
             val toPackCount = withContext(Dispatchers.IO) {
-                notesViewModel.note.getCountByFKTaskIdAndCategory(task.id, CATEGORY_TO_PACK)
+                notesViewModel.note.getCountByFKTaskIdAndCategory(task.id, CATEGORY_TO_PACK, dateTimeString)
             }
             binding.chipToPack.visibility = if (toPackCount == 0) View.GONE else View.VISIBLE
 
@@ -245,7 +291,8 @@ class DetailFragment : Fragment() {
             val memoNote = withContext(Dispatchers.IO) {
                 notesViewModel.note.getByFKTaskIdAndCategory(
                     args.taskDetailId,
-                    CATEGORY_MEMO
+                    CATEGORY_MEMO,
+                    DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, true).dateISO8601inString
                 )
             }
             memoNoteEmptyMode()
@@ -292,7 +339,8 @@ class DetailFragment : Fragment() {
                 val memoNoteId = withContext(Dispatchers.IO) {
                     notesViewModel.note.getByFKTaskIdAndCategory(
                         args.taskDetailId,
-                        CATEGORY_MEMO
+                        CATEGORY_MEMO,
+                        DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, true).dateISO8601inString
                     )?.id
                 }
 
@@ -413,7 +461,8 @@ class DetailFragment : Fragment() {
         lifecycleScope.launch {
             val toPackNote = notesViewModel.note.getByFKTaskIdAndCategory(
                 args.taskDetailId,
-                CATEGORY_TO_PACK
+                CATEGORY_TO_PACK,
+                DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, true).dateISO8601inString
             )
 
             toPackNote?.let {
@@ -449,7 +498,8 @@ class DetailFragment : Fragment() {
         lifecycleScope.launch {
             val toPackNote = notesViewModel.note.getByFKTaskIdAndCategory(
                 args.taskDetailId,
-                CATEGORY_TO_PACK
+                CATEGORY_TO_PACK,
+                DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, true).dateISO8601inString
             )
 
             toPackNote?.let {
@@ -482,7 +532,8 @@ class DetailFragment : Fragment() {
         lifecycleScope.launch {
             val quizNote = notesViewModel.note.getByFKTaskIdAndCategory(
                 args.taskDetailId,
-                CATEGORY_QUIZ
+                CATEGORY_QUIZ,
+                DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, true).dateISO8601inString
             )
 
             quizNote?.let {
@@ -526,7 +577,8 @@ class DetailFragment : Fragment() {
         lifecycleScope.launch {
             val quizNote = notesViewModel.note.getByFKTaskIdAndCategory(
                 args.taskDetailId,
-                CATEGORY_QUIZ
+                CATEGORY_QUIZ,
+                DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, true).dateISO8601inString
             )
 
             quizNote?.let {
@@ -538,9 +590,6 @@ class DetailFragment : Fragment() {
 
     /**
      * Insert memo action
-     *
-     *
-     * Next plan menggunakan fungsi ini juga
      *
      *
      * @param targetAction : String ([CATEGORY_QUIZ], [CATEGORY_TO_PACK], [CATEGORY_MEMO])
@@ -562,8 +611,22 @@ class DetailFragment : Fragment() {
     ) {
         lifecycleScope.launch {
             // get note id
+            val zonedDatetime : ZonedDateTime = args.selectedDatetimeDetailIso.zoneDateTime
+            val dateTime  = DatetimeAppManager(zonedDatetime, true)
+
+            val dateString = if (isNextPlan) {
+                if (weekSelected == 0) {
+                    Toast.makeText(requireContext(), getString(R.string.add_next_plan_memo_invalid), Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+                val nextDate = dateTime.selectedDetailDatetimeISO.plusWeeks(weekSelected.toLong())
+                DatetimeAppManager(nextDate, true).dateISO8601inString
+            } else {
+                dateTime.dateISO8601inString
+            }
+
             var noteId = withContext(Dispatchers.IO) {
-                notesViewModel.note.getByFKTaskIdAndCategory(args.taskDetailId, targetAction)?.id
+                notesViewModel.note.getByFKTaskIdAndCategory(args.taskDetailId, targetAction, dateString)?.id
             }
 
             if (noteId != null) {
@@ -580,14 +643,13 @@ class DetailFragment : Fragment() {
 
             } else {
                 // insert Note
-                val zoneDateTime = args.selectedDatetimeDetailIso.zoneDateTime
-                val date = DatetimeAppManager(zoneDateTime, true).dateISO8601inString
+
                 noteId = withContext(Dispatchers.IO) {
                     notesViewModel.note.insert(
                         fkTaskId = args.taskDetailId,
                         category = targetAction,
                         description = description,
-                        date = date
+                        date = dateString
                     )
                 }
             }
@@ -637,7 +699,10 @@ class DetailFragment : Fragment() {
     }
 
     private fun setupLocation(task: TaskTable) {
-        if (task.locationName == null) return
+        if (task.locationName.isNullOrEmpty()) {
+            binding.textViewLocation.visibility = View.GONE
+            return
+        }
 
         binding.textViewLocation.text = task.locationName!!
 

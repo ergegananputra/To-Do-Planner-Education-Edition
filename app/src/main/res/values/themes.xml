@@ -156,6 +156,8 @@
         <item name="android:paddingEnd">16dp</item>
         <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:drawableTint">?attr/colorOnSurface</item>
+        <item name="drawableTint">?attr/colorOnSurface</item>
         <item name="android:drawablePadding">16dp</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>

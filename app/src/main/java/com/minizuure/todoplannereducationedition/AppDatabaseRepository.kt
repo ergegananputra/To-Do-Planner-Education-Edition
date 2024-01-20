@@ -134,8 +134,12 @@ class AppDatabaseRepository(
     suspend fun getNotesTaskById(id: Long) = withContext(Dispatchers.IO) { notesTaskTableDao.getById(id) }
     suspend fun getCountNotesTasks() = withContext(Dispatchers.IO) { notesTaskTableDao.getCount() }
     suspend fun getNotesTaskByTaskId(taskId: Long) = withContext(Dispatchers.IO) { notesTaskTableDao.getByFkTaskId(taskId) }
-    suspend fun getNotesTaskByTaskIdAndCategory(taskId: Long, category: String) = withContext(Dispatchers.IO) { notesTaskTableDao.getByFkTaskIdAndCategory(taskId, category) }
-    suspend fun getCountNotesTaskByTaskIdAndCategory(taskId: Long, category: String) = withContext(Dispatchers.IO) { notesTaskTableDao.getCountByFkTaskIdAndCategory(taskId, category) }
+    suspend fun getNotesTaskByTaskIdAndCategory(taskId: Long, category: String, date : String) = withContext(Dispatchers.IO) {
+        notesTaskTableDao.getByFkTaskIdAndCategory(taskId, category, "%${date.trim()}%")
+    }
+    suspend fun getCountNotesTaskByTaskIdAndCategory(taskId: Long, category: String, date : String) = withContext(Dispatchers.IO) {
+        notesTaskTableDao.getCountByFkTaskIdAndCategory(taskId, category, "%${date.trim()}%")
+    }
     suspend fun insertNotesTask(notesTaskTable: NotesTaskTable) : Long = withContext(Dispatchers.IO) { notesTaskTableDao.insert(notesTaskTable) }
     suspend fun updateNotesTask(notesTaskTable: NotesTaskTable) = withContext(Dispatchers.IO) {
         val updateTime = DatetimeAppManager().dateISO8601inString
