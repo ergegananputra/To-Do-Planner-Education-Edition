@@ -121,6 +121,36 @@ class TodoFragment : Fragment() {
         setupEfabAddTask()
 
         setupSearchBar()
+        setupChipFilter()
+    }
+
+    private fun setupChipFilter() {
+        setChipAllEvent()
+        setChipCommunity()
+    }
+
+    private fun setChipCommunity() {
+        val chipCommunityIcon = binding.chipCommunitiesTodo.chipIcon
+
+        binding.chipCommunitiesTodo.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.chipCommunitiesTodo.chipIcon = null
+            } else {
+                binding.chipCommunitiesTodo.chipIcon = chipCommunityIcon
+            }
+        }
+    }
+
+    private fun setChipAllEvent() {
+        val chipAllEvenIcon = binding.chipAllTodo.chipIcon
+
+        binding.chipAllTodo.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.chipAllTodo.chipIcon = null
+            } else {
+                binding.chipAllTodo.chipIcon = chipAllEvenIcon
+            }
+        }
     }
 
     private fun setupSearchBar() {

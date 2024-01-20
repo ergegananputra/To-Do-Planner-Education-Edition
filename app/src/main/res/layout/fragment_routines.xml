@@ -86,6 +86,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_default_routine"
                 style="@style/Widget.Material3.Button.IconButton.Filled"
+                app:layout_constraintDimensionRatio="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
