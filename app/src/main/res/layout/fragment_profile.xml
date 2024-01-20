@@ -33,6 +33,7 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_theme_mode"
                     style="@style/Widget.Material3.Button.IconButton.Filled"
+                    app:layout_constraintDimensionRatio="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -176,6 +177,7 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_routines_management"
                         style="@style/Widget.Material3.Button.IconButton.Filled"
+                        app:layout_constraintDimensionRatio="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -242,6 +244,7 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_language"
                         style="@style/Widget.Material3.Button.IconButton.Filled"
+                        app:layout_constraintDimensionRatio="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -308,6 +311,7 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_settings"
                         style="@style/Widget.Material3.Button.IconButton.Filled"
+                        app:layout_constraintDimensionRatio="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -375,6 +379,7 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_communities"
                         style="@style/Widget.Material3.Button.IconButton.Filled"
+                        app:layout_constraintDimensionRatio="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -455,6 +460,7 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_help"
                         style="@style/Widget.Material3.Button.IconButton.Filled"
+                        app:layout_constraintDimensionRatio="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"

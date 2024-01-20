@@ -133,5 +133,7 @@
     <string name="editing">editing…</string>
     <string name="last_edited">Last edited</string>
     <string name="saved">saved</string>
+    <string name="no_week_selected">No week selected</string>
+    <string name="add_next_plan_memo_invalid">Can\'t add memo</string>
 
 </resources>

@@ -118,7 +118,7 @@
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Next week"
+            android:hint="@string/no_week_selected"
             android:paddingStart="48dp"
             android:paddingEnd="48dp"
             android:textColor="?attr/colorOnSurface"

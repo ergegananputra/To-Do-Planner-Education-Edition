@@ -3,6 +3,8 @@ package com.minizuure.todoplannereducationedition.services.database.notes
 import androidx.lifecycle.ViewModel
 import com.minizuure.todoplannereducationedition.AppDatabaseRepository
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class NoteViewModel(
     private val appDatabaseRepository: AppDatabaseRepository
@@ -27,12 +29,44 @@ class NoteViewModel(
             return appDatabaseRepository.getNotesTaskByTaskId(fkTaskId)
         }
 
-        suspend fun getByFKTaskIdAndCategory(fkTaskId: Long, category: String) : NotesTaskTable? {
-            return appDatabaseRepository.getNotesTaskByTaskIdAndCategory(fkTaskId, category)
+
+        /**
+         * [getByFKTaskIdAndCategory] is used to get the notesTaskTable by fkTaskId and category.
+         *
+         *
+         * if the date is not specified, it will return error because it will suppose to
+         * return multiple notesTaskTable.
+         *
+         *
+         * To get the date converted to ISO8601 ZonedDateTime to String,
+         * use [DatetimeAppManager] and set accuracy to day
+         *
+         *
+         *
+         * example:
+         * ```kotlin
+         * // zonedDatetime from fragment args parcelable
+         * val zonedDatetime : ZonedDateTime = args.selectedDatetimeDetailIso.zoneDateTime
+         * val date : String = DatetimeAppManager(zonedDatetime, true).dateISO8601inString
+         * ```
+         *
+         */
+        suspend fun getByFKTaskIdAndCategory(fkTaskId: Long, category: String, date: String) : NotesTaskTable? {
+            try {
+                ZonedDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME)
+            } catch (e: Exception) {
+                throw Exception("Date is not valid, please use ")
+            }
+            return appDatabaseRepository.getNotesTaskByTaskIdAndCategory(fkTaskId, category, date)?.getOrNull(0)
         }
 
-        suspend fun getCountByFKTaskIdAndCategory(fkTaskId: Long, category: String) : Int {
-            return appDatabaseRepository.getCountNotesTaskByTaskIdAndCategory(fkTaskId, category)
+
+        suspend fun getByFKTaskIdAndCategoryAsList(fkTaskId: Long, category: String) : List<NotesTaskTable>? {
+            return appDatabaseRepository.getNotesTaskByTaskIdAndCategory(fkTaskId, category, "")
+        }
+
+        suspend fun getCountByFKTaskIdAndCategory(fkTaskId: Long, category: String, date: String) : Int {
+            return appDatabaseRepository.getCountNotesTaskByTaskIdAndCategory(fkTaskId, category, date)
         }
 
         /**

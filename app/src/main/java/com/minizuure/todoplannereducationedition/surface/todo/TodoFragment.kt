@@ -121,6 +121,36 @@ class TodoFragment : Fragment() {
         setupEfabAddTask()
 
         setupSearchBar()
+        setupChipFilter()
+    }
+
+    private fun setupChipFilter() {
+        setChipAllEvent()
+        setChipCommunity()
+    }
+
+    private fun setChipCommunity() {
+        val chipCommunityIcon = binding.chipCommunitiesTodo.chipIcon
+
+        binding.chipCommunitiesTodo.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.chipCommunitiesTodo.chipIcon = null
+            } else {
+                binding.chipCommunitiesTodo.chipIcon = chipCommunityIcon
+            }
+        }
+    }
+
+    private fun setChipAllEvent() {
+        val chipAllEvenIcon = binding.chipAllTodo.chipIcon
+
+        binding.chipAllTodo.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.chipAllTodo.chipIcon = null
+            } else {
+                binding.chipAllTodo.chipIcon = chipAllEvenIcon
+            }
+        }
     }
 
     private fun setupSearchBar() {
@@ -179,7 +209,7 @@ class TodoFragment : Fragment() {
         updateQuizAdapter()
     }
 
-    private fun updateQuizAdapter() {
+    private fun updateQuizAdapter(forceUpdate: Boolean = false) {
         lifecycleScope.launch {
             val selectedDateTasks = withContext(Dispatchers.IO) {
                 val selectedDate = getSelectedDate()
@@ -201,7 +231,7 @@ class TodoFragment : Fragment() {
 
             selectedDateMainTaskAdapter.submitList(selectedDateTasks)
 
-
+            if (forceUpdate) selectedDateMainTaskAdapter.notifyDataSetChanged()
 
         }
     }
@@ -224,7 +254,7 @@ class TodoFragment : Fragment() {
     }
 
     private fun setOnSuccessDatetimePickerDialog(): () -> Unit = {
-        updateQuizAdapter()
+        updateQuizAdapter(forceUpdate = true)
     }
 
     private fun setupEfabAddTask() {

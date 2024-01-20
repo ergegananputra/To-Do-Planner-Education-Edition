@@ -46,6 +46,18 @@ class TaskManagementActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        val previousBackStackEntry = taskNavController.previousBackStackEntry
+        if (previousBackStackEntry?.destination?.id == taskNavController.graph.startDestinationId) {
+            finish()
+        } else {
+            if (!taskNavController.navigateUp()) {
+                super.onBackPressed()
+            }
+        }
+    }
+
     private fun setupFragment(toOpen: String) {
         val destination = when(toOpen) {
             OPEN_TASK -> {

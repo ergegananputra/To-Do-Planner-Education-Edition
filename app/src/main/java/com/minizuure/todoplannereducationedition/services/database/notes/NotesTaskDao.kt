@@ -19,10 +19,10 @@ interface NotesTaskDao : BaseIODao<NotesTaskTable> {
     @Query("SELECT * FROM notes_task_table WHERE fk_task_id = :fkTaskId")
     suspend fun getByFkTaskId(fkTaskId: Long): List<NotesTaskTable>?
 
-    @Query("SELECT * FROM notes_task_table WHERE fk_task_id = :fkTaskId AND category = :category")
-    suspend fun getByFkTaskIdAndCategory(fkTaskId: Long, category: String): NotesTaskTable?
+    @Query("SELECT * FROM notes_task_table WHERE fk_task_id = :fkTaskId AND category = :category AND date_iso8601 LIKE :date")
+    suspend fun getByFkTaskIdAndCategory(fkTaskId: Long, category: String, date : String): List<NotesTaskTable>?
 
-    @Query("SELECT COUNT(*) FROM notes_task_table WHERE fk_task_id = :fkTaskId AND category = :category")
-    suspend fun getCountByFkTaskIdAndCategory(fkTaskId: Long, category: String): Int
+    @Query("SELECT COUNT(*) FROM notes_task_table WHERE fk_task_id = :fkTaskId AND category = :category AND date_iso8601 LIKE :date")
+    suspend fun getCountByFkTaskIdAndCategory(fkTaskId: Long, category: String, date : String): Int
 
 }
