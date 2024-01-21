@@ -4,6 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Parcel
+import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_TO_PACK
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
@@ -15,23 +17,14 @@ class AndroidAlarmManager(
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
     override fun schedule(itemAlarmQueue: ItemAlarmQueue) {
-        val greetingMessage = if (itemAlarmQueue.action == CATEGORY_QUIZ)
-            "Quiz Alert!"
-        else if (itemAlarmQueue.action == CATEGORY_TO_PACK)
-            "To-Pack Alert!"
-        else
-            return
-
         val readableDatetime = DatetimeAppManager(itemAlarmQueue.time).toReadable()
         val preMessage = when (itemAlarmQueue.action) {
             CATEGORY_QUIZ -> {
-                greetingMessage + "\n\n" +
-                        "Heads up! In just up to 2 days, you've got a quiz in ${itemAlarmQueue.taskName} on $readableDatetime!\n\n" +
+                "Heads up! In just up to 2 days, you've got a quiz in ${itemAlarmQueue.taskName} on $readableDatetime!\n\n" +
                         itemAlarmQueue.message
             }
             CATEGORY_TO_PACK -> {
-                greetingMessage + "\n\n" +
-                        "Don't forget to prepare your pack in ${itemAlarmQueue.taskName} on $readableDatetime!\n\n" +
+                "Don't forget to prepare your pack in ${itemAlarmQueue.taskName} on $readableDatetime!\n\n" +
                         itemAlarmQueue.message
             }
             else -> return
@@ -39,32 +32,37 @@ class AndroidAlarmManager(
 
         val message = when (itemAlarmQueue.action) {
             CATEGORY_QUIZ -> {
-                greetingMessage + "\n\n" +
-                        "Today, you've got a quiz in ${itemAlarmQueue.taskName}!\n\n" +
+                "Today, you've got a quiz in ${itemAlarmQueue.taskName}!\n\n" +
                         itemAlarmQueue.message
             }
             CATEGORY_TO_PACK -> {
-                greetingMessage + "\n\n" +
-                        "Today, you've got to pack in ${itemAlarmQueue.taskName}!\n\n" +
+                "Today, you've got to pack in ${itemAlarmQueue.taskName}!\n\n" +
                         itemAlarmQueue.message
             }
             else -> return
         }
 
+        val parcelableZoneDateTime = ParcelableZoneDateTime(itemAlarmQueue.taskDateIdentification)
+        val parcel = Parcel.obtain()
+        parcelableZoneDateTime.writeToParcel(parcel, 0)
 
         val intentPrep = Intent(context, AlarmBroadcastReceiver::class.java).apply {
             putExtra(KEY_NOTIFICATION_ID, itemAlarmQueue.id)
             putExtra(KEY_NOTIFICATION_ACTION, itemAlarmQueue.action)
+            putExtra(KEY_NOTIFICATION_TASK_ID, itemAlarmQueue.taskId)
             putExtra(KEY_NOTIFICATION_TASKNAME, itemAlarmQueue.taskName)
             putExtra(KEY_NOTIFICATION_MESSAGE, preMessage)
+            putExtra(KEY_NOTIFICATION_TASK_DATE_IDENTIFICATION, parcelableZoneDateTime)
             action = "com.minizuure.todoplannereducationedition.services.notification.ALARM"
         }
 
         val intent = Intent(context, AlarmBroadcastReceiver::class.java).apply {
             putExtra(KEY_NOTIFICATION_ID, itemAlarmQueue.id + 1000)
             putExtra(KEY_NOTIFICATION_ACTION, itemAlarmQueue.action)
+            putExtra(KEY_NOTIFICATION_TASK_ID, itemAlarmQueue.taskId)
             putExtra(KEY_NOTIFICATION_TASKNAME, itemAlarmQueue.taskName)
             putExtra(KEY_NOTIFICATION_MESSAGE, message)
+            putExtra(KEY_NOTIFICATION_TASK_DATE_IDENTIFICATION, parcelableZoneDateTime)
             action = "com.minizuure.todoplannereducationedition.services.notification.ALARM"
         }
 

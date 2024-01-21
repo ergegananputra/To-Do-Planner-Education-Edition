@@ -67,6 +67,16 @@ class DatetimeAppManager(
         this.dateISO8601inString = zoneDateTime.toInstant().toString()
     }
 
+    constructor(accuracyOnlyUpToDays: Boolean) : this() {
+        val zoneDateTime =
+            if (accuracyOnlyUpToDays) selectedDetailDatetimeISO.truncatedTo(ChronoUnit.DAYS)
+            else selectedDetailDatetimeISO
+
+        this.zoneLocalTimeId = zoneDateTime.zone
+        this.selectedDetailDatetimeISO = zoneDateTime
+        this.dateISO8601inString = zoneDateTime.toInstant().toString()
+    }
+
 
 
     constructor(dateISO8601inString: String) : this() {
