@@ -33,6 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_schedule_outline_16"
+            app:drawableTint="?attr/colorOnSurface"
             android:drawablePadding="8dp"
             android:gravity="center_vertical"
             android:text="@string/interval_time_format"

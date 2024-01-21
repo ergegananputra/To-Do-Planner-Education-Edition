@@ -28,13 +28,10 @@ import com.minizuure.todoplannereducationedition.services.database.session.Sessi
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModelFactory
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
-import com.minizuure.todoplannereducationedition.services.notification.AndroidAlarmManager
-import com.minizuure.todoplannereducationedition.services.notification.ItemAlarmQueue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalTime
-import java.time.ZonedDateTime
 
 
 class HomeFragment : Fragment() {
@@ -164,9 +161,6 @@ class HomeFragment : Fragment() {
         setupUpcomingSection()
         setupUpcomingRecyclerView()
 
-
-        // NOTE: Testing
-        androidDevelopmentAlarmTest()
     }
 
     override fun onResume() {
@@ -220,25 +214,6 @@ class HomeFragment : Fragment() {
         } else {
             binding.recyclerViewToday.visibility = View.VISIBLE
             binding.buttonExpandableToday.isActivated = false
-        }
-    }
-
-    private fun androidDevelopmentAlarmTest() {
-        val scheduler = AndroidAlarmManager(requireActivity())
-        val item = ItemAlarmQueue(
-            id = 1,
-            action = "ACTION",
-            time = ZonedDateTime.now().plusSeconds(5),
-            message = "MESSAGE",
-            monthCreated = 1,
-        )
-
-        binding.drawerToday.setOnClickListener {
-            scheduler.schedule(item)
-        }
-
-        binding.drawerUpcoming.setOnClickListener {
-            scheduler.cancel(item)
         }
     }
 

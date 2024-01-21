@@ -15,6 +15,11 @@ class CustomSystemTweak(private val activity: Activity) {
             window.statusBarColor = backgroundColor
 
 
+            val bottomNavTypedValue = TypedValue()
+            theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, bottomNavTypedValue, true)
+            window.navigationBarColor = bottomNavTypedValue.data
+
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 val attributes = window.attributes
                 attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
