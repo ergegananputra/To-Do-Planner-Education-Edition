@@ -6,10 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Parcel
 import android.util.Log
+import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_TO_PACK
+import com.minizuure.todoplannereducationedition.services.database.queue.NotificationQueueTable
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AndroidAlarmManager(
     private val context: Context
@@ -96,6 +101,22 @@ class AndroidAlarmManager(
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )
+
+
+        // Save to database
+        val app = context.applicationContext as ToDoPlannerApplication
+        val notificationQueue = app.appDb.notificationQueueTableDao()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            notificationQueue.insert(NotificationQueueTable.convertItemToTable(itemAlarmQueue))
+
+            val itemAlarmQueuePending = itemAlarmQueue.copy(
+                id = itemAlarmQueue.id + 1000,
+                message = preMessage
+            )
+
+            notificationQueue.insert(NotificationQueueTable.convertItemToTable(itemAlarmQueuePending))
+        }
     }
 
     override fun cancel(itemAlarmQueue: ItemAlarmQueue) {

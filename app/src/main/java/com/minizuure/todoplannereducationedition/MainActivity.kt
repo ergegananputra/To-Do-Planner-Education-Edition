@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
 
         // TODO:  Delete this line in production
-        unitTesting(alarmManager)
+//        unitTesting(alarmManager)
 
     }
 

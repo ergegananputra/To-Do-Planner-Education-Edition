@@ -9,6 +9,7 @@ import android.graphics.drawable.Icon
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.minizuure.todoplannereducationedition.R
+import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL_GO_TO_PACK
@@ -16,6 +17,11 @@ import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActiv
 import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_TO_PACK
+import com.minizuure.todoplannereducationedition.services.database.queue.NotificationQueueTable
+import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val CHANNEL_ID = "TODO_PLANNER_EDUCATION_EDITION_BY_MINIZUURE_NOTIFICATIONS"
 const val KEY_NOTIFICATION_ID = "KEY_NOTIFICATION_ID"
@@ -28,10 +34,32 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
             // TODO: [FS/P01] Reschedule all alarms
-            println("AlarmBroadcastReceiver: BOOT_COMPLETED")
+
+            // read notification QUeue from database
+            val app = context.applicationContext as ToDoPlannerApplication
+
+            val alarmManager = AlarmManagerSingleton.getInstance(app).instance
+
+            val notificationQueue = app.appDb.notificationQueueTableDao()
+
+            val today = DatetimeAppManager().selectedDetailDatetimeISO
+
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val notificationQueueList = notificationQueue.getAll()
+
+                for (item in notificationQueueList) {
+                    val itemDate = DatetimeAppManager(item.taskDateIdentification).selectedDetailDatetimeISO
+                    if (itemDate.isBefore(today)) {
+                        notificationQueue.deleteById(item.id)
+                    } else {
+                        val itemAlarmQueue = NotificationQueueTable.convertTableToItem(item)
+                        alarmManager.schedule(itemAlarmQueue)
+                    }
+                }
+            }
 
         } else {
-            // TODO: [FS/P01] Show notification
 
             val notificationId = intent?.getIntExtra(KEY_NOTIFICATION_ID, 0) ?: return
             val action = intent.getStringExtra(KEY_NOTIFICATION_ACTION) ?: return
@@ -96,6 +124,13 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                 .build()
 
             notificationManager.notify(notificationId, notification)
+
+            // delete notification from queue
+            val app = context.applicationContext as ToDoPlannerApplication
+            val notificationQueue = app.appDb.notificationQueueTableDao()
+            CoroutineScope(Dispatchers.IO).launch {
+                notificationQueue.deleteById(notificationId.toLong())
+            }
         }
     }
 

@@ -8,6 +8,8 @@ import com.minizuure.todoplannereducationedition.services.database.notes.NotesTa
 import com.minizuure.todoplannereducationedition.services.database.notes.NotesTaskTable
 import com.minizuure.todoplannereducationedition.services.database.notes.TodoNoteDao
 import com.minizuure.todoplannereducationedition.services.database.notes.TodoNoteTable
+import com.minizuure.todoplannereducationedition.services.database.queue.NotificationQueueTable
+import com.minizuure.todoplannereducationedition.services.database.queue.NotificationQueueTableDao
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTableDao
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
@@ -21,9 +23,10 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
         SessionTable::class,
         TaskTable::class,
         TodoNoteTable::class,
-        NotesTaskTable::class
+        NotesTaskTable::class,
+        NotificationQueueTable::class
                ],
-    version = 5,
+    version = 6,
     exportSchema = true
 )
 abstract class ApplicationDatabase : RoomDatabase() {
@@ -32,6 +35,7 @@ abstract class ApplicationDatabase : RoomDatabase() {
     abstract fun taskTableDao(): TaskTableDao
     abstract fun todoNoteTableDao(): TodoNoteDao
     abstract fun notesTaskTableDao(): NotesTaskDao
+    abstract fun notificationQueueTableDao(): NotificationQueueTableDao
 
     abstract fun deleteAllOperation(): DeleteAllOperation
 

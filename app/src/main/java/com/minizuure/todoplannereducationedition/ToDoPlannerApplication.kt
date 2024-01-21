@@ -21,7 +21,7 @@ class ToDoPlannerApplication : Application() {
 
 
 
-    private val appDb by lazy {
+    val appDb by lazy {
         ApplicationDatabase.getDatabase(this)
     }
 
