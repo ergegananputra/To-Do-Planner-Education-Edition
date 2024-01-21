@@ -135,5 +135,7 @@
     <string name="saved">saved</string>
     <string name="no_week_selected">No week selected</string>
     <string name="add_next_plan_memo_invalid">Can\'t add memo</string>
+    <string name="notification_channel_main_name">Notes Reminder Notifications</string>
+    <string name="notification_channel_main_description">Notifications for notes alarms. For example, quiz and to-pack. This notification may consume battery. Feels free to disable it if you don\'t need it.</string>
 
 </resources>
