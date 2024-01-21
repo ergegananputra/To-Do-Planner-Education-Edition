@@ -58,7 +58,8 @@ class MainActivity : AppCompatActivity() {
         notificationManager.createNotificationChannel(channel)
 
 
-        val alarmManager = AndroidAlarmManager(this)
+        val app = application as ToDoPlannerApplication
+        val alarmManager = app.appAlarmManager
 
 
         // TODO:  Delete this line in production

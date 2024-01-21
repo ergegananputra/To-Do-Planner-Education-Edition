@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Parcel
+import android.util.Log
 import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_TO_PACK
@@ -17,6 +18,8 @@ class AndroidAlarmManager(
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
     override fun schedule(itemAlarmQueue: ItemAlarmQueue) {
+        Log.d("AndroidAlarmManager", "schedule triggered: ${itemAlarmQueue.taskName}")
+
         val readableDatetime = DatetimeAppManager(itemAlarmQueue.time).toReadable()
         val preMessage = when (itemAlarmQueue.action) {
             CATEGORY_QUIZ -> {

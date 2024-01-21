@@ -42,6 +42,7 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModelFactory
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
+import com.minizuure.todoplannereducationedition.services.notification.ItemAlarmQueue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -672,6 +673,33 @@ class DetailFragment : Fragment() {
 
             // Quiz and To Pack only
 
+            // Note: see ItemAlarmQueue.kt
+            // Use alarm manager inside when statement to be safe
+            val zonedDateTime = DatetimeAppManager(dateString).selectedDetailDatetimeISO
+            val notificationId = ItemAlarmQueue().createItemId(
+                zonedDateTime.dayOfMonth,
+                zonedDateTime.monthValue,
+                zonedDateTime.year,
+                taskId = args.taskDetailId,
+            )
+
+            val app = requireActivity().application as ToDoPlannerApplication
+            val alarmManager = app.appAlarmManager
+
+            val itemAlarmQueue = ItemAlarmQueue(
+                id = notificationId,
+                action = targetAction,
+                taskId = args.taskDetailId,
+                time = zonedDateTime.withHour(5).withMinute(30),
+                taskName = args.titleDetail,
+                message = description,
+                taskDateIdentification = zonedDateTime
+            )
+
+            Log.d("DetailFragment - AlarmBroadcastReceiver", "insertMemoAction: $itemAlarmQueue")
+
+
+
             notesViewModel.todo.insert(
                 fkNoteTaskId = noteId,
                 isChecked = false,
@@ -681,9 +709,11 @@ class DetailFragment : Fragment() {
             when(targetAction) {
                 CATEGORY_QUIZ -> {
                     updateMaterialQuizRecyclerViewData()
+                    alarmManager.schedule(itemAlarmQueue)
                 }
                 CATEGORY_TO_PACK -> {
                     updateToPackRecyclerViewData()
+                    alarmManager.schedule(itemAlarmQueue)
                 }
             }
 
