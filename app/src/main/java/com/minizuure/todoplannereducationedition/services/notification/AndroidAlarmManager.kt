@@ -55,7 +55,7 @@ class AndroidAlarmManager(
         parcelableZoneDateTime.writeToParcel(parcel, 0)
 
         val intentPrep = Intent(context, AlarmBroadcastReceiver::class.java).apply {
-            putExtra(KEY_NOTIFICATION_ID, itemAlarmQueue.id)
+            putExtra(KEY_NOTIFICATION_ID, ItemAlarmQueue(itemAlarmQueue.id).convertIdToDaysBeforeID())
             putExtra(KEY_NOTIFICATION_ACTION, itemAlarmQueue.action)
             putExtra(KEY_NOTIFICATION_TASK_ID, itemAlarmQueue.taskId)
             putExtra(KEY_NOTIFICATION_TASKNAME, itemAlarmQueue.taskName)
@@ -65,7 +65,7 @@ class AndroidAlarmManager(
         }
 
         val intent = Intent(context, AlarmBroadcastReceiver::class.java).apply {
-            putExtra(KEY_NOTIFICATION_ID, itemAlarmQueue.id + 1000)
+            putExtra(KEY_NOTIFICATION_ID, itemAlarmQueue.id)
             putExtra(KEY_NOTIFICATION_ACTION, itemAlarmQueue.action)
             putExtra(KEY_NOTIFICATION_TASK_ID, itemAlarmQueue.taskId)
             putExtra(KEY_NOTIFICATION_TASKNAME, itemAlarmQueue.taskName)
@@ -83,7 +83,7 @@ class AndroidAlarmManager(
             dDay.minusDays(2).toEpochSecond() * 1000,
             PendingIntent.getBroadcast(
                 context,
-                itemAlarmQueue.id + 1000,
+                ItemAlarmQueue(itemAlarmQueue.id).convertIdToDaysBeforeID(),
                 intentPrep,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
@@ -111,7 +111,7 @@ class AndroidAlarmManager(
             notificationQueue.insert(NotificationQueueTable.convertItemToTable(itemAlarmQueue))
 
             val itemAlarmQueuePending = itemAlarmQueue.copy(
-                id = itemAlarmQueue.id + 1000,
+                id = ItemAlarmQueue(itemAlarmQueue.id).convertIdToDaysBeforeID(),
                 message = preMessage
             )
 
@@ -129,7 +129,7 @@ class AndroidAlarmManager(
         }
 
         val intentPrep = Intent(context, AlarmBroadcastReceiver::class.java).apply {
-            putExtra(KEY_NOTIFICATION_ID, itemAlarmQueue.id + 1000)
+            putExtra(KEY_NOTIFICATION_ID, ItemAlarmQueue(itemAlarmQueue.id).convertIdToDaysBeforeID())
             putExtra(KEY_NOTIFICATION_ACTION, itemAlarmQueue.action)
             putExtra(KEY_NOTIFICATION_TASKNAME, itemAlarmQueue.taskName)
             action = "com.minizuure.todoplannereducationedition.services.notification.ALARM"
@@ -147,7 +147,7 @@ class AndroidAlarmManager(
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
-                itemAlarmQueue.id + 1000,
+                ItemAlarmQueue(itemAlarmQueue.id).convertIdToDaysBeforeID(),
                 intentPrep,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )

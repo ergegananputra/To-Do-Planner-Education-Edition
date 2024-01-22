@@ -30,7 +30,11 @@ import java.time.ZonedDateTime
  * the id should be 221240019
  *
  *
- * @param id The id of the alarm queue.
+ * [convertIdToDaysBeforeID] digunakan untuk mengubah id menjadi id khusus untuk
+ * notifikasi yang akan dikirimkan beberapa hari sebelumnya.
+ *
+ *
+ * @param id The id of the alarm queue. Note : 9 Chars Only.
  * @param action The action of the alarm queue.
  * @param taskId The task id of the alarm queue.
  * @param time The time of the alarm queue.
@@ -47,6 +51,21 @@ data class ItemAlarmQueue(
     val message : String = "",
     val taskDateIdentification : ZonedDateTime = ZonedDateTime.now(),
 ) {
+    //                              X_DDM_MY0_000
+    private val dayBeforeIDsConstanta = 4_000_000
+    fun convertIdToDaysBeforeID() : Int {
+        return id + dayBeforeIDsConstanta
+    }
+
+    fun isDaysBeforeID() : Boolean {
+        val month = id.toString().substring(2, 4).toInt()
+        return month > 40
+    }
+
+    fun isNotDaysBeforeID() : Boolean {
+        return !isDaysBeforeID()
+    }
+
     fun createItemId(days : Int, months : Int, years : Int, taskId : Long) : Int {
         val day = if (days < 10) {
             "0$days"

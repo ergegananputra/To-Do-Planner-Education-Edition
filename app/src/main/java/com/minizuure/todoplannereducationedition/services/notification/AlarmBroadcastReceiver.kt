@@ -33,9 +33,8 @@ const val KEY_NOTIFICATION_TASK_DATE_IDENTIFICATION = "KEY_NOTIFICATION_TASK_DAT
 class AlarmBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-            // TODO: [FS/P01] Reschedule all alarms
 
-            // read notification QUeue from database
+            // read notification Queue from database
             val app = context.applicationContext as ToDoPlannerApplication
 
             val alarmManager = AlarmManagerSingleton.getInstance(app).instance
@@ -49,10 +48,10 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                 val notificationQueueList = notificationQueue.getAll()
 
                 for (item in notificationQueueList) {
-                    val itemDate = DatetimeAppManager(item.taskDateIdentification).selectedDetailDatetimeISO
+                    val itemDate = DatetimeAppManager(item.time).selectedDetailDatetimeISO
                     if (itemDate.isBefore(today)) {
                         notificationQueue.deleteById(item.id)
-                    } else {
+                    } else if (ItemAlarmQueue(item.id.toInt()).isNotDaysBeforeID()) {
                         val itemAlarmQueue = NotificationQueueTable.convertTableToItem(item)
                         alarmManager.schedule(itemAlarmQueue)
                     }

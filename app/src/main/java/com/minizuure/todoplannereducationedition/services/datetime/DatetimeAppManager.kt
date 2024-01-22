@@ -2,6 +2,7 @@ package com.minizuure.todoplannereducationedition.services.datetime
 
 import android.content.Context
 import android.text.format.DateFormat
+import android.util.Log
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.datepicker.CalendarConstraints
@@ -17,6 +18,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
 import java.util.Locale
@@ -27,6 +29,12 @@ import kotlin.math.abs
  * This package contains all the functions related to date and time.
  * This package is used to manage date and time in the app.
  * The format used in this app is ISO 8601.
+ *
+ *
+ * @param zoneLocalTimeId : ZoneId
+ * @param selectedDetailDatetimeISO : ZonedDateTime
+ * @param dateTimeFormatPattern : String
+ * @param dateISO8601inString : String
  *
  *
  * Based on this article :
@@ -146,8 +154,26 @@ class DatetimeAppManager(
     }
 
     private fun localizedUTC(dateTimeInUTCiso8601: String) : ZonedDateTime {
-        val timestampInstant = Instant.parse(dateTimeInUTCiso8601)
-        return ZonedDateTime.ofInstant(timestampInstant, zoneLocalTimeId)
+        return try {
+            val timestampInstant = Instant.parse(dateTimeInUTCiso8601)
+            ZonedDateTime.ofInstant(timestampInstant, zoneLocalTimeId)
+        } catch (e: DateTimeParseException) {
+            Log.w("DatetimeAppManager",
+                "localizedUTC warning converting $dateTimeInUTCiso8601 \nStrange format")
+            try {
+                ZonedDateTime.parse(dateTimeInUTCiso8601)
+            } catch (e: Exception) {
+                Log.e("DatetimeAppManager",
+                    "localizedUTC error converting $dateTimeInUTCiso8601 after DateTimeParseException" +
+                        "\n${e.message}")
+                throw e
+            }
+        } catch (e: Exception) {
+            Log.e("DatetimeAppManager",
+                "localizedUTC error converting $dateTimeInUTCiso8601" +
+                    "\n${e.message}")
+            throw e
+        }
     }
 
     fun convertIso8601ToReadableDate(dateTimeInUTCiso8601: String) : String {

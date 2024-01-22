@@ -6,6 +6,14 @@ import androidx.room.PrimaryKey
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import com.minizuure.todoplannereducationedition.services.notification.ItemAlarmQueue
 
+/**
+ *
+ * Gunakan [time] untuk mengatur waktu alarm.
+ *
+ *
+ * [taskDateIdentification] digunakan untuk mencari notes.
+ *
+ */
 @Entity(tableName = "notification_queue_table")
 data class NotificationQueueTable (
     @PrimaryKey(autoGenerate = false)
