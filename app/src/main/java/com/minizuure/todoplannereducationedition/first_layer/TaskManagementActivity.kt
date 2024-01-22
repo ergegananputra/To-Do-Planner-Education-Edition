@@ -145,7 +145,8 @@ class TaskManagementActivity : AppCompatActivity() {
                     val bottomSheet = ActionMoreTaskBottomDialogFragment(
                         taskId = args.id,
                         onEditAction = fragment.setOnEditTaskAction(),
-                        onDeleteAction = fragment.setOnDeleteTaskAction()
+                        onDeleteAction = fragment.setOnDeleteTaskAction(),
+                        onResetAction = fragment.setOnResetTaskAction(),
                     )
                     bottomSheet.show(supportFragmentManager, bottomSheet.tag)
                     true

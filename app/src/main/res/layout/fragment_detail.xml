@@ -287,14 +287,18 @@
             app:layout_constraintEnd_toEndOf="@+id/card_view_next_week_plan"
             app:layout_constraintTop_toBottomOf="@+id/card_view_next_week_plan" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/text_view_quiz_material_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/add_quiz_materials_here"
+            android:hint="@string/add_quiz_materials_here"
+            android:textColorHint="?attr/colorOnBackground"
+            android:inputType="textMultiLine"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?attr/colorOnBackground"
+            android:enabled="false"
+            android:background="@null"
             app:layout_constraintEnd_toEndOf="@+id/button_add_quiz_material"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/card_view_next_week_plan"
@@ -338,14 +342,18 @@
             app:layout_constraintEnd_toEndOf="@+id/card_view_next_week_plan"
             app:layout_constraintTop_toBottomOf="@+id/recycler_view_quiz_materials" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/text_view_to_pack_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/add_to_pack_here"
+            android:hint="@string/add_to_pack_here"
+            android:textColorHint="?attr/colorOnBackground"
+            android:inputType="textMultiLine"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?attr/colorOnBackground"
+            android:enabled="false"
+            android:background="@null"
             app:layout_constraintEnd_toEndOf="@+id/button_add_quiz_material"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/card_view_next_week_plan"

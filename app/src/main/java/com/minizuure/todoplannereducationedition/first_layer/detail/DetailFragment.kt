@@ -44,6 +44,7 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskView
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import com.minizuure.todoplannereducationedition.services.notification.ItemAlarmQueue
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
@@ -59,7 +60,6 @@ private const val ARG_DETAIL_SET_GO_TO = "set_go_to"
  *
  *
  * - [ ] Setup rescedule task navigation
- * - [ ] Setup bottom more dialog -- reset this task*
  * - [ ] Setup bottom more dialog -- communities setting*
  *
  *
@@ -504,7 +504,7 @@ class DetailFragment : Fragment() {
             )
 
             toPackNote?.let {
-                binding.textViewToPackDescription.text = it.description
+                binding.textViewToPackDescription.setText(it.description)
             }
         }
     }
@@ -583,7 +583,7 @@ class DetailFragment : Fragment() {
             )
 
             quizNote?.let {
-                binding.textViewQuizMaterialDescription.text = it.description
+                binding.textViewQuizMaterialDescription.setText(it.description)
             }
         }
     }
@@ -658,10 +658,10 @@ class DetailFragment : Fragment() {
 
             when(targetAction) {
                 CATEGORY_QUIZ -> {
-                    binding.textViewQuizMaterialDescription.text = description
+                    binding.textViewQuizMaterialDescription.setText(description)
                 }
                 CATEGORY_TO_PACK -> {
-                    binding.textViewToPackDescription.text = description
+                    binding.textViewToPackDescription.setText(description)
                 }
                 CATEGORY_MEMO -> {
                     binding.textViewMemoDescription.setText(description)
@@ -806,6 +806,70 @@ class DetailFragment : Fragment() {
                 }
             }
             .show()
+    }
+
+    fun setOnResetTaskAction(): () -> Unit =  {
+        lifecycleScope.launch(Dispatchers.Main) {
+            this.launch(Dispatchers.IO) modelScope@{
+                val selectedDate = DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, true).dateISO8601inString
+
+                val deleteQuiz = async {
+                    val quizId = notesViewModel.note.getByFKTaskIdAndCategory(
+                        args.taskDetailId,
+                        CATEGORY_QUIZ,
+                        selectedDate
+                    )?.id ?: return@async
+
+                    this.launch(Dispatchers.IO) {
+                        notesViewModel.note.deleteById(quizId)
+                    }
+
+                    quizMaterialAdapter.submitList(emptyList())
+                }
+
+                val deleteToPack = async {
+                    val toPackId = notesViewModel.note.getByFKTaskIdAndCategory(
+                        args.taskDetailId,
+                        CATEGORY_TO_PACK,
+                        selectedDate
+                    )?.id ?: return@async
+
+                    this.launch(Dispatchers.IO) {
+                        notesViewModel.note.deleteById(toPackId)
+                    }
+
+                    toPackAdapter.submitList(emptyList())
+                }
+
+                val deleteMemo = async {
+                    val memoId = notesViewModel.note.getByFKTaskIdAndCategory(
+                        args.taskDetailId,
+                        CATEGORY_MEMO,
+                        selectedDate
+                    )?.id ?: return@async
+
+                    this.launch(Dispatchers.IO) {
+                        notesViewModel.note.deleteById(memoId)
+                    }
+                }
+
+                deleteQuiz.start()
+                deleteToPack.start()
+                deleteMemo.start()
+            }
+            resetNotesText()
+        }
+    }
+
+    private fun resetNotesText() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            binding.textViewQuizMaterialDescription.setText("")
+            binding.textViewToPackDescription.setText("")
+            binding.chipToPack.visibility = View.GONE
+            binding.chipQuiz.visibility = View.GONE
+            binding.textViewMemoDescription.setText("")
+            memoNoteEmptyMode()
+        }
     }
 
 
