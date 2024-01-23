@@ -137,5 +137,9 @@
     <string name="add_next_plan_memo_invalid">Can\'t add memo</string>
     <string name="notification_channel_main_name">Notes Reminder Notifications</string>
     <string name="notification_channel_main_description">Notifications for notes alarms. For example, quiz and to-pack. This notification may consume battery. Feels free to disable it if you don\'t need it.</string>
+    <string name="reschedule_to">reschedule to</string>
+    <string name="select_the_date">Select the date</string>
+    <string name="reschedule_all_following_meet">Reschedule all following meet</string>
+    <string name="default_reschedule_option">Only this time</string>
 
 </resources>
