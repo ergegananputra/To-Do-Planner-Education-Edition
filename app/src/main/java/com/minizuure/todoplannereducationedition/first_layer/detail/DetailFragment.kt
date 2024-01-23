@@ -216,7 +216,14 @@ class DetailFragment : Fragment() {
     }
 
     private fun setupRescheduleButton(task: TaskTable, routine: RoutineTable, session: SessionTable) {
-        // TODO : Setup reschedule button
+        val destination = DetailFragmentDirections.actionDetailFragmentToRescheduleFragment(
+            taskId = task.id,
+            selectedDatetimeDetailIso = args.selectedDatetimeDetailIso,
+            routineId = routine.id,
+        )
+        binding.buttonRescheduleNextPlan.setOnClickListener {
+            navController.navigate(destination)
+        }
     }
 
     private fun setScrollGoTo() {

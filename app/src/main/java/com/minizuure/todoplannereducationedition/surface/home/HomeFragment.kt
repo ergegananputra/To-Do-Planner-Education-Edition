@@ -31,7 +31,6 @@ import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppMa
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalTime
 
 
 class HomeFragment : Fragment() {
@@ -255,13 +254,25 @@ class HomeFragment : Fragment() {
 
 
             val dayOne = withContext(Dispatchers.IO) {
-                taskViewModel.getJoinSessionByIndexDay(dateDayOne.getTodayDayId(), dateDayOne.selectedDetailDatetimeISO)
+                taskViewModel.getJoinSessionByIndexDay(
+                    indexDay = dateDayOne.getTodayDayId(),
+                    selectedDateTime = dateDayOne.selectedDetailDatetimeISO,
+                    isToday = false
+                )
             }
             val dayTwo = withContext(Dispatchers.IO) {
-                taskViewModel.getJoinSessionByIndexDay(dateDayTwo.getTodayDayId(), dateDayTwo.selectedDetailDatetimeISO)
+                taskViewModel.getJoinSessionByIndexDay(
+                    indexDay = dateDayTwo.getTodayDayId(),
+                    selectedDateTime = dateDayTwo.selectedDetailDatetimeISO,
+                    isToday = false
+                )
             }
             val dayThree = withContext(Dispatchers.IO) {
-                taskViewModel.getJoinSessionByIndexDay(dateDayThree.getTodayDayId(), dateDayThree.selectedDetailDatetimeISO)
+                taskViewModel.getJoinSessionByIndexDay(
+                    indexDay = dateDayThree.getTodayDayId(),
+                    selectedDateTime = dateDayThree.selectedDetailDatetimeISO,
+                    isToday = false
+                )
             }
 
             upcomingTask.addAll(dayOne + dayTwo + dayThree)
@@ -283,17 +294,12 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             val todayTask = withContext(Dispatchers.IO) {
                 val today = DatetimeAppManager()
-                val tasks = taskViewModel.getJoinSessionByIndexDay(today.getTodayDayId(), today.selectedDetailDatetimeISO)
-                tasks
+                taskViewModel.getJoinSessionByIndexDay(
+                    indexDay = today.getTodayDayId(),
+                    selectedDateTime = today.selectedDetailDatetimeISO,
+                    isToday = true
+                )
             }
-            todayMainTaskAdapter.submitList(todayTask)
-
-            todayTask.sortedWith(
-                compareBy {
-                    LocalTime.parse(it.sessionTimeEnd)
-                        .isBefore(DatetimeAppManager().selectedDetailDatetimeISO.toLocalTime())
-                }
-            )
             todayMainTaskAdapter.submitList(todayTask)
         }
     }

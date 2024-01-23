@@ -53,12 +53,37 @@ interface TaskTableDao : BaseIODao<TaskTable> {
                 session_table.time_end AS time_end,
                 session_table.bool_selected_days AS bool_selected_days, 
                 session_table.fk_routine_id AS fk_routine_id, 
-                session_table.is_custom_session AS is_custom_session
+                session_table.is_custom_session AS is_custom_session,
+                task_table.is_rescheduled AS is_rescheduled,
+                task_table.rescheduled_time_start AS rescheduled_time_start,
+                task_table.rescheduled_time_end AS rescheduled_time_end
         FROM task_table
         JOIN session_table ON task_table.session_id = session_table.id
         JOIN routine_table ON session_table.fk_routine_id =  routine_table.id
-        WHERE task_table.index_day = :indexDay AND routine_table.id IN (:fkRoutinesIds)
+        WHERE task_table.index_day = :indexDay 
+        AND :iso8601Date BETWEEN routine_table.date_start AND routine_table.date_end
+        AND (
+            task_table.is_rescheduled = 0 
+            OR (
+                task_table.is_rescheduled = 1 
+                AND :iso8601Date BETWEEN task_table.rescheduled_time_start AND task_table.rescheduled_time_end
+            )
+        )
+        ORDER BY 
+            CASE WHEN :isToday = 1 
+                THEN CASE WHEN :todayHour <= session_table.time_end 
+                        THEN 0
+                        ELSE 1
+                    END
+                ELSE session_table.time_end
+            END ASC
+        
         """
     )
-    suspend fun getTaskAndSessionJoinByIndexDay(indexDay: Int, fkRoutinesIds: List<Long>): List<TaskAndSessionJoin>
+    suspend fun getTaskAndSessionJoinByIndexDay(
+        indexDay: Int,
+        iso8601Date : String,
+        isToday : Boolean,
+        todayHour : String
+    ): List<TaskAndSessionJoin>
 }

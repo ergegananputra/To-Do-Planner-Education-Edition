@@ -115,7 +115,7 @@ class TaskDetailBottomSheetDialogFragment(
             isCursorVisible = false
         }
 
-        val firstInitValue = weeksDictionary.keys.first()
+
         binding.textInputLayoutItemDateBottomSheet.editText?.setText(weeksDictionary.keys.first())
     }
 

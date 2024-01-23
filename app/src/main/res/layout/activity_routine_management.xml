@@ -17,6 +17,7 @@
         app:titleCentered="true"
         app:menu="@menu/app_bar_general_menu"
         app:navigationIcon="@drawable/ic_arrow_back_outline"
+        app:navigationIconTint="?attr/colorOnBackground"
         app:title="Routine Management" />
 
     <androidx.fragment.app.FragmentContainerView

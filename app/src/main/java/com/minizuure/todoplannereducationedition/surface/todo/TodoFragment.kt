@@ -31,7 +31,6 @@ import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppMa
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalTime
 import java.time.ZonedDateTime
 
 /**
@@ -211,24 +210,17 @@ class TodoFragment : Fragment() {
 
     private fun updateQuizAdapter(forceUpdate: Boolean = false) {
         lifecycleScope.launch {
+            val selectedDate = getSelectedDate()
             val selectedDateTasks = withContext(Dispatchers.IO) {
-                val selectedDate = getSelectedDate()
-                val tasks = taskViewModel.getJoinSessionByIndexDay(DatetimeAppManager(selectedDate).getTodayDayId(), selectedDate)
-                selectedDateMainTaskAdapter.setNewCurrentDate(selectedDate)
-                selectedDateMainTaskAdapter.submitList(tasks)
 
-                if (isToday(selectedDate.toInstant().toEpochMilli())) {
-                    tasks.sortedWith(
-                        compareBy {
-                            LocalTime.parse(it.sessionTimeEnd)
-                                .isBefore(DatetimeAppManager().selectedDetailDatetimeISO.toLocalTime())
-                        }
-                    )
-                }
-
-                tasks
+                taskViewModel.getJoinSessionByIndexDay(
+                    indexDay = DatetimeAppManager(selectedDate).getTodayDayId(),
+                    selectedDateTime = selectedDate,
+                    isToday = isToday(selectedDate.toInstant().toEpochMilli())
+                )
             }
 
+            selectedDateMainTaskAdapter.setNewCurrentDate(selectedDate)
             selectedDateMainTaskAdapter.submitList(selectedDateTasks)
 
             if (forceUpdate) selectedDateMainTaskAdapter.notifyDataSetChanged()

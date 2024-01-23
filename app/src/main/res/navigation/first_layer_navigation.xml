@@ -50,6 +50,12 @@
             android:name="task_id"
             app:argType="long"
             android:defaultValue="-1L" />
+        <argument
+            android:name="routine_id"
+            app:argType="long" />
+        <argument
+            android:name="selected_datetime_detail_iso"
+            app:argType="com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime" />
     </fragment>
     <fragment
         android:id="@+id/dummyFragment"

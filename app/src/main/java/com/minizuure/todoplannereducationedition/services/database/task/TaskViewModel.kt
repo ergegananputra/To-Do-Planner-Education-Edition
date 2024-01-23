@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.minizuure.todoplannereducationedition.AppDatabaseRepository
 import com.minizuure.todoplannereducationedition.services.database.join.TaskAndSessionJoin
+import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import java.time.ZonedDateTime
 
 class TaskViewModel(
@@ -32,9 +33,26 @@ class TaskViewModel(
         return appDatabaseRepository.getTasksByIndexDay(indexDay, selectedDateTime)
     }
 
-    suspend fun getJoinSessionByIndexDay(indexDay: Int, selectedDateTime: ZonedDateTime) : List<TaskAndSessionJoin> {
+    suspend fun getJoinSessionByIndexDay(
+        indexDay: Int,
+        selectedDateTime: ZonedDateTime,
+        isToday: Boolean,
+    ) : List<TaskAndSessionJoin> {
         Log.d("TaskViewModel", "get tasks by index day: $indexDay")
-        return appDatabaseRepository.getTaskAndSessionJoinByIndexDay(indexDay, selectedDateTime)
+        val datetimeAppManager = DatetimeAppManager().selectedDetailDatetimeISO
+        val hour = datetimeAppManager.hour.let {
+            if (it < 10) "0$it" else "$it"
+        }
+        val minute = datetimeAppManager.minute.let {
+            if (it < 10) "0$it" else "$it"
+        }
+
+        return appDatabaseRepository.getTaskAndSessionJoinByIndexDay(
+            indexDay = indexDay,
+            selectedDate = selectedDateTime.toLocalDateTime(),
+            isToday = isToday,
+            todayHour = "$hour:$minute",
+        )
     }
 
     suspend fun getBySessionId(sessionId: Long) : List<TaskTable> {

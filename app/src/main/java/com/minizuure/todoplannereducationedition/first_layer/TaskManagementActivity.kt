@@ -14,6 +14,7 @@ import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.databinding.ActivityTaskManagementBinding
 import com.minizuure.todoplannereducationedition.dialog_modal.ActionMoreTaskBottomDialogFragment
 import com.minizuure.todoplannereducationedition.first_layer.detail.DetailFragment
+import com.minizuure.todoplannereducationedition.first_layer.reschedule.RescheduleFragment
 import com.minizuure.todoplannereducationedition.first_layer.task.TaskFragment
 import com.minizuure.todoplannereducationedition.services.database.DEFAULT_TASK_ID
 
@@ -114,6 +115,9 @@ class TaskManagementActivity : AppCompatActivity() {
                     getString(R.string.edit_task)
                 }
                 changeToolbarTitle(title,false)
+            }
+            is RescheduleFragment -> {
+                changeToolbarTitle(getString(R.string.reschedule), false)
             }
 
             else -> changeToolbarTitle("Untitled", false)
