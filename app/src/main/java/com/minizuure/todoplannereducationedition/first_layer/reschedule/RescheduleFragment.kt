@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -36,7 +37,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.temporal.ChronoUnit
 
-
+/**
+ * [RescheduleFragment] is used to reschedule a task.
+ *
+ *
+ * TODO List :
+ * 1.   Membuat logic untuk reschedule task. [setupSaveButton]
+ *
+ */
 class RescheduleFragment : Fragment() {
     val args : RescheduleFragmentArgs by navArgs()
     private val rescheduleFormViewModel : RescheduleFormViewModel by activityViewModels()
@@ -74,7 +82,26 @@ class RescheduleFragment : Fragment() {
         setSessionDropDown()
         setupSwitch()
 
+        setupSaveButton()
         setupErrorMessages()
+    }
+
+    private fun setupSaveButton() {
+        /**
+         * TODO: membuat save button logic.
+         * 1.   Cek Switch, jika true maka reschedule semua task
+         *      yang ada di session tersebut setelah hari Task yang dipilih.
+         *
+         * 2.   Buat Task Duplicate dengan rentang waktu yang dipilih.
+         *
+         * 3.   Migrasi semua notes setelah hari Task yang dipilih ke Task Duplicate.
+         *
+         */
+
+        binding.buttonSaveRescheduleForm.setOnClickListener {
+            Log.d("RescheduleFragment", "setupSaveButton: clicked")
+            Toast.makeText(requireContext(), "Clicked: Unimplemented yet", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setupSwitch() {
