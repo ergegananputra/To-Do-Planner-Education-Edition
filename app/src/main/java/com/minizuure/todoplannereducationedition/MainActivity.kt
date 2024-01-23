@@ -24,7 +24,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        CustomSystemTweak(this).statusBarTweak()
+        CustomSystemTweak(this)
+            .statusBarTweak()
+            .customNavigationBarColorSet(com.google.android.material.R.attr.colorSurfaceContainer)
+
 
         // Bottom Navigation
         with(binding) {

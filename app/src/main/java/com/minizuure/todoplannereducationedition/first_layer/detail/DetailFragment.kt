@@ -216,7 +216,11 @@ class DetailFragment : Fragment() {
     }
 
     private fun setupRescheduleButton(task: TaskTable, routine: RoutineTable, session: SessionTable) {
-        val destination = DetailFragmentDirections.actionDetailFragmentToRescheduleFragment(task.id)
+        val destination = DetailFragmentDirections.actionDetailFragmentToRescheduleFragment(
+            taskId = task.id,
+            selectedDatetimeDetailIso = args.selectedDatetimeDetailIso,
+            routineId = routine.id,
+        )
         binding.buttonRescheduleNextPlan.setOnClickListener {
             navController.navigate(destination)
         }
