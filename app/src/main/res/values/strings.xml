@@ -141,5 +141,7 @@
     <string name="select_the_date">Select the date</string>
     <string name="reschedule_all_following_meet">Reschedule all following meet</string>
     <string name="default_reschedule_option">Only this time</string>
+    <string name="reschedule_option_only_this_time">Only this time</string>
+    <string name="reschedule_option_all_following_meet">All following meet</string>
 
 </resources>

@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -50,6 +49,12 @@ class RescheduleFragment : Fragment() {
     private val binding by lazy {
         FragmentRescheduleBinding.inflate(layoutInflater)
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        rescheduleFormViewModel.reset()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -66,15 +71,22 @@ class RescheduleFragment : Fragment() {
         setupSelectedDatePicker()
         setupRescheduleDatePicker()
         setupStartTimePicker()
-        setupDropdownTextField()
+        setSessionDropDown()
+        setupSwitch()
 
         setupErrorMessages()
     }
 
-    private fun setupDropdownTextField() {
-        setDayDropDown()
-        setSessionDropDown()
+    private fun setupSwitch() {
+        binding.switchRescheduleOption.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.rescheudleOption.text = getString(R.string.reschedule_all_following_meet)
+            } else {
+                binding.rescheudleOption.text = getString(R.string.reschedule_option_only_this_time)
+            }
+        }
     }
+
 
     private fun setSessionDropDown() {
         CustomTextField(requireContext()).setDropdownTextField(
@@ -87,10 +99,16 @@ class RescheduleFragment : Fragment() {
             if (it != null) {
                 val text = "${it.timeStart} - ${it.timeEnd}"
                 binding.textInputLayoutSelectSession.editText?.setText(text)
+                clearSessionError()
             } else {
                 binding.textInputLayoutSelectSession.editText?.setText("")
             }
         }
+    }
+
+    private fun clearSessionError() {
+        binding.textInputLayoutSelectSession.error = null
+        binding.textInputLayoutSelectSession.isErrorEnabled = false
     }
 
     private fun spinnerSelectSessionOnClick(): () -> Unit = {
@@ -163,75 +181,23 @@ class RescheduleFragment : Fragment() {
         binding.textInputLayoutSelectSession.editText?.setText(text)
     }
 
-    private fun setDayDropDown() {
-        CustomTextField(requireContext()).setDropdownTextField(
-            binding.textInputLayoutSelectDay,
-            onClick = spinnerSelectDayOnClick()
-        )
-
-        rescheduleFormViewModel.day.observe(viewLifecycleOwner) {
-            rescheduleFormViewModel.setSession(null)
-            clearDayError()
-        }
-    }
-
-    private fun spinnerSelectDayOnClick(): () -> Unit = {
-        lifecycleScope.launch {
-            val routine = withContext(Dispatchers.IO) {
-                routineViewModel.getById(args.routineId)
-            }
-
-            if (MinimumBottomSheetDialog.isDialogOpen) return@launch
-            if (routine == null) {
-                Log.e("RescheduleFragment", "spinnerSelectDayOnClick: routine is null")
-                val errorMsg = getString(R.string.error_no_routine_template_selected)
-                binding.textInputLayoutSelectDay.error = errorMsg
-                return@launch
-            }
-            val days = DatetimeAppManager().getAllDaysOfWeek()
-                .mapIndexed { index, title ->
-                    DaysOfWeekImpl(index.toLong(), title)
-                }
-
-            val selectDaysAdapter = GlobalAdapter(
-                firstDiffrenetColor = true,
-                startFromIndexZero = true
-            )
-            val bottomSheet = GlobalBottomSheetDialogFragment(
-                title = getString(R.string.default_select_day),
-                globalAdapter = selectDaysAdapter
-            )
-            selectDaysAdapter.onClickAction = onClickDayItem(bottomSheet)
-
-            selectDaysAdapter.submitList(days)
-
-            bottomSheet.show(parentFragmentManager, "select_days_bottom_sheet")
-
-        }
-    }
-
-    private fun onClickDayItem(bottomSheet: GlobalBottomSheetDialogFragment): (GlobalMinimumInterface) -> Unit = {
-        if (it is DaysOfWeekImpl) {
-            binding.textInputLayoutSelectDay.editText?.setText(it.title)
-            rescheduleFormViewModel.setDay(it)
-        } else {
-            Log.wtf("RescheduleFragment", "onClickDayItem: it is not DaysOfWeekImpl")
-        }
-        bottomSheet.closeDialog()
-    }
-
-    private fun clearDayError() {
-        binding.textInputLayoutSelectSession.error = null
-    }
 
     private fun setupRescheduleDatePicker() {
         DatetimeAppManager().setEditTextDatePickerDialog(
             requireContext(),
             parentFragmentManager,
             binding.textInputLayoutAlternativeReschedule,
+            forwardOnly = true,
             customSuccessAction = {
-                // TODO: connect with rescheduleFormViewModel
-                Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
+                val selectedDate = binding.textInputLayoutAlternativeReschedule.editText?.text.toString()
+                val iso8601 = DatetimeAppManager().convertReadableDateToIso8601(selectedDate)
+                val datetimeManager = DatetimeAppManager(iso8601)
+                val daysOfWeekImpl = DaysOfWeekImpl(
+                    id = datetimeManager.getTodayDayId().toLong(),
+                    title = datetimeManager.getTodayDayName()
+                )
+                rescheduleFormViewModel.setDay(daysOfWeekImpl)
+                clearSessionError()
             }
         )
     }
@@ -240,7 +206,7 @@ class RescheduleFragment : Fragment() {
         lifecycleScope.launch {
             Log.d("RescheduleFragment", "setupSelectedDatePicker: program reached")
 
-            val routine = routineViewModel.getById(args.routineId) ?: return@launch
+            val routine = withContext(Dispatchers.IO){ routineViewModel.getById(args.routineId) } ?: return@launch
             val dateEnd = DatetimeAppManager(routine.date_end).selectedDetailDatetimeISO
 
             val currentDate = args.selectedDatetimeDetailIso.zoneDateTime
@@ -251,10 +217,13 @@ class RescheduleFragment : Fragment() {
 
             val weeks = ChronoUnit.WEEKS.between(currentDate, dateEnd).toInt()
 
-            for (i in 1..weeks) {
+            for (i in 0..weeks) {
                 val dateTime = DatetimeAppManager(currentDate.plusWeeks(i.toLong())).toReadable()
                 if (i == 1) {
-                    weeksDictionary["Next week"] = i
+                    weeksDictionary["Next week | $dateTime"] = i
+                    continue
+                } else if (i == 0) {
+                    weeksDictionary["This week | $dateTime"] = 0
                     continue
                 }
                 weeksDictionary[ "In $i weeks | $dateTime"] = i

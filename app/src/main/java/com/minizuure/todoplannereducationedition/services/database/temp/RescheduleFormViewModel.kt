@@ -57,4 +57,13 @@ class RescheduleFormViewModel : ViewModel() {
     suspend fun getTimeEnd() : String? {
         return timeEnd.asFlow().firstOrNull()
     }
+
+    fun reset() {
+        day.value = null
+        session.value = null
+        isCustomSession.value = false
+        timeStart.value = null
+        timeEnd.value = null
+        isObserverActive = false
+    }
 }

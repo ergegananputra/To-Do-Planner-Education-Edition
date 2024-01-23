@@ -21,15 +21,6 @@
             android:paddingVertical="24dp">
 
             <androidx.constraintlayout.widget.Group
-                android:id="@+id/group_share_to_community"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:constraint_referenced_ids="container_reschedule_option_label, switch_reschedule_option"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.constraintlayout.widget.Group
                 android:id="@+id/group_custom_session"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,42 +101,18 @@
                 </com.google.android.material.textfield.TextInputEditText>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_input_layout_select_day"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="8dp"
-                android:hint="@string/default_select_day"
-                app:endIconDrawable="@drawable/ic_arrow_down"
-                app:endIconMode="custom"
-                app:layout_constraintEnd_toStartOf="@id/guideline_center_vertical"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_input_layout_alternative_reschedule">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="48dp" />
-
-            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_layout_select_session"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="32dp"
                 android:hint="@string/default_select_session"
                 app:endIconDrawable="@drawable/ic_arrow_down"
                 app:endIconMode="custom"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@id/guideline_center_vertical"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_input_layout_alternative_reschedule">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -171,7 +138,7 @@
                 app:layout_constraintEnd_toStartOf="@id/guideline_center_vertical"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_input_layout_select_day">
+                app:layout_constraintTop_toBottomOf="@+id/text_input_layout_select_session">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -196,7 +163,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline_center_vertical"
-                app:layout_constraintTop_toBottomOf="@+id/text_input_layout_select_day">
+                app:layout_constraintTop_toBottomOf="@+id/text_input_layout_select_session">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"

@@ -110,6 +110,10 @@ class DatetimeAppManager(
         return selectedDetailDatetimeISO.dayOfWeek.value % 7
     }
 
+    fun getTodayDayName() : String {
+        return getAllDaysOfWeek()[getTodayDayId()]
+    }
+
     /**
      * @return List of days of week in localized string, example ["Sunday", "Monday", "Tuesday", ...]
      */
