@@ -10,7 +10,7 @@ import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.G
  *
  *
  * [date_start] & [date_end] is stored in the string format of ISO 8601.
- * for example: "2021-08-01T00:00:00.000+02:00[Europe/Paris]"
+ * for example: "2024-01-20T17:00:00Z"
  *
  *
  * This is the routineTable class. It is used to store the data of a routine.

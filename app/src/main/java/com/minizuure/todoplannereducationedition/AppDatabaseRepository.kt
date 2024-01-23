@@ -1,5 +1,6 @@
 package com.minizuure.todoplannereducationedition
 
+import android.util.Log
 import com.minizuure.todoplannereducationedition.services.database.DeleteAllOperation
 import com.minizuure.todoplannereducationedition.services.database.notes.NotesTaskDao
 import com.minizuure.todoplannereducationedition.services.database.notes.NotesTaskTable
@@ -14,6 +15,7 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 
 /**
@@ -89,14 +91,12 @@ class AppDatabaseRepository(
         taskTableDao.getByIndexDay(indexDay, validRoutineIds)
     }
 
-    suspend fun getTaskAndSessionJoinByIndexDay(indexDay: Int, selectedDate : ZonedDateTime) = withContext(Dispatchers.IO) {
-        val routines = routineTableDao.getAll()
-        val validRoutineIds = routines.filter {
-            val endTime = DatetimeAppManager(it.date_end).selectedDetailDatetimeISO
-            selectedDate.isBefore(endTime) || selectedDate.isEqual(endTime)
-        }.map { it.id }
-
-        taskTableDao.getTaskAndSessionJoinByIndexDay(indexDay, validRoutineIds)
+    suspend fun getTaskAndSessionJoinByIndexDay(indexDay: Int, selectedDate : LocalDateTime, isToday : Boolean, todayHour: String) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getTaskAndSessionJoinByIndexDay: $indexDay, $selectedDate, $isToday, $todayHour")
+        if (todayHour.length != 5) throw Exception("todayHour must be in format HH:mm\n\n")
+        val (a,b) = todayHour.split(":")
+        if (a.toInt() > 23 || a.toInt() < 0 || b.toInt() > 59 || b.toInt() < 0) throw Exception("Invalid todayHour format : '$todayHour'?\n\n")
+        taskTableDao.getTaskAndSessionJoinByIndexDay(indexDay, selectedDate.toString(), isToday, todayHour)
     }
 
     suspend fun getTasksBySessionId(sessionId: Long) = withContext(Dispatchers.IO) { taskTableDao.getBySessionId(sessionId) }
