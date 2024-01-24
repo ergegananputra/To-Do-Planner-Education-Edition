@@ -49,7 +49,7 @@ class TaskViewModel(
 
         return appDatabaseRepository.getTaskAndSessionJoinByIndexDay(
             indexDay = indexDay,
-            selectedDate = selectedDateTime.toLocalDateTime(),
+            selectedDate = selectedDateTime,
             isToday = isToday,
             todayHour = "$hour:$minute",
         )

@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Filter
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.minizuure.todoplannereducationedition.databinding.ModalAddNotesTaskBottomSheetDialogBinding
 import com.minizuure.todoplannereducationedition.dialog_modal.preset.MinimumBottomSheetDialog
@@ -105,9 +107,31 @@ class TaskDetailBottomSheetDialogFragment(
             weeksDictionary[ "In $i weeks | $dateTime"] = i
         }
 
+        val adapter: ArrayAdapter<String> = object : ArrayAdapter<String>(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            weeksDictionary.keys.toTypedArray()
+        ) {
+            override fun getFilter(): Filter {
+                return object : Filter() {
+                    override fun performFiltering(constraint: CharSequence?): FilterResults {
+                        return FilterResults().apply { values = weeksDictionary.keys.toTypedArray(); count = weeksDictionary.keys.size }
+                    }
+
+                    override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                        if (results != null && results.count > 0) {
+                            notifyDataSetChanged()
+                        } else {
+                            notifyDataSetInvalidated()
+                        }
+                    }
+                }
+            }
+        }
+
         (binding.textInputLayoutItemDateBottomSheet.editText
                     as? MaterialAutoCompleteTextView
-                    )?.setSimpleItems(weeksDictionary.keys.toTypedArray())
+                    )?.setAdapter(adapter)
 
         binding.textInputLayoutItemDateBottomSheet.editText?.apply {
             isFocusable = false

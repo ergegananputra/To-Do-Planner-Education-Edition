@@ -15,8 +15,9 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * AppDatabaseRepository
@@ -91,12 +92,21 @@ class AppDatabaseRepository(
         taskTableDao.getByIndexDay(indexDay, validRoutineIds)
     }
 
-    suspend fun getTaskAndSessionJoinByIndexDay(indexDay: Int, selectedDate : LocalDateTime, isToday : Boolean, todayHour: String) = withContext(Dispatchers.IO) {
-        Log.d("AppDatabaseRepository", "getTaskAndSessionJoinByIndexDay: $indexDay, $selectedDate, $isToday, $todayHour")
+    suspend fun getTaskAndSessionJoinByIndexDay(indexDay: Int, selectedDate : ZonedDateTime, isToday : Boolean, todayHour: String) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getTaskAndSessionJoinByIndexDay: $indexDay, ${
+            selectedDate.withZoneSameInstant(
+                ZoneId.of("Z")
+            ).format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+        }, $isToday, $todayHour")
         if (todayHour.length != 5) throw Exception("todayHour must be in format HH:mm\n\n")
         val (a,b) = todayHour.split(":")
         if (a.toInt() > 23 || a.toInt() < 0 || b.toInt() > 59 || b.toInt() < 0) throw Exception("Invalid todayHour format : '$todayHour'?\n\n")
-        taskTableDao.getTaskAndSessionJoinByIndexDay(indexDay, selectedDate.toString(), isToday, todayHour)
+        taskTableDao.getTaskAndSessionJoinByIndexDay(
+            indexDay,
+            DatetimeAppManager(selectedDate, true).dateISO8601inString,
+            isToday,
+            todayHour
+        )
     }
 
     suspend fun getTasksBySessionId(sessionId: Long) = withContext(Dispatchers.IO) { taskTableDao.getBySessionId(sessionId) }

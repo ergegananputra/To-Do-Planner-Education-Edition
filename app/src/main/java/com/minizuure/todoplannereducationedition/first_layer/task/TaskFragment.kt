@@ -630,7 +630,7 @@ class TaskFragment : Fragment() {
 
                                 if (timeEnd == null || timeEnd == "") return@launch
 
-                                checkTimeInteval(it, timeEnd)
+                                checkTimeInterval(it, timeEnd)
                             }
 
                         }
@@ -648,7 +648,7 @@ class TaskFragment : Fragment() {
 
                                 if(timeStart == null || timeStart == "") return@launch
 
-                                checkTimeInteval(timeStart, it)
+                                checkTimeInterval(timeStart, it)
                             }
 
                         }
@@ -667,7 +667,7 @@ class TaskFragment : Fragment() {
 
     }
 
-    private fun checkTimeInteval(timeStart: String, timeEnd: String) {
+    private fun checkTimeInterval(timeStart: String, timeEnd: String) {
         val startTime = DatetimeAppManager().convertStringTimeToMinutes(timeStart)
         val endTime = DatetimeAppManager().convertStringTimeToMinutes(timeEnd)
 
