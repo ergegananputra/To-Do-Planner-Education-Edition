@@ -63,7 +63,9 @@ class TaskManagementActivity : AppCompatActivity() {
         val destination = when(toOpen) {
             OPEN_TASK -> {
                 DummyFragmentDirections.actionDummyFragmentToTaskFragment(
-                    taskId = args.id
+                    taskId = args.id,
+                    indexDay = args.indexDay,
+                    sessionId = args.sessionId,
                 )
             }
             OPEN_DETAIL -> {
@@ -71,7 +73,9 @@ class TaskManagementActivity : AppCompatActivity() {
                     taskDetailId = args.id,
                     titleDetail = args.title ?: "",
                     selectedDatetimeDetailIso = args.selectedDatetimeISO,
-                    setGoTo = null
+                    setGoTo = null,
+                    indexDay = args.indexDay,
+                    sessionId = args.sessionId,
                 )
             }
             OPEN_DETAIL_GO_TO_QUIZ -> {
@@ -79,7 +83,9 @@ class TaskManagementActivity : AppCompatActivity() {
                     taskDetailId = args.id,
                     titleDetail = args.title ?: "",
                     selectedDatetimeDetailIso = args.selectedDatetimeISO,
-                    setGoTo = OPEN_DETAIL_GO_TO_QUIZ
+                    setGoTo = OPEN_DETAIL_GO_TO_QUIZ,
+                    indexDay = args.indexDay,
+                    sessionId = args.sessionId,
                 )
             }
             OPEN_DETAIL_GO_TO_PACK  -> {
@@ -87,7 +93,9 @@ class TaskManagementActivity : AppCompatActivity() {
                     taskDetailId = args.id,
                     titleDetail = args.title ?: "",
                     selectedDatetimeDetailIso = args.selectedDatetimeISO,
-                    setGoTo = OPEN_DETAIL_GO_TO_PACK
+                    setGoTo = OPEN_DETAIL_GO_TO_PACK,
+                    indexDay = args.indexDay,
+                    sessionId = args.sessionId,
                 )
             }
             else -> {

@@ -96,7 +96,9 @@ class TodoFragment : Fragment() {
             actionToOpen = OPEN_DETAIL,
             title = taskAndSessionJoin.title,
             id = taskAndSessionJoin.id,
-            selectedDatetimeISO = ParcelableZoneDateTime(getSelectedDate())
+            selectedDatetimeISO = ParcelableZoneDateTime(getSelectedDate()),
+            indexDay = taskAndSessionJoin.indexDay,
+            sessionId = taskAndSessionJoin.fkSessionId
         )
 
         findNavController().navigate(destination)

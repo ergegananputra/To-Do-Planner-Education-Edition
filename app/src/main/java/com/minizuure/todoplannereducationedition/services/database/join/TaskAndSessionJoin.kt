@@ -10,20 +10,8 @@ data class TaskAndSessionJoin(
     @ColumnInfo(name ="title")
     val title : String,
 
-    @ColumnInfo(name ="index_day")
-    val indexDay : Int,
-
-    @ColumnInfo(name ="session_id")
-    val sessionId : Long,
-
     @ColumnInfo(name ="updated_at")
     val updatedAt : String,
-
-    @ColumnInfo(name ="location_name")
-    val locationName : String?,
-
-    @ColumnInfo(name ="location_link")
-    val locationAddress : String?,
 
     @ColumnInfo(name ="is_shared_to_community")
     val isSharedToCommunity : Boolean,
@@ -51,7 +39,13 @@ data class TaskAndSessionJoin(
     val sessionIsCustomSession : Boolean,
 
 
-    // custom reschedule
+    // SessionTaskProviderTable
+    @ColumnInfo(name ="index_day")
+    val indexDay : Int,
+
+    @ColumnInfo(name = "session_id")
+    val fkSessionId: Long,
+
     @ColumnInfo(name = "is_rescheduled")
     var isRescheduled : Boolean = false,
 
@@ -60,5 +54,12 @@ data class TaskAndSessionJoin(
 
     @ColumnInfo(name = "rescheduled_time_end")
     var rescheduledTimeEnd : String? = null,
+
+    @ColumnInfo(name ="location_name")
+    val locationName : String?,
+
+    @ColumnInfo(name ="location_link")
+    val locationAddress : String?,
+
 
 )

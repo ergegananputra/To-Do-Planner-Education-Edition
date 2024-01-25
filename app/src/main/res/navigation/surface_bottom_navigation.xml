@@ -48,5 +48,13 @@
         <argument
             android:name="selectedDatetimeISO"
             app:argType="com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime" />
+        <argument
+            android:name="index_day"
+            app:argType="integer"
+            android:defaultValue="-1" />
+        <argument
+            android:name="session_id"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </activity>
 </navigation>

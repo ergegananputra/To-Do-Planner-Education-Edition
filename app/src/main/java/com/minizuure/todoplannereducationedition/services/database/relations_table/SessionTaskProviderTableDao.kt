@@ -1,4 +1,4 @@
-package com.minizuure.todoplannereducationedition.services.database.task
+package com.minizuure.todoplannereducationedition.services.database.relations_table
 
 import androidx.room.Dao
 import androidx.room.Query
@@ -6,27 +6,41 @@ import com.minizuure.todoplannereducationedition.services.database.BaseIODao
 import com.minizuure.todoplannereducationedition.services.database.join.TaskAndSessionJoin
 
 @Dao
-interface TaskTableDao : BaseIODao<TaskTable> {
+interface SessionTaskProviderTableDao : BaseIODao<SessionTaskProviderTable> {
 
-    @Query("SELECT * FROM task_table")
-    suspend fun getAll(): List<TaskTable>
+    @Query("SELECT * FROM session_task_provider_table")
+    suspend fun getAll(): List<SessionTaskProviderTable>
 
-    @Query("SELECT * FROM task_table LIMIT :limit OFFSET :offset")
-    suspend fun getPaginated(limit: Int, offset: Int = 0): List<TaskTable>
+    @Query("SELECT * FROM session_task_provider_table LIMIT :limit OFFSET :offset")
+    suspend fun getPaginated(limit: Int, offset: Int = 0): List<SessionTaskProviderTable>
 
+    @Query("SELECT * FROM session_task_provider_table WHERE index_day = :indexDay AND fk_task_id = :taskId AND fk_session_id = :sessionId")
+    suspend fun getByPrimaryKeys(
+        indexDay: Int,
+        taskId: Long,
+        sessionId: Long
+    ): SessionTaskProviderTable?
 
-    @Query("SELECT * FROM task_table WHERE id = :id")
-    suspend fun getById(id: Long): TaskTable?
+    @Query("DELETE FROM session_task_provider_table WHERE index_day = :indexDay AND fk_task_id = :taskId AND fk_session_id = :sessionId")
+    suspend fun deleteByIndexDayAndTaskIdAndSessionId(
+        indexDay: Int,
+        taskId: Long,
+        sessionId: Long
+    )
 
     @Query("""
-        SELECT task_table.* 
-        FROM session_task_provider_table as provider_table
-        JOIN task_table ON provider_table.fk_task_id = task_table.id
-        WHERE provider_table.fk_session_id = :sessionId
+        UPDATE session_task_provider_table
+        SET location_name = :location, location_link = :locationLink
+        WHERE index_day = :indexDay AND fk_task_id = :taskId AND fk_session_id = :sessionId
         """
     )
-    suspend fun getBySessionId(sessionId: Long): List<TaskTable>
-
+    suspend fun updateLocationByPrimaryKeys(
+        indexDay: Int,
+        taskId: Long,
+        sessionId: Long,
+        location: String,
+        locationLink : String
+    )
 
     @Query("""
         SELECT 
@@ -55,30 +69,17 @@ interface TaskTableDao : BaseIODao<TaskTable> {
         JOIN task_table ON provider_table.fk_task_id = task_table.id
         JOIN session_table ON provider_table.fk_session_id = session_table.id
         JOIN routine_table ON session_table.fk_routine_id =  routine_table.id
-        WHERE provider_table.index_day = :indexDay 
-        AND :iso8601Date BETWEEN routine_table.date_start AND routine_table.date_end
-        AND (
-            provider_table.is_rescheduled = 0 
-            OR (
-                provider_table.is_rescheduled = 1 
-                AND :iso8601Date BETWEEN provider_table.rescheduled_date_start AND provider_table.rescheduled_date_end
-            )
-        )
-        ORDER BY 
-            CASE WHEN :isToday = 1 
-                THEN CASE WHEN :todayHour <= session_table.time_end 
-                        THEN 0
-                        ELSE 1
-                    END
-                ELSE session_table.time_end
-            END ASC
-        
+        WHERE
+            provider_table.index_day = :indexDay
+            AND provider_table.fk_task_id = :taskId
+            AND provider_table.fk_session_id = :sessionId
         """
     )
-    suspend fun getTaskAndSessionJoinByIndexDay(
+    suspend fun getTaskAndSessionJoinByProviderPrimaryKeys(
         indexDay: Int,
-        iso8601Date : String,
-        isToday : Boolean,
-        todayHour : String
-    ): List<TaskAndSessionJoin>
+        taskId: Long,
+        sessionId: Long
+    ): TaskAndSessionJoin?
+
+
 }

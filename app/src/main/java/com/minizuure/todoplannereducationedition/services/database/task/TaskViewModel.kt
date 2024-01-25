@@ -28,10 +28,6 @@ class TaskViewModel(
         return appDatabaseRepository.getPaginatedTasks(limit, offset)
     }
 
-    suspend fun getByIndexDay(indexDay: Int, selectedDateTime: ZonedDateTime) : List<TaskTable> {
-        Log.d("TaskViewModel", "get tasks by index day: $indexDay")
-        return appDatabaseRepository.getTasksByIndexDay(indexDay, selectedDateTime)
-    }
 
     suspend fun getJoinSessionByIndexDay(
         indexDay: Int,
@@ -49,7 +45,7 @@ class TaskViewModel(
 
         return appDatabaseRepository.getTaskAndSessionJoinByIndexDay(
             indexDay = indexDay,
-            selectedDate = selectedDateTime.toLocalDateTime(),
+            selectedDate = selectedDateTime,
             isToday = isToday,
             todayHour = "$hour:$minute",
         )
@@ -67,20 +63,12 @@ class TaskViewModel(
 
     suspend fun insert(
         title : String,
-        indexDay : Int,
-        sessionId : Long,
-        locationName : String? = null,
-        locationAddress : String? = null,
         isSharedToCommunity : Boolean = false,
         communityId : String? = null
     ) : Long {
         return appDatabaseRepository.insertTask(
             TaskTable(
                 title = title,
-                indexDay = indexDay,
-                sessionId = sessionId,
-                locationName = locationName,
-                locationAddress = locationAddress,
                 isSharedToCommunity = isSharedToCommunity,
                 communityId = communityId
             )
@@ -102,6 +90,18 @@ class TaskViewModel(
     suspend fun update(taskTable: TaskTable) {
         Log.d("TaskViewModel", "update task: $taskTable")
         appDatabaseRepository.updateTask(taskTable)
+    }
+
+    suspend fun getTaskAndSessionJoinByProviderPrimaryKeys(
+        indexDay: Int,
+        taskId: Long,
+        sessionId: Long
+    ) : TaskAndSessionJoin? {
+        return appDatabaseRepository.getTaskAndSessionJoinByProviderPrimaryKeys(
+            indexDay = indexDay,
+            taskId = taskId,
+            sessionId = sessionId
+        )
     }
 
 }

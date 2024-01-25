@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Filter
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.minizuure.todoplannereducationedition.databinding.ModalAddNotesTaskBottomSheetDialogBinding
 import com.minizuure.todoplannereducationedition.dialog_modal.preset.MinimumBottomSheetDialog
@@ -12,7 +14,17 @@ import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppMa
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-
+/**
+ * list TODO in [TaskDetailBottomSheetDialogFragment]:
+ *
+ *
+ * [ ] Perbaiki pembuatan list week [weeksDictionary] untuk menyesuaikan [SessionTaskProvider].
+ *       Solution Idea : Dapat menggunakan crawler terdekat untuk menentukan week yang akan ditampilkan.
+ *
+ *
+ *
+ *  see [RescheduleFragment] for comparison.
+ */
 class TaskDetailBottomSheetDialogFragment(
     private val taskId : Long,
     private val routine: RoutineTable,
@@ -90,6 +102,8 @@ class TaskDetailBottomSheetDialogFragment(
     }
 
     private fun setupWeek() {
+        // TODO: Perbaiki pembuatan list week untuk menyesuaikan [SessionTaskProvider]; HINT: Gunakan crawler terdekat
+
         val dateEnd = DatetimeAppManager(routine.date_end).selectedDetailDatetimeISO
 
         if (currentDate.isAfter(dateEnd)) return
@@ -99,15 +113,37 @@ class TaskDetailBottomSheetDialogFragment(
         for (i in 1..weeks) {
             val dateTime = DatetimeAppManager(currentDate.plusWeeks(i.toLong())).toReadable()
             if (i == 1) {
-                weeksDictionary["Next week"] = i
+                weeksDictionary["Next meet"] = i
                 continue
             }
-            weeksDictionary[ "In $i weeks | $dateTime"] = i
+            weeksDictionary[ "In $i meets | $dateTime"] = i
+        }
+
+        val adapter: ArrayAdapter<String> = object : ArrayAdapter<String>(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            weeksDictionary.keys.toTypedArray()
+        ) {
+            override fun getFilter(): Filter {
+                return object : Filter() {
+                    override fun performFiltering(constraint: CharSequence?): FilterResults {
+                        return FilterResults().apply { values = weeksDictionary.keys.toTypedArray(); count = weeksDictionary.keys.size }
+                    }
+
+                    override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                        if (results != null && results.count > 0) {
+                            notifyDataSetChanged()
+                        } else {
+                            notifyDataSetInvalidated()
+                        }
+                    }
+                }
+            }
         }
 
         (binding.textInputLayoutItemDateBottomSheet.editText
                     as? MaterialAutoCompleteTextView
-                    )?.setSimpleItems(weeksDictionary.keys.toTypedArray())
+                    )?.setAdapter(adapter)
 
         binding.textInputLayoutItemDateBottomSheet.editText?.apply {
             isFocusable = false

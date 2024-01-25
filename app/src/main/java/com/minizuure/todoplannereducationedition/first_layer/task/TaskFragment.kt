@@ -23,6 +23,9 @@ import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActiv
 import com.minizuure.todoplannereducationedition.services.customtextfield.CustomTextField
 import com.minizuure.todoplannereducationedition.services.database.DEFAULT_SESSION_ID
 import com.minizuure.todoplannereducationedition.services.database.DEFAULT_TASK_ID
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderTable
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModel
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
@@ -47,6 +50,7 @@ class TaskFragment : Fragment() {
     private lateinit var routineViewModel : RoutineViewModel
     private lateinit var sessionViewModel: SessionViewModel
     private lateinit var taskViewModel : TaskViewModel
+    private lateinit var sessionTaskProviderViewModel: SessionTaskProviderViewModel
 
 
     private val binding by lazy {
@@ -80,38 +84,63 @@ class TaskFragment : Fragment() {
 
     private fun loadData() {
         lifecycleScope.launch(Dispatchers.Main) {
-            val task = withContext(Dispatchers.IO) { taskViewModel.getById(args.taskId) } ?: return@launch
-            val session = withContext(Dispatchers.IO) { sessionViewModel.getById(task.sessionId) } ?: return@launch
-            val routine = withContext(Dispatchers.IO) { routineViewModel.getById(session.fkRoutineId) } ?: return@launch
+            val taskAndSessionJoin = withContext(Dispatchers.IO) {
+                taskViewModel.getTaskAndSessionJoinByProviderPrimaryKeys(
+                    indexDay = args.indexDay,
+                    taskId = args.taskId,
+                    sessionId = args.sessionId
+                )
+            } ?: run {
+                //TODO : Hapus ini
+                Log.e("TaskFragment", "loadData: taskAndSessionJoin is null")
+                Toast.makeText(requireContext(), "Task Tidak ditemukan", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            val session = SessionTable(
+                id = taskAndSessionJoin.fkSessionId,
+                title = taskAndSessionJoin.sessionTitle,
+                timeStart = taskAndSessionJoin.sessionTimeStart,
+                timeEnd = taskAndSessionJoin.sessionTimeEnd,
+                selectedDays = taskAndSessionJoin.sessionSelectedDays,
+                fkRoutineId = taskAndSessionJoin.sessionFkRoutineId,
+                isCustomSession = taskAndSessionJoin.sessionIsCustomSession
+            )
+
 
             // title
-            binding.taskInputLayoutTitle.editText?.setText(task.title)
-
-            // routine template
-            taskFormViewModel.setRoutineTemplate(routine)
+            binding.taskInputLayoutTitle.editText?.setText(taskAndSessionJoin.title)
 
             // day
-            val dayName = DatetimeAppManager().dayNameFromDayId(task.indexDay)
-            taskFormViewModel.setDay(DaysOfWeekImpl(task.indexDay.toLong(), dayName))
+            val dayName = DatetimeAppManager().dayNameFromDayId(taskAndSessionJoin.indexDay)
+            taskFormViewModel.setDay(DaysOfWeekImpl(taskAndSessionJoin.indexDay.toLong(), dayName))
             binding.textInputLayoutSelectDay.editText?.setText(dayName)
 
             // is Custom Session
-            taskFormViewModel.setIsCustomSession(session.isCustomSession)
+            taskFormViewModel.setIsCustomSession(taskAndSessionJoin.sessionIsCustomSession)
 
             // session
             taskFormViewModel.setSession(session)
 
             // time start
-            session.timeStart.let { taskFormViewModel.setTimeStart(it) }
+            taskAndSessionJoin.sessionTimeStart.let { taskFormViewModel.setTimeStart(it) }
 
             // time end
-            session.timeStart.let { taskFormViewModel.setTimeEnd(it) }
+            taskAndSessionJoin.sessionTimeEnd.let { taskFormViewModel.setTimeEnd(it) }
 
             // location
-            binding.teksInputLayoutLocation.editText?.setText(task.locationName)
+            binding.teksInputLayoutLocation.editText?.setText(taskAndSessionJoin.locationName)
 
             // location link
-            binding.textInputLayoutMapsLink.editText?.setText(task.locationAddress)
+            binding.textInputLayoutMapsLink.editText?.setText(taskAndSessionJoin.locationAddress)
+
+
+            val routine = withContext(Dispatchers.IO) {
+                routineViewModel.getById(taskAndSessionJoin.sessionFkRoutineId)
+            } ?: return@launch
+
+            // routine template
+            taskFormViewModel.setRoutineTemplate(routine)
 
         }
     }
@@ -263,13 +292,17 @@ class TaskFragment : Fragment() {
                 TaskTable(
                     id = taskId,
                     title = title,
-                    indexDay = indexDay,
-                    sessionId = sessionId,
-                    locationName = location,
-                    locationAddress = locationLink,
                     isSharedToCommunity = community,
                     communityId = communityId,
                 )
+            )
+
+            sessionTaskProviderViewModel.updateLocationByPrimaryKeys(
+                indexDay = indexDay,
+                taskId = taskId,
+                sessionId = sessionId,
+                location = location,
+                locationLink = locationLink
             )
 
             if (customSession) {
@@ -305,7 +338,7 @@ class TaskFragment : Fragment() {
     private suspend fun createNewTask(
         title: String,
         indexDay: Int,
-        sessionId: Long,
+        formSessionId: Long,
 
         customSession: Boolean,
         customTimeStart: String?,
@@ -317,35 +350,33 @@ class TaskFragment : Fragment() {
         community: Boolean,
         communityId: String?
     ) {
-        val id = withContext(Dispatchers.IO) {
-            val id = taskViewModel.insert(
+        val taskId = withContext(Dispatchers.IO) {
+            taskViewModel.insert(
                 title = title,
-                indexDay = indexDay,
-                sessionId = sessionId,
-                locationName = location,
-                locationAddress = locationLink,
                 isSharedToCommunity = community,
                 communityId = communityId
             )
-
-            if (customSession) {
-                lifecycleScope.launch {
-                    val task = withContext(Dispatchers.IO) { taskViewModel.getById(id)!!}
-                    val newSessionId = createCustomSession(indexDay, customTimeStart!!, customTimeEnd!!)
-                    task.sessionId = newSessionId
-                    taskViewModel.update(task)
-
-                    Log.d("TaskFragment", "createNewTask: success to create custom session \n" +
-                            "New Session ID : $newSessionId\n" +
-                            "Detail : \n${task.toString()}")
-                }
-
-            }
-
-            id
         }
 
-        if (id == DEFAULT_TASK_ID) {
+        val sessionId = if (customSession) {
+            createCustomSession(indexDay, customTimeStart!!, customTimeEnd!!)
+        } else {
+            formSessionId
+        }
+
+        withContext(Dispatchers.IO) {
+            sessionTaskProviderViewModel.insert(
+                SessionTaskProviderTable(
+                    indexDay = indexDay,
+                    fkTaskId = taskId,
+                    fkSessionId = sessionId,
+                    locationName = location,
+                    locationLink = locationLink
+                )
+            )
+        }
+
+        if (taskId == DEFAULT_TASK_ID) {
             Log.e("TaskFragment", "createNewTask: failed to insert task")
             Toast.makeText(requireContext(), getString(R.string.failed_to_create_task), Toast.LENGTH_SHORT).show()
             return
@@ -365,6 +396,9 @@ class TaskFragment : Fragment() {
 
         val taskFactory = TaskViewModelFactory(app.appRepository)
         taskViewModel = ViewModelProvider(requireActivity(), taskFactory)[TaskViewModel::class.java]
+
+        val sessionTaskProviderFactory = SessionTaskProviderViewModelFactory(app.appRepository)
+        sessionTaskProviderViewModel = ViewModelProvider(requireActivity(), sessionTaskProviderFactory)[SessionTaskProviderViewModel::class.java]
 
     }
 
@@ -630,7 +664,7 @@ class TaskFragment : Fragment() {
 
                                 if (timeEnd == null || timeEnd == "") return@launch
 
-                                checkTimeInteval(it, timeEnd)
+                                checkTimeInterval(it, timeEnd)
                             }
 
                         }
@@ -648,7 +682,7 @@ class TaskFragment : Fragment() {
 
                                 if(timeStart == null || timeStart == "") return@launch
 
-                                checkTimeInteval(timeStart, it)
+                                checkTimeInterval(timeStart, it)
                             }
 
                         }
@@ -667,7 +701,7 @@ class TaskFragment : Fragment() {
 
     }
 
-    private fun checkTimeInteval(timeStart: String, timeEnd: String) {
+    private fun checkTimeInterval(timeStart: String, timeEnd: String) {
         val startTime = DatetimeAppManager().convertStringTimeToMinutes(timeStart)
         val endTime = DatetimeAppManager().convertStringTimeToMinutes(timeEnd)
 

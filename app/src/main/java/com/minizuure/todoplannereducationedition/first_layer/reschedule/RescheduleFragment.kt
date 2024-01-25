@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Filter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -22,6 +24,16 @@ import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.G
 import com.minizuure.todoplannereducationedition.dialog_modal.preset.MinimumBottomSheetDialog
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
 import com.minizuure.todoplannereducationedition.services.customtextfield.CustomTextField
+import com.minizuure.todoplannereducationedition.services.database.CATEGORY_MEMO
+import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
+import com.minizuure.todoplannereducationedition.services.database.CATEGORY_TO_PACK
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_SESSION_ID
+import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModel
+import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModelFactory
+import com.minizuure.todoplannereducationedition.services.database.notes.NotesTaskTable
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderTable
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModel
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
@@ -32,18 +44,23 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskView
 import com.minizuure.todoplannereducationedition.services.database.temp.RescheduleFormViewModel
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import com.minizuure.todoplannereducationedition.services.errormsgs.ErrorMsgManager
+import com.minizuure.todoplannereducationedition.services.notification.ItemAlarmQueue
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 /**
- * [RescheduleFragment] is used to reschedule a task.
+ * list TODO in [RescheduleFragment]:
  *
  *
- * TODO List :
- * 1.   Membuat logic untuk reschedule task. [setupSaveButton]
+ * [ ] Perbaiki logic pendapatan week pada methods [setupSelectedDatePicker] untuk menyesuaikan [SessionTaskProvider].
+ *       Solution Idea : Dapat menggunakan crawler terdekat untuk menentukan week yang akan ditampilkan.
  *
+ *
+ * see [TaskDetailBottomSheetDialogFragment] for comparison.
  */
 class RescheduleFragment : Fragment() {
     val args : RescheduleFragmentArgs by navArgs()
@@ -51,6 +68,8 @@ class RescheduleFragment : Fragment() {
     private lateinit var routineViewModel : RoutineViewModel
     private lateinit var sessionViewModel: SessionViewModel
     private lateinit var taskViewModel : TaskViewModel
+    private lateinit var notesViewModel : NoteViewModel
+    private lateinit var sessionTaskProviderViewModel : SessionTaskProviderViewModel
 
     private val weeksDictionary : MutableMap<String, Int> = mutableMapOf()
 
@@ -68,13 +87,13 @@ class RescheduleFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
+        setupViewModelFactory()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as TaskManagementActivity).setToolbarTitle(this)
-        setupViewModelFactory()
 
         setupSelectedDatePicker()
         setupRescheduleDatePicker()
@@ -84,6 +103,25 @@ class RescheduleFragment : Fragment() {
 
         setupSaveButton()
         setupErrorMessages()
+    }
+
+    private fun setupViewModelFactory() {
+        val app : ToDoPlannerApplication = (requireActivity().application as ToDoPlannerApplication)
+
+        val routineFactory = RoutineViewModelFactory(app.appRepository)
+        routineViewModel = ViewModelProvider(requireActivity(), routineFactory)[RoutineViewModel::class.java]
+
+        val sessionFactory = SessionViewModelFactory(app.appRepository)
+        sessionViewModel = ViewModelProvider(requireActivity(), sessionFactory)[SessionViewModel::class.java]
+
+        val taskFactory = TaskViewModelFactory(app.appRepository)
+        taskViewModel = ViewModelProvider(requireActivity(), taskFactory)[TaskViewModel::class.java]
+
+        val noteFactory = NoteViewModelFactory(app.appRepository)
+        notesViewModel = ViewModelProvider(requireActivity(), noteFactory)[NoteViewModel::class.java]
+
+        val sessionTaskProviderFactory = SessionTaskProviderViewModelFactory(app.appRepository)
+        sessionTaskProviderViewModel = ViewModelProvider(requireActivity(), sessionTaskProviderFactory)[SessionTaskProviderViewModel::class.java]
     }
 
     private fun setupSaveButton() {
@@ -101,8 +139,391 @@ class RescheduleFragment : Fragment() {
         binding.buttonSaveRescheduleForm.setOnClickListener {
             Log.d("RescheduleFragment", "setupSaveButton: clicked")
             Toast.makeText(requireContext(), "Clicked: Unimplemented yet", Toast.LENGTH_SHORT).show()
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                val taskId : Long = args.taskId
+                val weekFromNow : Int = weeksDictionary[binding.textInputLayoutSelectedReschedule.editText?.text.toString()] ?: 0
+                val breakPointDate : String = binding.textInputLayoutAlternativeReschedule.editText?.text.toString().trim()
+                val indexDay : Int? = rescheduleFormViewModel.getDay()?.getId()
+                val sessionId : Long = rescheduleFormViewModel.getSession()?.id ?: DEFAULT_SESSION_ID
+                val isCustomSession : Boolean = rescheduleFormViewModel.getIsCustomSession()
+                val customTimeStart : String? = rescheduleFormViewModel.getTimeStart()
+                val customTimeEnd : String? = rescheduleFormViewModel.getTimeEnd()
+                val location : String = binding.teksInputLayoutLocation.editText?.text.toString().trim()
+                val locationLink : String = binding.textInputLayoutMapsLink.editText?.text.toString().trim()
+                val isRescheduleAllFollowingMeet : Boolean = binding.switchRescheduleOption.isChecked
+                // TODO: Set Community ID
+
+                val isValid = withContext(Dispatchers.Main) {
+                    validateForm(
+                        indexDay,
+                        isCustomSession,
+                        customTimeStart,
+                        customTimeEnd
+                    )
+                }
+
+
+                if (!isValid) return@launch
+
+                rescheduleTask(
+                    taskId,
+                    weekFromNow,
+                    DatetimeAppManager().convertReadableDateToIso8601(breakPointDate),
+                    indexDay!!,
+                    sessionId,
+                    isCustomSession,
+                    customTimeStart,
+                    customTimeEnd,
+                    location,
+                    locationLink,
+                    isRescheduleAllFollowingMeet,
+                    this.launch(Dispatchers.Main) {
+                        (requireActivity() as TaskManagementActivity).onSupportNavigateUp()
+                    }
+                )
+
+
+            }
         }
     }
+
+    /**
+     *
+     * [rescheduleTask] is used to reschedule a task.
+     *
+     *
+     * Rescheduling a task ALWAYS create a new Session IF [SessionTaskProviderTable]
+     * already exist with same [indexDay], [taskId] and [sessionId].
+     *
+     *
+     * Last Edit : 25 January 2024
+     *
+     *
+     * Note : Please update the javaDoc if you edit this function.
+     */
+    private suspend fun rescheduleTask(
+        taskId: Long,
+        weekFromNow: Int,
+        alternateDateString: String,
+        indexDay: Int,
+        sessionId: Long,
+
+        isCustomSession: Boolean,
+        customTimeStart: String?,
+        customTimeEnd: String?,
+
+        location: String,
+        locationLink: String,
+        isRescheduleAllFollowingMeet: Boolean,
+
+        closeAction: Job
+    ) {
+        withContext(Dispatchers.IO) {
+            val taskAndSessionJoin = taskViewModel.getTaskAndSessionJoinByProviderPrimaryKeys(
+                indexDay = args.indexDay,
+                taskId = args.taskId,
+                sessionId = args.sessionId
+            ) ?: return@withContext
+
+            val routine = routineViewModel.getById(args.routineId) ?: return@withContext
+
+            val alternateDate = DatetimeAppManager(DatetimeAppManager(alternateDateString).selectedDetailDatetimeISO, accuracyOnlyUpToDays = true)
+            val currentDate = args.selectedDatetimeDetailIso.zoneDateTime.plusWeeks(weekFromNow.toLong())
+
+            val referenceSessionTaskProvider = sessionTaskProviderViewModel.getByPrimaryKeys(
+                indexDay = args.indexDay,
+                taskId = args.taskId,
+                sessionId = args.sessionId
+            ) ?: return@withContext
+
+            val sessionTaskProvider = sessionTaskProviderViewModel.getByPrimaryKeys(
+                indexDay = indexDay,
+                taskId = taskId,
+                sessionId = sessionId
+            )
+
+            val alterSessionId = if (sessionTaskProvider != null) {
+                // create copy of session
+                val oldSession = sessionViewModel.getById(sessionId) ?: return@withContext
+
+                sessionViewModel.insert(
+                    oldSession.copy(
+                        id = 0,
+                        title = "Reschedule Session $sessionId from Task $taskId",
+                        selectedDays = booleanSelectedDaysGenerator(indexDay),
+                        isCustomSession = true
+                    )
+                )
+            } else if(sessionId == DEFAULT_SESSION_ID && isCustomSession) {
+                sessionViewModel.insert(
+                    title = "Reschedule Session $sessionId from Task $taskId",
+                    timeStart = customTimeStart!!,
+                    timeEnd = customTimeEnd!!,
+                    selectedDays = booleanSelectedDaysGenerator(indexDay),
+                    fkRoutineId = taskAndSessionJoin.sessionFkRoutineId,
+                    isCustomSession = true
+                )
+            } else {
+                sessionId
+            }
+
+            if (isRescheduleAllFollowingMeet) {
+                // Break to 2 Segment
+
+                // Segment Left (Update)
+                sessionTaskProviderViewModel.update(
+                    referenceSessionTaskProvider.copy(
+                        isRescheduled = true,
+                        rescheduledDateStart = if(referenceSessionTaskProvider.isRescheduled) referenceSessionTaskProvider.rescheduledDateStart  else routine.date_start,
+                        rescheduledDateEnd = DatetimeAppManager(currentDate).dateISO8601inString,
+                    )
+                )
+
+                // Segment Right (Insert)
+                sessionTaskProviderViewModel.insert(
+                    SessionTaskProviderTable(
+                        fkTaskId = args.taskId,
+                        indexDay = indexDay,
+                        fkSessionId = alterSessionId,
+
+                        locationName = location,
+                        locationLink = locationLink,
+
+                        isRescheduled = true,
+                        rescheduledDateStart = DatetimeAppManager(currentDate.plusDays(1)).dateISO8601inString,
+                        rescheduledDateEnd = routine.date_end,
+                    )
+                )
+
+                migrateAllNotes(
+                    alternateDate,
+                    currentDate,
+                    2
+                )
+
+            } else {
+                // Break to 3 Segment
+
+                // Segment Left (Update)
+                sessionTaskProviderViewModel.update(
+                    referenceSessionTaskProvider.copy(
+                        isRescheduled = true,
+                        rescheduledDateStart = if(referenceSessionTaskProvider.isRescheduled) referenceSessionTaskProvider.rescheduledDateStart  else routine.date_start,
+                        rescheduledDateEnd = DatetimeAppManager(currentDate.minusDays(1)).dateISO8601inString,
+                    )
+                )
+
+                // Segment Center (Insert)
+                sessionTaskProviderViewModel.insert(
+                    SessionTaskProviderTable(
+                        fkTaskId = args.taskId,
+                        indexDay = indexDay,
+                        fkSessionId = alterSessionId,
+
+                        locationName = location,
+                        locationLink = locationLink,
+
+                        isRescheduled = true,
+                        rescheduledDateStart = alternateDate.dateISO8601inString,
+                        rescheduledDateEnd = alternateDate.dateISO8601inString,
+                    )
+                )
+
+                // Segment Right (Insert)
+                val copyOldSession = sessionViewModel.getById(sessionId)!!
+                val newSessionId = sessionViewModel.insert(
+                    copyOldSession.copy(
+                        id = 0,
+                        title = "Reschedule Session $sessionId from Task $taskId",
+                        selectedDays = booleanSelectedDaysGenerator(indexDay),
+                        isCustomSession = true
+                    )
+                )
+
+                sessionTaskProviderViewModel.insert(
+                    referenceSessionTaskProvider.copy(
+                        fkSessionId = newSessionId,
+
+                        isRescheduled = true,
+                        rescheduledDateStart = DatetimeAppManager(currentDate.plusDays(1)).dateISO8601inString,
+                        rescheduledDateEnd = routine.date_end,
+                    )
+                )
+
+                migrateAllNotes(
+                    alternateDate,
+                    currentDate,
+                    3
+                )
+
+            }
+
+            closeAction.start()
+        }
+    }
+
+    private fun booleanSelectedDaysGenerator(indexDay: Int)
+    = "0000000".mapIndexed { index, _ ->
+            if (index == indexDay) '1' else '0'
+        }.joinToString(separator = "")
+
+
+
+
+    private suspend fun migrateAllNotes(
+        alternateDate: DatetimeAppManager,
+        currentDate: ZonedDateTime,
+        segment: Int
+    ) {
+        withContext(Dispatchers.IO) {
+            notesViewModel.note.getByFKTaskIdAndCategoryAsList(
+                fkTaskId = args.taskId,
+                category = CATEGORY_QUIZ
+            ).let {
+                if (it != null) migrateNotes(
+                    it,
+                    alternateDate,
+                    currentDate,
+                    segment
+                )
+            }
+
+            notesViewModel.note.getByFKTaskIdAndCategoryAsList(
+                fkTaskId = args.taskId,
+                category = CATEGORY_TO_PACK
+            ).let {
+                if (it != null) migrateNotes(
+                    it,
+                    alternateDate,
+                    currentDate,
+                    segment
+                )
+            }
+
+            notesViewModel.note.getByFKTaskIdAndCategoryAsList(
+                fkTaskId = args.taskId,
+                category = CATEGORY_MEMO
+            ).let {
+                if (it != null) migrateNotes(
+                    it,
+                    alternateDate,
+                    currentDate,
+                    segment
+                )
+            }
+        }
+    }
+
+    private suspend fun migrateNotes(
+        notesTaskTables: List<NotesTaskTable>,
+        alternateDate: DatetimeAppManager,
+        currentDate: ZonedDateTime,
+        segment: Int
+    ) {
+        val app = requireActivity().application as ToDoPlannerApplication
+        val alarmManager = app.appAlarmManager
+
+        withContext(Dispatchers.IO) {
+            val alternateDayIndex = alternateDate.getTodayDayId()
+            val currentDayIndex = DatetimeAppManager(currentDate).getTodayDayId()
+            val intervalDay = alternateDayIndex - currentDayIndex
+
+            notesTaskTables.forEach {
+                val notesDate = DatetimeAppManager(it.dateISO8601).selectedDetailDatetimeISO
+                val isEdited = if (notesDate.isEqual(currentDate) && segment == 3) {
+                    Log.d("RescheduleFragment", "migrateNotes center Triggered: ${it.dateISO8601} to ${alternateDate.dateISO8601inString}")
+                    notesViewModel.note.update(
+                        it.copy(
+                            dateISO8601 = alternateDate.dateISO8601inString
+                        )
+                    )
+                    alternateDate
+
+                } else if (notesDate.isAfter(currentDate) && segment == 2) {
+                    val editedDate = DatetimeAppManager(
+                        DatetimeAppManager(it.dateISO8601).selectedDetailDatetimeISO.plusDays(intervalDay.toLong())
+                    )
+                    notesViewModel.note.update(
+                        it.copy(
+                            dateISO8601 = editedDate.dateISO8601inString
+                        )
+                    )
+
+                    editedDate
+                } else {
+                    null
+                }
+
+                if (isEdited != null) {
+                    Log.d("RescheduleFragment", "migrateNotes: ${it.dateISO8601} to ${alternateDate.dateISO8601inString} \n " +
+                            "Run update notification schedule")
+
+                    val notificationId = ItemAlarmQueue().createItemId(
+                        isEdited.selectedDetailDatetimeISO.dayOfMonth,
+                        isEdited.selectedDetailDatetimeISO.monthValue,
+                        isEdited.selectedDetailDatetimeISO.year,
+                        args.taskId
+                    )
+
+                    val cancelledDatetime = DatetimeAppManager(it.dateISO8601).selectedDetailDatetimeISO
+
+                    val itemAlarmQueueCancelled = ItemAlarmQueue(
+                        id = notificationId,
+                        action = it.category,
+                        taskId = args.taskId,
+                        time = cancelledDatetime.withHour(5).withMinute(30),
+                        taskName = args.taskTitle,
+                        message = it.description,
+                        taskDateIdentification = cancelledDatetime
+                    )
+
+                    alarmManager.cancel(
+                        itemAlarmQueueCancelled
+                    )
+
+                    val itemAlarmQueue = itemAlarmQueueCancelled.copy(
+                        time = isEdited.selectedDetailDatetimeISO.withHour(5).withMinute(30),
+                        taskDateIdentification = isEdited.selectedDetailDatetimeISO
+                    )
+
+                    alarmManager.schedule(
+                        itemAlarmQueue
+                    )
+                }
+            }
+        }
+    }
+
+    private fun validateForm(
+        indexDay: Int?,
+        customSession: Boolean,
+        customTimeStart: String?,
+        customTimeEnd: String?
+    ): Boolean {
+        if (indexDay == null) {
+            val errorMsg = getString(R.string.error_no_day_selected)
+            binding.textInputLayoutSelectSession.error = errorMsg
+            return false
+        }
+
+        if (!customSession) return true
+
+        if (customTimeStart == null || customTimeStart == "") {
+            val errorMsg = getString(R.string.error_msg_time_is_not_valid)
+            binding.textInputLayoutStartTime.error = errorMsg
+            return false
+        }
+
+        if (customTimeEnd == null || customTimeEnd == "") {
+            val errorMsg = getString(R.string.error_msg_time_is_not_valid)
+            binding.textInputLayoutEndTime.error = errorMsg
+            return false
+        }
+
+        return true
+    }
+
 
     private fun setupSwitch() {
         binding.switchRescheduleOption.setOnCheckedChangeListener { _, isChecked ->
@@ -230,6 +651,8 @@ class RescheduleFragment : Fragment() {
     }
 
     private fun setupSelectedDatePicker() {
+        // TODO: Perbaiki logic untuk mendapatkan list week yang valid. Karena implementasi saat ini tidak dapat
+        //  menangani kasus SessionTaskProvider yang sudah direschedule di beda tanggal / hari
         lifecycleScope.launch {
             Log.d("RescheduleFragment", "setupSelectedDatePicker: program reached")
 
@@ -238,7 +661,7 @@ class RescheduleFragment : Fragment() {
 
             val currentDate = args.selectedDatetimeDetailIso.zoneDateTime
 
-            Log.d("RescheduleFragment", "setupSelectedDatePicker: $currentDate")
+            Log.d("RescheduleFragment", "setupSelectedDatePicker: $currentDate and $dateEnd")
 
             if (currentDate.isAfter(dateEnd)) return@launch
 
@@ -256,9 +679,32 @@ class RescheduleFragment : Fragment() {
                 weeksDictionary[ "In $i weeks | $dateTime"] = i
             }
 
+            val adapter: ArrayAdapter<String> = object : ArrayAdapter<String>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                weeksDictionary.keys.toTypedArray()
+            ) {
+                override fun getFilter(): Filter {
+                    return object : Filter() {
+                        override fun performFiltering(constraint: CharSequence?): FilterResults {
+                            return FilterResults().apply { values = weeksDictionary.keys.toTypedArray(); count = weeksDictionary.keys.size }
+                        }
+
+                        override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                            if (results != null && results.count > 0) {
+                                notifyDataSetChanged()
+                            } else {
+                                notifyDataSetInvalidated()
+                            }
+                        }
+                    }
+                }
+            }
+
+
             (binding.textInputLayoutSelectedReschedule.editText
                     as? MaterialAutoCompleteTextView
-                    )?.setSimpleItems(weeksDictionary.keys.toTypedArray())
+                    )?.setAdapter(adapter)
 
             binding.textInputLayoutSelectedReschedule.editText?.apply {
                 isFocusable = false
@@ -271,20 +717,6 @@ class RescheduleFragment : Fragment() {
 
             Log.d("RescheduleFragment", "setupSelectedDatePicker: $weeksDictionary")
         }
-    }
-
-    private fun setupViewModelFactory() {
-        val app : ToDoPlannerApplication = (requireActivity().application as ToDoPlannerApplication)
-
-        val routineFactory = RoutineViewModelFactory(app.appRepository)
-        routineViewModel = ViewModelProvider(requireActivity(), routineFactory)[RoutineViewModel::class.java]
-
-        val sessionFactory = SessionViewModelFactory(app.appRepository)
-        sessionViewModel = ViewModelProvider(requireActivity(), sessionFactory)[SessionViewModel::class.java]
-
-        val taskFactory = TaskViewModelFactory(app.appRepository)
-        taskViewModel = ViewModelProvider(requireActivity(), taskFactory)[TaskViewModel::class.java]
-
     }
 
     private fun setupStartTimePicker() {

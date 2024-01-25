@@ -138,6 +138,12 @@ class NoteViewModel(
             return true
         }
 
+        suspend fun update(
+            note: NotesTaskTable
+        ) {
+            appDatabaseRepository.updateNotesTask(note)
+        }
+
         suspend fun delete(note: NotesTaskTable) {
             appDatabaseRepository.deleteNotesTask(note)
         }
