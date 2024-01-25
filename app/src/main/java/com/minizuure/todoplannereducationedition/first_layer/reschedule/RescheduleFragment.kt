@@ -53,12 +53,14 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 /**
- * [RescheduleFragment] is used to reschedule a task.
+ * list TODO in [RescheduleFragment]:
  *
  *
- * TODO List :
- * 1.   Membuat logic untuk reschedule task. [setupSaveButton]
+ * [ ] Perbaiki logic pendapatan week pada methods [setupSelectedDatePicker] untuk menyesuaikan [SessionTaskProvider].
+ *       Solution Idea : Dapat menggunakan crawler terdekat untuk menentukan week yang akan ditampilkan.
  *
+ *
+ * see [TaskDetailBottomSheetDialogFragment] for comparison.
  */
 class RescheduleFragment : Fragment() {
     val args : RescheduleFragmentArgs by navArgs()
@@ -649,6 +651,8 @@ class RescheduleFragment : Fragment() {
     }
 
     private fun setupSelectedDatePicker() {
+        // TODO: Perbaiki logic untuk mendapatkan list week yang valid. Karena implementasi saat ini tidak dapat
+        //  menangani kasus SessionTaskProvider yang sudah direschedule di beda tanggal / hari
         lifecycleScope.launch {
             Log.d("RescheduleFragment", "setupSelectedDatePicker: program reached")
 

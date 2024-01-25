@@ -14,7 +14,17 @@ import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppMa
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-
+/**
+ * list TODO in [TaskDetailBottomSheetDialogFragment]:
+ *
+ *
+ * [ ] Perbaiki pembuatan list week [weeksDictionary] untuk menyesuaikan [SessionTaskProvider].
+ *       Solution Idea : Dapat menggunakan crawler terdekat untuk menentukan week yang akan ditampilkan.
+ *
+ *
+ *
+ *  see [RescheduleFragment] for comparison.
+ */
 class TaskDetailBottomSheetDialogFragment(
     private val taskId : Long,
     private val routine: RoutineTable,
@@ -92,6 +102,8 @@ class TaskDetailBottomSheetDialogFragment(
     }
 
     private fun setupWeek() {
+        // TODO: Perbaiki pembuatan list week untuk menyesuaikan [SessionTaskProvider]; HINT: Gunakan crawler terdekat
+
         val dateEnd = DatetimeAppManager(routine.date_end).selectedDetailDatetimeISO
 
         if (currentDate.isAfter(dateEnd)) return
@@ -101,10 +113,10 @@ class TaskDetailBottomSheetDialogFragment(
         for (i in 1..weeks) {
             val dateTime = DatetimeAppManager(currentDate.plusWeeks(i.toLong())).toReadable()
             if (i == 1) {
-                weeksDictionary["Next week"] = i
+                weeksDictionary["Next meet"] = i
                 continue
             }
-            weeksDictionary[ "In $i weeks | $dateTime"] = i
+            weeksDictionary[ "In $i meets | $dateTime"] = i
         }
 
         val adapter: ArrayAdapter<String> = object : ArrayAdapter<String>(
