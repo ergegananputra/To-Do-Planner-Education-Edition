@@ -46,8 +46,8 @@ interface TaskTableDao : BaseIODao<TaskTable> {
                 provider_table.index_day AS index_day,
                 provider_table.fk_session_id AS session_id,
                 provider_table.is_rescheduled AS is_rescheduled,
-                provider_table.rescheduled_time_start AS rescheduled_time_start,
-                provider_table.rescheduled_time_end AS rescheduled_time_end,
+                provider_table.rescheduled_date_start AS rescheduled_time_start,
+                provider_table.rescheduled_date_end AS rescheduled_time_end,
                 provider_table.location_name AS location_name,
                 provider_table.location_link AS location_link
                 
@@ -61,7 +61,7 @@ interface TaskTableDao : BaseIODao<TaskTable> {
             provider_table.is_rescheduled = 0 
             OR (
                 provider_table.is_rescheduled = 1 
-                AND :iso8601Date BETWEEN provider_table.rescheduled_time_start AND provider_table.rescheduled_time_end
+                AND :iso8601Date BETWEEN provider_table.rescheduled_date_start AND provider_table.rescheduled_date_end
             )
         )
         ORDER BY 

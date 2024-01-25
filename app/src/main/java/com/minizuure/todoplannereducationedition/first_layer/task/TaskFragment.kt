@@ -371,7 +371,7 @@ class TaskFragment : Fragment() {
                     fkTaskId = taskId,
                     fkSessionId = sessionId,
                     locationName = location,
-                    locationAddress = locationLink
+                    locationLink = locationLink
                 )
             )
         }

@@ -29,7 +29,7 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
         NotificationQueueTable::class,
         SessionTaskProviderTable::class
                ],
-    version = 8,
+    version = 9,
     exportSchema = true
 )
 abstract class ApplicationDatabase : RoomDatabase() {

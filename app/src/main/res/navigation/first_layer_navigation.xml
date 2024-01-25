@@ -72,6 +72,12 @@
         <argument
             android:name="task_title"
             app:argType="string" />
+        <argument
+            android:name="index_day"
+            app:argType="integer" />
+        <argument
+            android:name="session_id"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/dummyFragment"

@@ -60,8 +60,8 @@ interface SessionTaskProviderTableDao : BaseIODao<SessionTaskProviderTable> {
                 provider_table.index_day AS index_day,
                 provider_table.fk_session_id AS session_id,
                 provider_table.is_rescheduled AS is_rescheduled,
-                provider_table.rescheduled_time_start AS rescheduled_time_start,
-                provider_table.rescheduled_time_end AS rescheduled_time_end,
+                provider_table.rescheduled_date_start AS rescheduled_time_start,
+                provider_table.rescheduled_date_end AS rescheduled_time_end,
                 provider_table.location_name AS location_name,
                 provider_table.location_link AS location_link
                 

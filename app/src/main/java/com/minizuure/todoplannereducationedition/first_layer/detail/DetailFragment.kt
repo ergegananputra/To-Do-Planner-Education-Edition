@@ -241,6 +241,8 @@ class DetailFragment : Fragment() {
             selectedDatetimeDetailIso = args.selectedDatetimeDetailIso,
             routineId = routine.id,
             taskTitle = taskProvider.title,
+            indexDay = taskProvider.indexDay,
+            sessionId = taskProvider.fkSessionId,
         )
         binding.buttonRescheduleNextPlan.setOnClickListener {
             navController.navigate(destination)

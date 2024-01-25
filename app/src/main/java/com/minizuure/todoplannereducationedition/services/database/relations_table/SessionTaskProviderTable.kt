@@ -46,11 +46,11 @@ data class SessionTaskProviderTable (
     @ColumnInfo(name = "is_rescheduled")
     var isRescheduled : Boolean = false,
 
-    @ColumnInfo(name = "rescheduled_time_start")
-    var rescheduledTimeStart : String? = null,
+    @ColumnInfo(name = "rescheduled_date_start")
+    var rescheduledDateStart : String? = null,
 
-    @ColumnInfo(name = "rescheduled_time_end")
-    var rescheduledTimeEnd : String? = null,
+    @ColumnInfo(name = "rescheduled_date_end")
+    var rescheduledDateEnd : String? = null,
 
     // Additional Location
 
@@ -58,5 +58,5 @@ data class SessionTaskProviderTable (
     var locationName : String? = null,
 
     @ColumnInfo(name = "location_link")
-    var locationAddress : String? = null,
+    var locationLink : String? = null,
 )
