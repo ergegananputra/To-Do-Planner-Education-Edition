@@ -4,12 +4,16 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import androidx.room.PrimaryKey
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 
 @Entity(
     tableName = "session_task_provider_table",
+    primaryKeys = [
+        "index_day",
+        "fk_task_id",
+        "fk_session_id"
+                  ],
     foreignKeys = [
         ForeignKey(
             entity = TaskTable::class,
@@ -30,8 +34,8 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
     ]
 )
 data class SessionTaskProviderTable (
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    @ColumnInfo(name = "index_day")
+    val indexDay: Int = 0,
 
     @ColumnInfo(name = "fk_task_id")
     val fkTaskId: Long,
@@ -47,4 +51,12 @@ data class SessionTaskProviderTable (
 
     @ColumnInfo(name = "rescheduled_time_end")
     var rescheduledTimeEnd : String? = null,
+
+    // Additional Location
+
+    @ColumnInfo(name = "location_name")
+    var locationName : String? = null,
+
+    @ColumnInfo(name = "location_link")
+    var locationAddress : String? = null,
 )

@@ -14,6 +14,14 @@
             android:name="task_id"
             app:argType="long"
             android:defaultValue="-1L" />
+        <argument
+            android:name="index_day"
+            app:argType="integer"
+            android:defaultValue="-1" />
+        <argument
+            android:name="session_id"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
@@ -22,8 +30,7 @@
         tools:layout="@layout/fragment_detail" >
         <argument
             android:name="task_detail_id"
-            app:argType="long"
-            android:defaultValue="-1L" />
+            app:argType="long" />
         <argument
             android:name="title_detail"
             app:argType="string" />
@@ -40,6 +47,12 @@
             android:name="set_go_to"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="index_day"
+            app:argType="integer" />
+        <argument
+            android:name="session_id"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/rescheduleFragment"

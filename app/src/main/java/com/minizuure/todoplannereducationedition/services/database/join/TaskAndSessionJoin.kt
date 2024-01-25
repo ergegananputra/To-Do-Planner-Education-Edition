@@ -2,7 +2,6 @@ package com.minizuure.todoplannereducationedition.services.database.join
 
 import androidx.room.ColumnInfo
 
-// TODO: DELETE THE COMMENTED CODES
 data class TaskAndSessionJoin(
     // Task
     @ColumnInfo(name ="id")
@@ -11,20 +10,8 @@ data class TaskAndSessionJoin(
     @ColumnInfo(name ="title")
     val title : String,
 
-    @ColumnInfo(name ="index_day")
-    val indexDay : Int,
-
-//    @ColumnInfo(name ="session_id")
-//    val sessionId : Long,
-
     @ColumnInfo(name ="updated_at")
     val updatedAt : String,
-
-    @ColumnInfo(name ="location_name")
-    val locationName : String?,
-
-    @ColumnInfo(name ="location_link")
-    val locationAddress : String?,
 
     @ColumnInfo(name ="is_shared_to_community")
     val isSharedToCommunity : Boolean,
@@ -52,20 +39,9 @@ data class TaskAndSessionJoin(
     val sessionIsCustomSession : Boolean,
 
 
-//    // custom reschedule
-//    @ColumnInfo(name = "is_rescheduled")
-//    var isRescheduled : Boolean = false,
-//
-//    @ColumnInfo(name = "rescheduled_time_start")
-//    var rescheduledTimeStart : String? = null,
-//
-//    @ColumnInfo(name = "rescheduled_time_end")
-//    var rescheduledTimeEnd : String? = null,
-
-
     // SessionTaskProviderTable
-    @ColumnInfo(name ="session_task_provider_table_id")
-    val sessionTaskProviderTableId : Long,
+    @ColumnInfo(name ="index_day")
+    val indexDay : Int,
 
     @ColumnInfo(name = "session_id")
     val fkSessionId: Long,
@@ -78,6 +54,12 @@ data class TaskAndSessionJoin(
 
     @ColumnInfo(name = "rescheduled_time_end")
     var rescheduledTimeEnd : String? = null,
+
+    @ColumnInfo(name ="location_name")
+    val locationName : String?,
+
+    @ColumnInfo(name ="location_link")
+    val locationAddress : String?,
 
 
 )

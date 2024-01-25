@@ -6,6 +6,8 @@ import com.minizuure.todoplannereducationedition.services.database.notes.NotesTa
 import com.minizuure.todoplannereducationedition.services.database.notes.NotesTaskTable
 import com.minizuure.todoplannereducationedition.services.database.notes.TodoNoteDao
 import com.minizuure.todoplannereducationedition.services.database.notes.TodoNoteTable
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderTable
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderTableDao
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTableDao
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
@@ -33,7 +35,8 @@ class AppDatabaseRepository(
     private val taskTableDao: TaskTableDao,
     private val todoNoteTableDao: TodoNoteDao,
     private val notesTaskTableDao: NotesTaskDao,
-    private val deleteAllOperation: DeleteAllOperation
+    private val sessionTaskProviderTableDao: SessionTaskProviderTableDao,
+    private val deleteAllOperation: DeleteAllOperation,
 ) {
     // Delete
     private suspend fun deleteAllTasks() = withContext(Dispatchers.IO) { deleteAllOperation.deleteAllTasks() }
@@ -81,16 +84,6 @@ class AppDatabaseRepository(
         withContext(Dispatchers.IO) {
             taskTableDao.getPaginated(limit, offset)
         }
-    suspend fun getTasksByIndexDay(indexDay: Int, selectedDate : ZonedDateTime) = withContext(Dispatchers.IO) {
-        val routines = routineTableDao.getAll()
-        val validRoutineIds = routines.filter {
-            val endTime = DatetimeAppManager(it.date_end).selectedDetailDatetimeISO
-            selectedDate.isBefore(endTime) || selectedDate.isEqual(endTime)
-        }.map { it.id }
-
-
-        taskTableDao.getByIndexDay(indexDay, validRoutineIds)
-    }
 
     suspend fun getTaskAndSessionJoinByIndexDay(indexDay: Int, selectedDate : ZonedDateTime, isToday : Boolean, todayHour: String) = withContext(Dispatchers.IO) {
         Log.d("AppDatabaseRepository", "getTaskAndSessionJoinByIndexDay: $indexDay, ${
@@ -162,5 +155,63 @@ class AppDatabaseRepository(
     }
     suspend fun deleteNotesTask(notesTaskTable: NotesTaskTable) = withContext(Dispatchers.IO) { notesTaskTableDao.delete(notesTaskTable) }
 
+
+    // SessionTaskProviderTableDao
+    suspend fun getAllSessionTaskProviderTable() = withContext(Dispatchers.IO) { sessionTaskProviderTableDao.getAll() }
+    suspend fun getSessionTaskProviderByPrimaryKeys(
+        indexDay: Int,
+        taskId: Long,
+        sessionId: Long,
+    ) = withContext(Dispatchers.IO) {
+        sessionTaskProviderTableDao.getByPrimaryKeys(indexDay, taskId, sessionId)
+    }
+
+    suspend fun insertSessionTaskProviderTable(sessionTaskProviderTable: SessionTaskProviderTable) = withContext(Dispatchers.IO) {
+        sessionTaskProviderTableDao.insert(sessionTaskProviderTable)
+    }
+
+    suspend fun deleteSessionTaskProviderTableByPrimaryKeys(
+        indexDay: Int,
+        taskId: Long,
+        sessionId: Long,
+    ) = withContext(Dispatchers.IO) {
+        sessionTaskProviderTableDao.deleteByIndexDayAndTaskIdAndSessionId(indexDay, taskId, sessionId)
+    }
+
+    suspend fun deleteSessionTaskProviderTable(sessionTaskProviderTable: SessionTaskProviderTable) = withContext(Dispatchers.IO) {
+        sessionTaskProviderTableDao.delete(sessionTaskProviderTable)
+    }
+
+    suspend fun updateSessionTaskProviderTable(sessionTaskProviderTable: SessionTaskProviderTable) = withContext(Dispatchers.IO) {
+        sessionTaskProviderTableDao.update(sessionTaskProviderTable)
+    }
+
+    suspend fun updateSessionTaskProviderTableLocationByPrimaryKeys(
+        indexDay: Int,
+        taskId: Long,
+        sessionId: Long,
+        location: String,
+        locationLink : String
+    ) = withContext(Dispatchers.IO) {
+        sessionTaskProviderTableDao.updateLocationByPrimaryKeys(
+            indexDay = indexDay,
+            taskId = taskId,
+            sessionId = sessionId,
+            location = location,
+            locationLink = locationLink
+        )
+    }
+
+    suspend fun getTaskAndSessionJoinByProviderPrimaryKeys(
+        indexDay: Int,
+        taskId: Long,
+        sessionId: Long,
+    ) = withContext(Dispatchers.IO) {
+        sessionTaskProviderTableDao.getTaskAndSessionJoinByProviderPrimaryKeys(
+            indexDay = indexDay,
+            taskId = taskId,
+            sessionId = sessionId
+        )
+    }
 
 }

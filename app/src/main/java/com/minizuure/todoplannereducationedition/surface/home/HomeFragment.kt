@@ -136,7 +136,9 @@ class HomeFragment : Fragment() {
             actionToOpen = OPEN_DETAIL,
             title = taskAndSessionJoinTable.title,
             id = taskAndSessionJoinTable.id,
-            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime().plusDays(interval.toLong()))
+            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime().plusDays(interval.toLong())),
+            indexDay = taskAndSessionJoinTable.indexDay,
+            sessionId = taskAndSessionJoinTable.fkSessionId
         )
         findNavController().navigate(destination)
     }

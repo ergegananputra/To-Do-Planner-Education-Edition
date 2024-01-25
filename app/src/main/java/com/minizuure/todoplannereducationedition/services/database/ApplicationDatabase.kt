@@ -10,6 +10,8 @@ import com.minizuure.todoplannereducationedition.services.database.notes.TodoNot
 import com.minizuure.todoplannereducationedition.services.database.notes.TodoNoteTable
 import com.minizuure.todoplannereducationedition.services.database.queue.NotificationQueueTable
 import com.minizuure.todoplannereducationedition.services.database.queue.NotificationQueueTableDao
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderTable
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderTableDao
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTableDao
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
@@ -24,9 +26,10 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
         TaskTable::class,
         TodoNoteTable::class,
         NotesTaskTable::class,
-        NotificationQueueTable::class
+        NotificationQueueTable::class,
+        SessionTaskProviderTable::class
                ],
-    version = 7,
+    version = 8,
     exportSchema = true
 )
 abstract class ApplicationDatabase : RoomDatabase() {
@@ -36,6 +39,7 @@ abstract class ApplicationDatabase : RoomDatabase() {
     abstract fun todoNoteTableDao(): TodoNoteDao
     abstract fun notesTaskTableDao(): NotesTaskDao
     abstract fun notificationQueueTableDao(): NotificationQueueTableDao
+    abstract fun sessionTaskProviderTableDao(): SessionTaskProviderTableDao
 
     abstract fun deleteAllOperation(): DeleteAllOperation
 

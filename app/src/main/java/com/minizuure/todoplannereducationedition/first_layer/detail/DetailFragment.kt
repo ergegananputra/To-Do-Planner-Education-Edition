@@ -30,6 +30,7 @@ import com.minizuure.todoplannereducationedition.services.database.CATEGORY_MEMO
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_TO_PACK
 import com.minizuure.todoplannereducationedition.services.database.DEFAULT_NOTE_ID
+import com.minizuure.todoplannereducationedition.services.database.join.TaskAndSessionJoin
 import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModel
 import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
@@ -38,7 +39,6 @@ import com.minizuure.todoplannereducationedition.services.database.routine.Routi
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModelFactory
-import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModelFactory
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
@@ -147,6 +147,7 @@ class DetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
+        setupViewModelFactory()
         return binding.root
     }
 
@@ -154,24 +155,43 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as TaskManagementActivity).setToolbarTitle(this, args.titleDetail)
         navController = Navigation.findNavController(view)
-        setupViewModelFactory()
         setScrollGoTo()
 
         lifecycleScope.launch {
-            val task = taskViewModel.getById(args.taskDetailId) ?: return@launch closeFragment()
-            val session = sessionViewModel.getById(task.sessionId) ?: return@launch closeFragment()
+            val taskAndSessionJoin = withContext(Dispatchers.IO) {
+                taskViewModel.getTaskAndSessionJoinByProviderPrimaryKeys(
+                    indexDay = args.indexDay,
+                    taskId = args.taskDetailId,
+                    sessionId = args.sessionId
+                )
+            }?: run {
+                Log.e("DetailFragment", "onViewCreated: taskAndSessionJoin is null \n" +
+                        "with Primary Keys : ${args.indexDay}, ${args.taskDetailId}, ${args.sessionId}")
+                return@launch closeFragment()
+            }
+            val session = SessionTable(
+                id = taskAndSessionJoin.fkSessionId,
+                title = taskAndSessionJoin.sessionTitle,
+                timeStart = taskAndSessionJoin.sessionTimeStart,
+                timeEnd = taskAndSessionJoin.sessionTimeEnd,
+                selectedDays = taskAndSessionJoin.sessionSelectedDays,
+                fkRoutineId = taskAndSessionJoin.sessionFkRoutineId,
+                isCustomSession = taskAndSessionJoin.sessionIsCustomSession
+            )
+
             val routine = routineViewModel.getById(session.fkRoutineId) ?: return@launch closeFragment()
 
+            (activity as TaskManagementActivity).setToolbarTitle(this@DetailFragment, taskAndSessionJoin.title)
 
-            setupChipTags(task, routine)
+            setupChipTags(taskAndSessionJoin, routine)
             setupDate()
             setupTime(session)
-            setupLocation(task)
+            setupLocation(taskAndSessionJoin)
             setupRoutineTemplateText(routine)
             setupQuizMaterial(routine, args.selectedDatetimeDetailIso)
             setupToPack(routine, args.selectedDatetimeDetailIso)
             setupMemo(routine)
-            setupRescheduleButton(task, routine, session)
+            setupRescheduleButton(taskAndSessionJoin, routine)
             setupNextPlanQuizMaterial(routine)
             setupNextPlanToPack(routine)
         }
@@ -215,12 +235,12 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun setupRescheduleButton(task: TaskTable, routine: RoutineTable, session: SessionTable) {
+    private fun setupRescheduleButton(taskProvider: TaskAndSessionJoin, routine: RoutineTable) {
         val destination = DetailFragmentDirections.actionDetailFragmentToRescheduleFragment(
-            taskId = task.id,
+            taskId = taskProvider.id,
             selectedDatetimeDetailIso = args.selectedDatetimeDetailIso,
             routineId = routine.id,
-            taskTitle = task.title,
+            taskTitle = taskProvider.title,
         )
         binding.buttonRescheduleNextPlan.setOnClickListener {
             navController.navigate(destination)
@@ -269,20 +289,20 @@ class DetailFragment : Fragment() {
         }
     }
 
-    private fun setupChipTags(task: TaskTable, routine: RoutineTable) {
+    private fun setupChipTags(taskProvider: TaskAndSessionJoin, routine: RoutineTable) {
         lifecycleScope.launch {
-            val day = DatetimeAppManager().dayNameFromDayId(task.indexDay)
+            val day = DatetimeAppManager().dayNameFromDayId(taskProvider.indexDay)
             val dateTimeString = DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, true).dateISO8601inString
             binding.chipDay.text = day
 
             val quizCount = withContext(Dispatchers.IO) {
-                notesViewModel.note.getCountByFKTaskIdAndCategory(task.id, CATEGORY_QUIZ, dateTimeString)
+                notesViewModel.note.getCountByFKTaskIdAndCategory(taskProvider.id, CATEGORY_QUIZ, dateTimeString)
             }
             binding.chipQuiz.visibility = if (quizCount == 0) View.GONE else View.VISIBLE
 
 
             val toPackCount = withContext(Dispatchers.IO) {
-                notesViewModel.note.getCountByFKTaskIdAndCategory(task.id, CATEGORY_TO_PACK, dateTimeString)
+                notesViewModel.note.getCountByFKTaskIdAndCategory(taskProvider.id, CATEGORY_TO_PACK, dateTimeString)
             }
             binding.chipToPack.visibility = if (toPackCount == 0) View.GONE else View.VISIBLE
 
@@ -736,16 +756,16 @@ class DetailFragment : Fragment() {
         binding.textViewRoutineName.text = routineNameText
     }
 
-    private fun setupLocation(task: TaskTable) {
-        if (task.locationName.isNullOrEmpty()) {
+    private fun setupLocation(taskProvider: TaskAndSessionJoin) {
+        if (taskProvider.locationName.isNullOrEmpty()) {
             binding.textViewLocation.visibility = View.GONE
             return
         }
 
-        binding.textViewLocation.text = task.locationName!!
+        binding.textViewLocation.text = taskProvider.locationName
 
         binding.cardViewSessionInfo.setOnClickListener {
-            val link = task.locationAddress ?: return@setOnClickListener
+            val link = taskProvider.locationAddress ?: return@setOnClickListener
 
             if(link.contains("maps")) {
                 MaterialAlertDialogBuilder(requireActivity())
@@ -795,6 +815,8 @@ class DetailFragment : Fragment() {
         val destination = DetailFragmentDirections
             .actionDetailFragmentToTaskFragment(
                 taskId = args.taskDetailId,
+                indexDay = args.indexDay,
+                sessionId = args.sessionId,
             )
 
         navController.navigate(destination)

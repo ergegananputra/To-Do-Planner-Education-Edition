@@ -59,34 +59,8 @@ data class TaskTable(
     @ColumnInfo(name = "title")
     var title: String,
 
-    @ColumnInfo(name = "index_day")
-    var indexDay : Int = 0,
-
-//    @ColumnInfo(name = "session_id")
-//    var sessionId : Long = DEFAULT_SESSION_ID,
-
     @ColumnInfo(name = "updated_at")
     var updatedAt: String = DatetimeAppManager().dateISO8601inString,
-
-    // Additional Location
-
-    @ColumnInfo(name = "location_name")
-    var locationName : String? = null,
-
-    @ColumnInfo(name = "location_link")
-    var locationAddress : String? = null,
-
-//
-//    // custom reschedule
-//    @ColumnInfo(name = "is_rescheduled")
-//    var isRescheduled : Boolean = false,
-//
-//    @ColumnInfo(name = "rescheduled_time_start")
-//    var rescheduledTimeStart : String? = null,
-//
-//    @ColumnInfo(name = "rescheduled_time_end")
-//    var rescheduledTimeEnd : String? = null,
-
 
     // Community Feature
 

@@ -27,12 +27,13 @@ class ToDoPlannerApplication : Application() {
 
     val appRepository by lazy {
         AppDatabaseRepository(
-            appDb.routineTableDao(),
-            appDb.sessionTableDao(),
-            appDb.taskTableDao(),
-            appDb.todoNoteTableDao(),
-            appDb.notesTaskTableDao(),
-            appDb.deleteAllOperation()
+            routineTableDao = appDb.routineTableDao(),
+            sessionTableDao = appDb.sessionTableDao(),
+            taskTableDao = appDb.taskTableDao(),
+            todoNoteTableDao = appDb.todoNoteTableDao(),
+            notesTaskTableDao = appDb.notesTaskTableDao(),
+            sessionTaskProviderTableDao = appDb.sessionTaskProviderTableDao(),
+            deleteAllOperation = appDb.deleteAllOperation(),
         )
     }
 
