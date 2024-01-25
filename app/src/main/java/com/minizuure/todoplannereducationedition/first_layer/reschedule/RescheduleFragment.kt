@@ -44,6 +44,7 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskView
 import com.minizuure.todoplannereducationedition.services.database.temp.RescheduleFormViewModel
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import com.minizuure.todoplannereducationedition.services.errormsgs.ErrorMsgManager
+import com.minizuure.todoplannereducationedition.services.notification.ItemAlarmQueue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -418,6 +419,9 @@ class RescheduleFragment : Fragment() {
         currentDate: ZonedDateTime,
         segment: Int
     ) {
+        val app = requireActivity().application as ToDoPlannerApplication
+        val alarmManager = app.appAlarmManager
+
         withContext(Dispatchers.IO) {
             val alternateDayIndex = alternateDate.getTodayDayId()
             val currentDayIndex = DatetimeAppManager(currentDate).getTodayDayId()
@@ -425,20 +429,64 @@ class RescheduleFragment : Fragment() {
 
             notesTaskTables.forEach {
                 val notesDate = DatetimeAppManager(it.dateISO8601).selectedDetailDatetimeISO
-                if (notesDate.isEqual(currentDate) && segment == 3) {
+                val isEdited = if (notesDate.isEqual(currentDate) && segment == 3) {
                     Log.d("RescheduleFragment", "migrateNotes center Triggered: ${it.dateISO8601} to ${alternateDate.dateISO8601inString}")
                     notesViewModel.note.update(
                         it.copy(
                             dateISO8601 = alternateDate.dateISO8601inString
                         )
                     )
+                    alternateDate
+
                 } else if (notesDate.isAfter(currentDate) && segment == 2) {
+                    val editedDate = DatetimeAppManager(
+                        DatetimeAppManager(it.dateISO8601).selectedDetailDatetimeISO.plusDays(intervalDay.toLong())
+                    )
                     notesViewModel.note.update(
                         it.copy(
-                            dateISO8601 = DatetimeAppManager(
-                                DatetimeAppManager(it.dateISO8601).selectedDetailDatetimeISO.plusDays(intervalDay.toLong())
-                            ).dateISO8601inString
+                            dateISO8601 = editedDate.dateISO8601inString
                         )
+                    )
+
+                    editedDate
+                } else {
+                    null
+                }
+
+                if (isEdited != null) {
+                    Log.d("RescheduleFragment", "migrateNotes: ${it.dateISO8601} to ${alternateDate.dateISO8601inString} \n " +
+                            "Run update notification schedule")
+
+                    val notificationId = ItemAlarmQueue().createItemId(
+                        isEdited.selectedDetailDatetimeISO.dayOfMonth,
+                        isEdited.selectedDetailDatetimeISO.monthValue,
+                        isEdited.selectedDetailDatetimeISO.year,
+                        args.taskId
+                    )
+
+                    val cancelledDatetime = DatetimeAppManager(it.dateISO8601).selectedDetailDatetimeISO
+
+                    val itemAlarmQueueCancelled = ItemAlarmQueue(
+                        id = notificationId,
+                        action = it.category,
+                        taskId = args.taskId,
+                        time = cancelledDatetime.withHour(5).withMinute(30),
+                        taskName = args.taskTitle,
+                        message = it.description,
+                        taskDateIdentification = cancelledDatetime
+                    )
+
+                    alarmManager.cancel(
+                        itemAlarmQueueCancelled
+                    )
+
+                    val itemAlarmQueue = itemAlarmQueueCancelled.copy(
+                        time = isEdited.selectedDetailDatetimeISO.withHour(5).withMinute(30),
+                        taskDateIdentification = isEdited.selectedDetailDatetimeISO
+                    )
+
+                    alarmManager.schedule(
+                        itemAlarmQueue
                     )
                 }
             }
