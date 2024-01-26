@@ -71,8 +71,13 @@ class MainTaskAdapter(
         }
 
         private fun setupTagsVisibility(item: TaskAndSessionJoin) {
+            val todayIndex = DatetimeAppManager(currentDate).getTodayDayId()
+            val interval =
+                if (todayIndex <= item.indexDay) item.indexDay - todayIndex
+                else 7 + item.indexDay - todayIndex
+
             scope.launch {
-                val dateTimeString = DatetimeAppManager(currentDate, true).dateISO8601inString
+                val dateTimeString = DatetimeAppManager(currentDate.plusDays(interval.toLong()), true).dateISO8601inString
                 val countQuiz = withContext(Dispatchers.IO) {
                     notesViewModel.note.getCountByFKTaskIdAndCategory(item.id, CATEGORY_QUIZ, dateTimeString)
                 }

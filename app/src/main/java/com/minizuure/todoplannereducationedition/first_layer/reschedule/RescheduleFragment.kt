@@ -197,7 +197,13 @@ class RescheduleFragment : Fragment() {
      * already exist with same [indexDay], [taskId] and [sessionId].
      *
      *
-     * Last Edit : 25 January 2024
+     * [currentWeekDate] digunakan untuk menentukan awal minggu dimana [alternateDate] asli berada.
+     * [currentWeekDate] akan digunakan untuk melakukan blocking selama satu minggu jika hanya
+     * reschedule hari itu [alternateDateString] saja (3 segmen) dan tidak ada blocking untuk jika reschedule
+     * semua task setelah hari itu (2 segmen).
+     *
+     *
+     * Last Edit : 26 January 2024
      *
      *
      * Note : Please update the javaDoc if you edit this function.
@@ -229,7 +235,17 @@ class RescheduleFragment : Fragment() {
             val routine = routineViewModel.getById(args.routineId) ?: return@withContext
 
             val alternateDate = DatetimeAppManager(DatetimeAppManager(alternateDateString).selectedDetailDatetimeISO, accuracyOnlyUpToDays = true)
-            val currentDate = args.selectedDatetimeDetailIso.zoneDateTime.plusWeeks(weekFromNow.toLong())
+
+            val preCurrentWeekDate = DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, accuracyOnlyUpToDays = true).selectedDetailDatetimeISO
+            val currentWeekDate = preCurrentWeekDate.plusWeeks(weekFromNow.toLong()).minusDays(taskAndSessionJoin.indexDay.toLong() + 1).let {
+                if (isRescheduleAllFollowingMeet) {
+                    if (alternateDate.selectedDetailDatetimeISO.isAfter(it)) it else it.minusWeeks(1)
+                } else {
+                    it
+                }
+            }
+            Log.i("Reschedule", "User choose alternative date: ${alternateDate.dateISO8601inString}")
+            Log.i("Reschedule", "Current week date: $currentWeekDate")
 
             val referenceSessionTaskProvider = sessionTaskProviderViewModel.getByPrimaryKeys(
                 indexDay = args.indexDay,
@@ -276,9 +292,10 @@ class RescheduleFragment : Fragment() {
                     referenceSessionTaskProvider.copy(
                         isRescheduled = true,
                         rescheduledDateStart = if(referenceSessionTaskProvider.isRescheduled) referenceSessionTaskProvider.rescheduledDateStart  else routine.date_start,
-                        rescheduledDateEnd = DatetimeAppManager(currentDate).dateISO8601inString,
+                        rescheduledDateEnd = DatetimeAppManager(currentWeekDate, accuracyOnlyUpToDays = true).dateISO8601inString,
                     )
                 )
+                Log.i("RescheduleFragment", "Completed Segment Left (1 out of 2) :\nPK(${referenceSessionTaskProvider.fkTaskId}, ${referenceSessionTaskProvider.indexDay}, ${referenceSessionTaskProvider.fkSessionId})")
 
                 // Segment Right (Insert)
                 sessionTaskProviderViewModel.insert(
@@ -291,14 +308,15 @@ class RescheduleFragment : Fragment() {
                         locationLink = locationLink,
 
                         isRescheduled = true,
-                        rescheduledDateStart = DatetimeAppManager(currentDate.plusDays(1)).dateISO8601inString,
+                        rescheduledDateStart = DatetimeAppManager(currentWeekDate.plusDays(1), accuracyOnlyUpToDays = true).dateISO8601inString,
                         rescheduledDateEnd = routine.date_end,
                     )
                 )
+                Log.i("RescheduleFragment", "Completed Segment Right (2 out of 2) :\nPK(${args.taskId}, $indexDay, $alterSessionId)")
 
                 migrateAllNotes(
                     alternateDate,
-                    currentDate,
+                    currentWeekDate,
                     2
                 )
 
@@ -310,9 +328,10 @@ class RescheduleFragment : Fragment() {
                     referenceSessionTaskProvider.copy(
                         isRescheduled = true,
                         rescheduledDateStart = if(referenceSessionTaskProvider.isRescheduled) referenceSessionTaskProvider.rescheduledDateStart  else routine.date_start,
-                        rescheduledDateEnd = DatetimeAppManager(currentDate.minusDays(1)).dateISO8601inString,
+                        rescheduledDateEnd = DatetimeAppManager(currentWeekDate).dateISO8601inString,
                     )
                 )
+                Log.i("RescheduleFragment", "Completed Segment Left (1 out of 3) :\nPK(${referenceSessionTaskProvider.fkTaskId}, ${referenceSessionTaskProvider.indexDay}, ${referenceSessionTaskProvider.fkSessionId})")
 
                 // Segment Center (Insert)
                 sessionTaskProviderViewModel.insert(
@@ -329,6 +348,7 @@ class RescheduleFragment : Fragment() {
                         rescheduledDateEnd = alternateDate.dateISO8601inString,
                     )
                 )
+                Log.i("RescheduleFragment", "Completed Segment Center (2 out of 3) :\nPK(${args.taskId}, $indexDay, $alterSessionId})")
 
                 // Segment Right (Insert)
                 val copyOldSession = sessionViewModel.getById(sessionId)!!
@@ -346,14 +366,15 @@ class RescheduleFragment : Fragment() {
                         fkSessionId = newSessionId,
 
                         isRescheduled = true,
-                        rescheduledDateStart = DatetimeAppManager(currentDate.plusDays(1)).dateISO8601inString,
+                        rescheduledDateStart = DatetimeAppManager(currentWeekDate.plusWeeks(1)).dateISO8601inString,
                         rescheduledDateEnd = routine.date_end,
                     )
                 )
+                Log.i("RescheduleFragment", "Completed Segment Right (3 out of 3) :\nPK(${referenceSessionTaskProvider.fkTaskId}, ${referenceSessionTaskProvider.indexDay}, $newSessionId)")
 
                 migrateAllNotes(
                     alternateDate,
-                    currentDate,
+                    currentWeekDate,
                     3
                 )
 
@@ -503,6 +524,12 @@ class RescheduleFragment : Fragment() {
     ): Boolean {
         if (indexDay == null) {
             val errorMsg = getString(R.string.error_no_day_selected)
+            binding.textInputLayoutSelectSession.error = errorMsg
+            return false
+        }
+
+        if (binding.textInputLayoutSelectSession.editText?.text.toString().isEmpty()) {
+            val errorMsg = getString(R.string.error_no_session_selected)
             binding.textInputLayoutSelectSession.error = errorMsg
             return false
         }

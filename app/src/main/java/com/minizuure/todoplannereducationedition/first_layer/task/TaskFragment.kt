@@ -240,7 +240,7 @@ class TaskFragment : Fragment() {
             return false
         }
 
-        if (sessionId == null && !customSession) {
+        if (sessionId == DEFAULT_SESSION_ID && !customSession) {
             val errorMsg = getString(R.string.error_msg_session_empty)
             binding.textInputLayoutSelectSession.error = errorMsg
             return false

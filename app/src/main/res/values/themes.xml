@@ -2,7 +2,11 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.ToDoPlannerEducationEdition" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-<!--         <item name="colorPrimary">#720A30</item>-->
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:statusBarColor">@android:color/background_dark</item>
+        <item name="android:navigationBarColor">?attr/colorSurfaceContainerLow</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <!-- and so on for other color attributes -->
     </style>
 
     <style name="Theme.ToDoPlannerEducationEdition" parent="Base.Theme.ToDoPlannerEducationEdition" />

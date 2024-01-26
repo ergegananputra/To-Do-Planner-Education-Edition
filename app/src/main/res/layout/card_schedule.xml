@@ -314,7 +314,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="card_quiz_material_detail, button_to_pack_next_plan"
+        app:constraint_referenced_ids="card_quiz_material_detail, button_tags_quiz"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

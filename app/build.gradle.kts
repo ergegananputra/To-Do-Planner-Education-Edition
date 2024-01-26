@@ -55,6 +55,16 @@ android {
         // TODO: build test case
         getByName("androidTest").assets.srcDirs("$projectDir/schemas")
     }
+
+
+    packaging {
+        resources{
+            excludes.add("**/LICENSE.md")
+            excludes.add("**/LICENSE-notice.md")
+        }
+
+    }
+
 }
 
 dependencies {
@@ -65,6 +75,8 @@ dependencies {
     // Room
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("androidx.room:room-runtime:2.6.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    androidTestImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     ksp("androidx.room:room-compiler:2.6.1")
 
     // Testing Unit

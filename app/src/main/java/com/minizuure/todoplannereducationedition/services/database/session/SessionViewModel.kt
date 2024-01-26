@@ -16,7 +16,7 @@ class SessionViewModel(
     suspend fun getById(id: Long) : SessionTable? {
         Log.d("SessionViewModel", "begin get session by id: $id")
         val result = appDatabaseRepository.getSessionById(id)
-        Log.d("SessionViewModel", "result get session by id is ${result != null}")
+        Log.v("SessionViewModel", "result get session with ID $id is ${if (result != null) "success " else "fail"}")
         return result
     }
 
