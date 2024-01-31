@@ -1,8 +1,12 @@
 package com.minizuure.todoplannereducationedition.services.database.relations_table
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.minizuure.todoplannereducationedition.AppDatabaseRepository
 import com.minizuure.todoplannereducationedition.services.database.join.TaskAndSessionJoin
+import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SessionTaskProviderViewModel(
     private val appDatabaseRepository: AppDatabaseRepository
@@ -74,6 +78,36 @@ class SessionTaskProviderViewModel(
             taskId = taskId,
             sessionId = sessionId
         )
+    }
+
+    /**
+     *
+     * [optimizeSessionTaskProviderTable]
+     *
+     *
+     * Delete all [SessionTaskProviderTable] that have a [SessionTaskProviderTable.rescheduledDateStart] that is
+     * after the [SessionTaskProviderTable.rescheduledDateEnd].
+     *
+     *
+     * [SessionTaskProviderTable.rescheduledDateStart] and [SessionTaskProviderTable.rescheduledDateEnd] must be in ISO format
+     * and always accurate to the day plus the zone hours.
+     * Example: "2024-01-28T17:00:00Z"
+     */
+    fun optimizeSessionTaskProviderTable() {
+       viewModelScope.launch(Dispatchers.IO) {
+           val allProviders = getAll()
+
+           for (item in allProviders) {
+               if (!item.isRescheduled) continue // if not rescheduled, continue
+
+               val dateStart = DatetimeAppManager(item.rescheduledDateStart!!).selectedDetailDatetimeISO
+               val dateEnd = DatetimeAppManager(item.rescheduledDateEnd!!).selectedDetailDatetimeISO
+
+               if (dateStart.isBefore(dateEnd) || dateStart.isEqual(dateEnd)) continue
+
+               delete(item)
+           }
+       }
     }
 
 }
