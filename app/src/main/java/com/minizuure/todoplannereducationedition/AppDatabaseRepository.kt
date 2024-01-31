@@ -148,6 +148,11 @@ class AppDatabaseRepository(
             taskTableDao.getPaginated(limit, offset)
         }
 
+    suspend fun searchTasks(searchQuery: String) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "searchTasks triggered with $searchQuery")
+        taskTableDao.search("%$searchQuery%")
+    }
+
     suspend fun getTaskAndSessionJoinByIndexDay(indexDay: Int, selectedDate : ZonedDateTime, isToday : Boolean, todayHour: String) = withContext(Dispatchers.IO) {
         Log.d("AppDatabaseRepository", "getTaskAndSessionJoinByIndexDay: $indexDay, ${
             selectedDate.withZoneSameInstant(

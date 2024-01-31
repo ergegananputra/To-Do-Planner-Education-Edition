@@ -1,11 +1,12 @@
 package com.minizuure.todoplannereducationedition.surface.todo
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.format.DateUtils.isToday
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -155,10 +156,35 @@ class TodoFragment : Fragment() {
     }
 
     private fun setupSearchBar() {
-        // TODO: Search bar
+        val handler = Handler(Looper.getMainLooper())
+        val delayInMillis = 5_000L
+        val clearFocus = Runnable {
+            binding.searchBarTodo.clearFocus()
+        }
+
         binding.searchBarTodo.editText?.doAfterTextChanged { text ->
             val searchQuery = text.toString().trim()
-            updateQuizAdapterWithResult(searchQuery)
+
+            if (searchQuery.isNotEmpty()) {
+                handler.removeCallbacks(clearFocus)
+
+                binding.containerDatetime.visibility = View.GONE
+                updateQuizAdapterWithResult(searchQuery)
+
+
+            } else {
+                binding.containerDatetime.visibility = View.VISIBLE
+                updateQuizAdapter(forceUpdate = true)
+
+                handler.postDelayed(clearFocus, delayInMillis)
+            }
+        }
+
+        binding.searchBarTodo.setEndIconOnClickListener {
+            binding.searchBarTodo.editText?.setText("")
+            updateQuizAdapter(forceUpdate = true)
+
+            binding.containerDatetime.visibility = View.VISIBLE
         }
     }
 
@@ -232,7 +258,22 @@ class TodoFragment : Fragment() {
 
     private fun updateQuizAdapterWithResult(searchQuery: String) {
         //TODO: Search result from database
-        Toast.makeText(requireContext(), "Search result for $searchQuery", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            val searchResult = withContext(Dispatchers.IO) {
+                taskViewModel.search(searchQuery)
+            }
+
+            val selectedDate = ZonedDateTime.now()
+                .withYear(1970)
+                .withMonth(1)
+                .withDayOfMonth(1)
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+
+            selectedDateMainTaskAdapter.setNewCurrentDate(selectedDate)
+            selectedDateMainTaskAdapter.submitList(searchResult)
+        }
     }
 
     private fun setupCalendarDialog() {

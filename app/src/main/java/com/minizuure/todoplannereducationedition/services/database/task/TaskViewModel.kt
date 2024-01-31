@@ -117,4 +117,8 @@ class TaskViewModel(
         )
     }
 
+    suspend fun search(query: String) : List<TaskAndSessionJoin> {
+        return appDatabaseRepository.searchTasks(query)
+    }
+
 }
