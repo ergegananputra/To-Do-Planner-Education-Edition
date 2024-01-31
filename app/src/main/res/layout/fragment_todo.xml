@@ -115,16 +115,6 @@
                     >
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_all_todo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:text="@string/all_event"
-                        app:chipIconVisible="true"
-                        app:chipIconTint="?attr/colorOnSurfaceVariant"
-                        app:chipIcon="@drawable/ic_history" />
-
-                    <com.google.android.material.chip.Chip
                         android:id="@+id/chip_communities_todo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

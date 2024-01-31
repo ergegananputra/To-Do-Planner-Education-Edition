@@ -43,10 +43,8 @@ import java.time.ZonedDateTime
  *
  *
  * Development TODO List :
- * - Search bar & Result
  * - Quiz Filter
  * - To Pack Filter
- * - All Event Filter
  * - Community Filter
  */
 class TodoFragment : Fragment() {
@@ -127,7 +125,6 @@ class TodoFragment : Fragment() {
     }
 
     private fun setupChipFilter() {
-        setChipAllEvent()
         setChipCommunity()
     }
 
@@ -143,17 +140,7 @@ class TodoFragment : Fragment() {
         }
     }
 
-    private fun setChipAllEvent() {
-        val chipAllEvenIcon = binding.chipAllTodo.chipIcon
 
-        binding.chipAllTodo.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                binding.chipAllTodo.chipIcon = null
-            } else {
-                binding.chipAllTodo.chipIcon = chipAllEvenIcon
-            }
-        }
-    }
 
     private fun setupSearchBar() {
         val handler = Handler(Looper.getMainLooper())
