@@ -33,6 +33,8 @@ import com.minizuure.todoplannereducationedition.services.database.DEFAULT_NOTE_
 import com.minizuure.todoplannereducationedition.services.database.join.TaskAndSessionJoin
 import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModel
 import com.minizuure.todoplannereducationedition.services.database.notes.NoteViewModelFactory
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModel
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
@@ -74,6 +76,7 @@ class DetailFragment : Fragment() {
     private lateinit var sessionViewModel: SessionViewModel
     private lateinit var taskViewModel : TaskViewModel
     private lateinit var notesViewModel : NoteViewModel
+    private lateinit var sessionTaskProviderViewModel: SessionTaskProviderViewModel
 
     private val binding by lazy {
         FragmentDetailBinding.inflate(layoutInflater)
@@ -202,6 +205,7 @@ class DetailFragment : Fragment() {
             val bottomSheet = TaskDetailBottomSheetDialogFragment(
                 taskId = args.taskDetailId,
                 routine = routine,
+                sessionTaskProviderViewModel = sessionTaskProviderViewModel,
                 currentDate = args.selectedDatetimeDetailIso.zoneDateTime,
                 isNextPlan = true,
                 title = getString(R.string.to_pack),
@@ -221,6 +225,7 @@ class DetailFragment : Fragment() {
             val bottomSheet = TaskDetailBottomSheetDialogFragment(
                 taskId = args.taskDetailId,
                 routine = routine,
+                sessionTaskProviderViewModel = sessionTaskProviderViewModel,
                 currentDate = args.selectedDatetimeDetailIso.zoneDateTime,
                 isNextPlan = true,
                 title = getString(R.string.quiz_materials_title),
@@ -512,6 +517,7 @@ class DetailFragment : Fragment() {
             val bottomSheet = TaskDetailBottomSheetDialogFragment(
                 taskId = args.taskDetailId,
                 routine = routine,
+                sessionTaskProviderViewModel = sessionTaskProviderViewModel,
                 currentDate = selectedDatetimeDetailIso.zoneDateTime,
                 isNextPlan = false,
                 title = getString(R.string.to_pack),
@@ -591,6 +597,7 @@ class DetailFragment : Fragment() {
             val bottomSheet = TaskDetailBottomSheetDialogFragment(
                 taskId = args.taskDetailId,
                 routine = routine,
+                sessionTaskProviderViewModel = sessionTaskProviderViewModel,
                 currentDate = currentDate.zoneDateTime,
                 isNextPlan = false,
                 title = getString(R.string.quiz_materials_title),
@@ -637,8 +644,8 @@ class DetailFragment : Fragment() {
         isNextPlan: Boolean,
         description: String,
         title: String?,
-        weekSelected: Int,
-        weeksDictionary: Map<String, Int>
+        weekSelected: ZonedDateTime,
+        weeksDictionary: Map<String, ZonedDateTime>
     ) {
         lifecycleScope.launch {
             // get note id
@@ -646,12 +653,11 @@ class DetailFragment : Fragment() {
             val dateTime  = DatetimeAppManager(zonedDatetime, true)
 
             val dateString = if (isNextPlan) {
-                if (weekSelected == 0) {
+                if (weekSelected.isEqual(dateTime.selectedDetailDatetimeISO)) {
                     Toast.makeText(requireContext(), getString(R.string.add_next_plan_memo_invalid), Toast.LENGTH_SHORT).show()
                     return@launch
                 }
-                val nextDate = dateTime.selectedDetailDatetimeISO.plusWeeks(weekSelected.toLong())
-                DatetimeAppManager(nextDate, true).dateISO8601inString
+                DatetimeAppManager(weekSelected, true).dateISO8601inString
             } else {
                 dateTime.dateISO8601inString
             }
@@ -805,6 +811,10 @@ class DetailFragment : Fragment() {
 
         val notesFactory = NoteViewModelFactory(app.appRepository)
         notesViewModel = ViewModelProvider(requireActivity(), notesFactory)[NoteViewModel::class.java]
+
+        val sessionTaskProviderFactory = SessionTaskProviderViewModelFactory(app.appRepository)
+        sessionTaskProviderViewModel = ViewModelProvider(requireActivity(), sessionTaskProviderFactory)[SessionTaskProviderViewModel::class.java]
+
     }
 
     private fun setupDate() {

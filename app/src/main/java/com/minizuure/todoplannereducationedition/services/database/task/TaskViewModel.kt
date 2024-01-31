@@ -51,6 +51,19 @@ class TaskViewModel(
         )
     }
 
+    suspend fun getJoinSessionByTaskId(
+        taskId: Long,
+        indexDay: Int,
+        selectedDateTime: ZonedDateTime,
+        ) : TaskAndSessionJoin? {
+        Log.d("TaskViewModel", "get tasks by task id: $taskId")
+        return appDatabaseRepository.getTaskAndSessionJoinByTaskId(
+            taskId = taskId,
+            indexDay = indexDay,
+            selectedDate = selectedDateTime,
+        )
+    }
+
     suspend fun getBySessionId(sessionId: Long) : List<TaskTable> {
         Log.d("TaskViewModel", "get tasks by session id: $sessionId")
         return appDatabaseRepository.getTasksBySessionId(sessionId)

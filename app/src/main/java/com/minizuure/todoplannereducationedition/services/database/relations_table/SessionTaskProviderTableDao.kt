@@ -14,6 +14,9 @@ interface SessionTaskProviderTableDao : BaseIODao<SessionTaskProviderTable> {
     @Query("SELECT * FROM session_task_provider_table LIMIT :limit OFFSET :offset")
     suspend fun getPaginated(limit: Int, offset: Int = 0): List<SessionTaskProviderTable>
 
+    @Query("SELECT * FROM session_task_provider_table WHERE fk_task_id = :taskId")
+    suspend fun getByTaskId(taskId: Long): List<SessionTaskProviderTable>
+
     @Query("SELECT * FROM session_task_provider_table WHERE index_day = :indexDay AND fk_task_id = :taskId AND fk_session_id = :sessionId")
     suspend fun getByPrimaryKeys(
         indexDay: Int,

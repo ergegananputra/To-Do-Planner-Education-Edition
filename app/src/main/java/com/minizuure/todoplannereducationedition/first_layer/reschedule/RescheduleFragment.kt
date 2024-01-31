@@ -47,21 +47,13 @@ import com.minizuure.todoplannereducationedition.services.errormsgs.ErrorMsgMana
 import com.minizuure.todoplannereducationedition.services.notification.ItemAlarmQueue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-/**
- * list TODO in [RescheduleFragment]:
- *
- *
- * [ ] Perbaiki logic pendapatan week pada methods [setupSelectedDatePicker] untuk menyesuaikan [SessionTaskProvider].
- *       Solution Idea : Dapat menggunakan crawler terdekat untuk menentukan week yang akan ditampilkan.
- *
- *
- * see [TaskDetailBottomSheetDialogFragment] for comparison.
- */
+
 class RescheduleFragment : Fragment() {
     val args : RescheduleFragmentArgs by navArgs()
     private val rescheduleFormViewModel : RescheduleFormViewModel by activityViewModels()
@@ -71,7 +63,7 @@ class RescheduleFragment : Fragment() {
     private lateinit var notesViewModel : NoteViewModel
     private lateinit var sessionTaskProviderViewModel : SessionTaskProviderViewModel
 
-    private val weeksDictionary : MutableMap<String, Int> = mutableMapOf()
+    private val weeksDictionary : MutableMap<String, ZonedDateTime> = mutableMapOf()
 
     private val binding by lazy {
         FragmentRescheduleBinding.inflate(layoutInflater)
@@ -125,24 +117,13 @@ class RescheduleFragment : Fragment() {
     }
 
     private fun setupSaveButton() {
-        /**
-         * TODO: membuat save button logic.
-         * 1.   Cek Switch, jika true maka reschedule semua task
-         *      yang ada di session tersebut setelah hari Task yang dipilih.
-         *
-         * 2.   Buat Task Duplicate dengan rentang waktu yang dipilih.
-         *
-         * 3.   Migrasi semua notes setelah hari Task yang dipilih ke Task Duplicate.
-         *
-         */
-
         binding.buttonSaveRescheduleForm.setOnClickListener {
             Log.d("RescheduleFragment", "setupSaveButton: clicked")
             Toast.makeText(requireContext(), "Clicked: Unimplemented yet", Toast.LENGTH_SHORT).show()
 
             lifecycleScope.launch(Dispatchers.IO) {
                 val taskId : Long = args.taskId
-                val weekFromNow : Int = weeksDictionary[binding.textInputLayoutSelectedReschedule.editText?.text.toString()] ?: 0
+                val weekFromNow : ZonedDateTime = weeksDictionary[binding.textInputLayoutSelectedReschedule.editText?.text.toString()] ?: args.selectedDatetimeDetailIso.zoneDateTime
                 val breakPointDate : String = binding.textInputLayoutAlternativeReschedule.editText?.text.toString().trim()
                 val indexDay : Int? = rescheduleFormViewModel.getDay()?.getId()
                 val sessionId : Long = rescheduleFormViewModel.getSession()?.id ?: DEFAULT_SESSION_ID
@@ -203,14 +184,14 @@ class RescheduleFragment : Fragment() {
      * semua task setelah hari itu (2 segmen).
      *
      *
-     * Last Edit : 26 January 2024
+     * Last Edit : 31 January 2024
      *
      *
      * Note : Please update the javaDoc if you edit this function.
      */
     private suspend fun rescheduleTask(
         taskId: Long,
-        weekFromNow: Int,
+        weekFromNow: ZonedDateTime,
         alternateDateString: String,
         indexDay: Int,
         sessionId: Long,
@@ -236,8 +217,8 @@ class RescheduleFragment : Fragment() {
 
             val alternateDate = DatetimeAppManager(DatetimeAppManager(alternateDateString).selectedDetailDatetimeISO, accuracyOnlyUpToDays = true)
 
-            val preCurrentWeekDate = DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime, accuracyOnlyUpToDays = true).selectedDetailDatetimeISO
-            val currentWeekDate = preCurrentWeekDate.plusWeeks(weekFromNow.toLong()).minusDays(taskAndSessionJoin.indexDay.toLong() + 1).let {
+            val preCurrentWeekDate = DatetimeAppManager(weekFromNow, accuracyOnlyUpToDays = true).selectedDetailDatetimeISO
+            val currentWeekDate = preCurrentWeekDate.minusDays(taskAndSessionJoin.indexDay.toLong() + 1).let {
                 if (isRescheduleAllFollowingMeet) {
                     if (alternateDate.selectedDetailDatetimeISO.isAfter(it)) it else it.minusWeeks(1)
                 } else {
@@ -678,33 +659,13 @@ class RescheduleFragment : Fragment() {
     }
 
     private fun setupSelectedDatePicker() {
-        // TODO: Perbaiki logic untuk mendapatkan list week yang valid. Karena implementasi saat ini tidak dapat
-        //  menangani kasus SessionTaskProvider yang sudah direschedule di beda tanggal / hari
         lifecycleScope.launch {
             Log.d("RescheduleFragment", "setupSelectedDatePicker: program reached")
 
-            val routine = withContext(Dispatchers.IO){ routineViewModel.getById(args.routineId) } ?: return@launch
-            val dateEnd = DatetimeAppManager(routine.date_end).selectedDetailDatetimeISO
+            val meetsDictionary = withContext(Dispatchers.IO) { setMeetsDictionary() }
 
-            val currentDate = args.selectedDatetimeDetailIso.zoneDateTime
+            if (!meetsDictionary) return@launch
 
-            Log.d("RescheduleFragment", "setupSelectedDatePicker: $currentDate and $dateEnd")
-
-            if (currentDate.isAfter(dateEnd)) return@launch
-
-            val weeks = ChronoUnit.WEEKS.between(currentDate, dateEnd).toInt()
-
-            for (i in 0..weeks) {
-                val dateTime = DatetimeAppManager(currentDate.plusWeeks(i.toLong())).toReadable()
-                if (i == 1) {
-                    weeksDictionary["Next week | $dateTime"] = i
-                    continue
-                } else if (i == 0) {
-                    weeksDictionary["This week | $dateTime"] = 0
-                    continue
-                }
-                weeksDictionary[ "In $i weeks | $dateTime"] = i
-            }
 
             val adapter: ArrayAdapter<String> = object : ArrayAdapter<String>(
                 requireContext(),
@@ -744,6 +705,109 @@ class RescheduleFragment : Fragment() {
 
             Log.d("RescheduleFragment", "setupSelectedDatePicker: $weeksDictionary")
         }
+    }
+
+    private suspend fun setMeetsDictionary() : Boolean {
+        return coroutineScope {
+            val sessionTaskProviders = withContext(Dispatchers.IO){
+                sessionTaskProviderViewModel.getByTaskId(args.taskId)
+            }
+
+            if (sessionTaskProviders.first().isRescheduled) {
+                setMeetsDictionaryRescheduled(sessionTaskProviders)
+            } else {
+                setMeetsDictionaryNotRescheduled()
+            }
+
+        }
+
+    }
+
+    private suspend fun setMeetsDictionaryNotRescheduled() : Boolean {
+        val routine = withContext(Dispatchers.IO){ routineViewModel.getById(args.routineId) } ?: return false
+
+        return coroutineScope {
+            val dateEnd = DatetimeAppManager(routine.date_end).selectedDetailDatetimeISO
+            if (args.selectedDatetimeDetailIso.zoneDateTime.isAfter(dateEnd)) return@coroutineScope true
+
+            val weeks = ChronoUnit.WEEKS.between(args.selectedDatetimeDetailIso.zoneDateTime, dateEnd).toInt()
+
+            this.launch(Dispatchers.IO) {
+                for (i in 1..weeks) {
+                    val dateTime = DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime.plusWeeks(i.toLong())).toReadable()
+                    if (i == 1) {
+                        weeksDictionary["Next meet"] = DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime.plusWeeks(i.toLong())).selectedDetailDatetimeISO
+                        continue
+                    }
+                    weeksDictionary["In $i meets | $dateTime"] = DatetimeAppManager(args.selectedDatetimeDetailIso.zoneDateTime.plusWeeks(i.toLong())).selectedDetailDatetimeISO
+                }
+            }
+
+            return@coroutineScope true
+        }
+    }
+
+    private suspend fun setMeetsDictionaryRescheduled(sessionTaskProviders: List<SessionTaskProviderTable>) : Boolean {
+        return coroutineScope {
+            this.launch(Dispatchers.IO) {
+                Log.d("TaskDetailBottomSheet", "sessionTaskProviders: $sessionTaskProviders with current date: ${args.selectedDatetimeDetailIso.zoneDateTime}")
+                val possibleWeeksMeets = mutableListOf<ZonedDateTime>()
+
+                for (item in sessionTaskProviders) {
+                    val startDate =
+                        DatetimeAppManager(item.rescheduledDateStart!!).selectedDetailDatetimeISO
+                    val endDate =
+                        DatetimeAppManager(item.rescheduledDateEnd!!).selectedDetailDatetimeISO
+
+                    if (args.selectedDatetimeDetailIso.zoneDateTime.isAfter(endDate)) continue
+
+                    val taskStartDate = getFirstTaskInWeek(item, startDate, endDate) ?: continue
+
+
+                    val meets = ChronoUnit.WEEKS.between(taskStartDate, endDate).toInt()
+
+                    for (i in 0..meets) {
+                        val dateTime =
+                            DatetimeAppManager(taskStartDate.plusWeeks(i.toLong())).selectedDetailDatetimeISO
+
+                        if (dateTime.isBefore(args.selectedDatetimeDetailIso.zoneDateTime)) continue
+
+                        possibleWeeksMeets.add(dateTime)
+                    }
+
+
+                }
+
+                possibleWeeksMeets.sort()
+
+                for (i in possibleWeeksMeets.indices) {
+                    val dateTime = DatetimeAppManager(possibleWeeksMeets[i]).toReadable()
+                    if (i == 0) {
+                        weeksDictionary["Next meet | $dateTime"] = possibleWeeksMeets[i]
+                        continue
+                    }
+                    weeksDictionary["In $i meets | $dateTime"] = possibleWeeksMeets[i]
+                }
+            }
+
+
+            return@coroutineScope true
+        }
+    }
+
+    private fun getFirstTaskInWeek(sessionTaskProviderTable: SessionTaskProviderTable, startDate: ZonedDateTime, endDate: ZonedDateTime): ZonedDateTime? {
+        val daysInterval = ChronoUnit.DAYS.between(startDate, endDate).toInt()
+
+        for (i in 0..daysInterval) {
+            val date = DatetimeAppManager(startDate.plusDays(i.toLong())).selectedDetailDatetimeISO
+            val dayId = DatetimeAppManager(date).getTodayDayId()
+
+            if (sessionTaskProviderTable.indexDay == dayId) {
+                return date
+            }
+        }
+
+        return null
     }
 
     private fun setupStartTimePicker() {
