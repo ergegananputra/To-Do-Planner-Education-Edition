@@ -165,6 +165,15 @@ class AppDatabaseRepository(
         )
     }
 
+    suspend fun getTaskAndSessionJoinByTaskId(indexDay: Int, selectedDate : ZonedDateTime, taskId: Long) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getTaskAndSessionJoinByTaskId: $taskId")
+        taskTableDao.getTaskAndSessionJoinByTaskIdAndIndexDay(
+            taskId = taskId,
+            indexDay = indexDay,
+            iso8601Date = DatetimeAppManager(selectedDate, true).dateISO8601inString,
+        )
+    }
+
     suspend fun getTasksBySessionId(sessionId: Long) = withContext(Dispatchers.IO) {
         Log.d("AppDatabaseRepository", "getTasksBySessionId triggered with sessionId $sessionId")
         taskTableDao.getBySessionId(sessionId)
@@ -278,6 +287,16 @@ class AppDatabaseRepository(
         Log.d("AppDatabaseRepository", "getAllSessionTaskProviderTable triggered")
         sessionTaskProviderTableDao.getAll()
     }
+
+    suspend fun getSessionTaskProviderByTaskId(
+        taskId: Long,
+    ) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getTaskAndSessionJoinByTaskId: $taskId")
+        sessionTaskProviderTableDao.getByTaskId(
+            taskId = taskId
+        )
+    }
+
     suspend fun getSessionTaskProviderByPrimaryKeys(
         indexDay: Int,
         taskId: Long,
