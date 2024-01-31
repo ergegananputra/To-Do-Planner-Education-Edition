@@ -4,11 +4,14 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.minizuure.todoplannereducationedition.databinding.ActivityMainBinding
 import com.minizuure.todoplannereducationedition.services.database.CATEGORY_QUIZ
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModel
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModelFactory
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 import com.minizuure.todoplannereducationedition.services.notification.AndroidAlarmManager
 import com.minizuure.todoplannereducationedition.services.notification.CHANNEL_ID
@@ -37,6 +40,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         startNotificationService()
+        optimizeSessionTaskProviderDatabase()
+    }
+
+    private fun optimizeSessionTaskProviderDatabase() {
+        val app = application as ToDoPlannerApplication
+        val factory = SessionTaskProviderViewModelFactory(app.appRepository)
+        val sessionTaskProviderViewModel = ViewModelProvider(this, factory)[SessionTaskProviderViewModel::class.java]
+
+        sessionTaskProviderViewModel.optimizeSessionTaskProviderTable()
     }
 
     /**
