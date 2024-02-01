@@ -88,7 +88,8 @@ class TaskFragment : Fragment() {
                 taskViewModel.getTaskAndSessionJoinByProviderPrimaryKeys(
                     indexDay = args.indexDay,
                     taskId = args.taskId,
-                    sessionId = args.sessionId
+                    sessionId = args.sessionId,
+                    paramDateIso8601 = ""
                 )
             } ?: run {
                 //TODO : Hapus ini

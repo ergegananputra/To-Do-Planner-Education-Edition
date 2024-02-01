@@ -1,6 +1,7 @@
 package com.minizuure.todoplannereducationedition.services.database.join
 
 import androidx.room.ColumnInfo
+import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 
 data class TaskAndSessionJoin(
     // Task
@@ -61,5 +62,14 @@ data class TaskAndSessionJoin(
     @ColumnInfo(name ="location_link")
     val locationAddress : String?,
 
+    // Query Parameter
+    @ColumnInfo(name ="params_selected_iso8601_date")
+    val paramsSelectedIso8601Date : String = generateCurrentIso8601Date()
 
-)
+) {
+    companion object {
+        fun generateCurrentIso8601Date() : String {
+            return DatetimeAppManager().dateISO8601inString
+        }
+    }
+}

@@ -17,6 +17,8 @@ import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentTodoBinding
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity
 import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL
+import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL_GO_TO_PACK
+import com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity.Companion.OPEN_DETAIL_GO_TO_QUIZ
 import com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime
 import com.minizuure.todoplannereducationedition.recycler.adapter.MainTaskAdapter
 import com.minizuure.todoplannereducationedition.services.database.join.TaskAndSessionJoin
@@ -56,12 +58,12 @@ class TodoFragment : Fragment() {
 
     private val selectedDateMainTaskAdapter by lazy {
         MainTaskAdapter(
-            currentDate = getSelectedDate(),
+//            currentDate = getSelectedDate(),
             scope = lifecycleScope,
             notesViewModel = noteViewModel,
-            onClickOpenDetail = {setOnClickOpenDetail(it)},
-            onClickOpenQuizInDetail = {setOnClickOpenQuizInDetail(it)},
-            onClickOpenToPackInDetail = {setOnClickOpenToPackInDetail(it)}
+            onClickOpenDetail = {setOnClickOpenTask(it, OPEN_DETAIL)},
+            onClickOpenQuizInDetail = {setOnClickOpenTask(it, OPEN_DETAIL_GO_TO_QUIZ)},
+            onClickOpenToPackInDetail = {setOnClickOpenTask(it, OPEN_DETAIL_GO_TO_PACK)}
         )
     }
 
@@ -70,38 +72,54 @@ class TodoFragment : Fragment() {
         return DatetimeAppManager(selectedDate, true).selectedDetailDatetimeISO
     }
 
-    private fun setOnClickOpenToPackInDetail(taskAndSessionJoin: TaskAndSessionJoin) {
+    private fun setOnClickOpenTask(taskAndSessionJoinTable: TaskAndSessionJoin, action : String) {
         val destination = TodoFragmentDirections.actionTodoFragmentToTaskManagementActivity(
-            actionToOpen = TaskManagementActivity.OPEN_DETAIL_GO_TO_PACK,
-            title = taskAndSessionJoin.title,
-            id = taskAndSessionJoin.id,
-            selectedDatetimeISO = ParcelableZoneDateTime(getSelectedDate())
+            actionToOpen = action,
+            title = taskAndSessionJoinTable.title,
+            id = taskAndSessionJoinTable.id,
+            selectedDatetimeISO = ParcelableZoneDateTime(
+                DatetimeAppManager(
+                    taskAndSessionJoinTable.paramsSelectedIso8601Date
+                ).selectedDetailDatetimeISO
+            ),
+            indexDay = taskAndSessionJoinTable.indexDay,
+            sessionId = taskAndSessionJoinTable.fkSessionId
         )
         findNavController().navigate(destination)
     }
 
-    private fun setOnClickOpenQuizInDetail(taskAndSessionJoin: TaskAndSessionJoin) {
-        val destination = TodoFragmentDirections.actionTodoFragmentToTaskManagementActivity(
-            actionToOpen = TaskManagementActivity.OPEN_DETAIL_GO_TO_QUIZ,
-            title = taskAndSessionJoin.title,
-            id = taskAndSessionJoin.id,
-            selectedDatetimeISO = ParcelableZoneDateTime(getSelectedDate()),
-        )
-        findNavController().navigate(destination)
-    }
-
-    private fun setOnClickOpenDetail(taskAndSessionJoin: TaskAndSessionJoin) {
-        val destination = TodoFragmentDirections.actionTodoFragmentToTaskManagementActivity(
-            actionToOpen = OPEN_DETAIL,
-            title = taskAndSessionJoin.title,
-            id = taskAndSessionJoin.id,
-            selectedDatetimeISO = ParcelableZoneDateTime(getSelectedDate()),
-            indexDay = taskAndSessionJoin.indexDay,
-            sessionId = taskAndSessionJoin.fkSessionId
-        )
-
-        findNavController().navigate(destination)
-    }
+//    private fun setOnClickOpenToPackInDetail(taskAndSessionJoin: TaskAndSessionJoin) {
+//        val destination = TodoFragmentDirections.actionTodoFragmentToTaskManagementActivity(
+//            actionToOpen = TaskManagementActivity.OPEN_DETAIL_GO_TO_PACK,
+//            title = taskAndSessionJoin.title,
+//            id = taskAndSessionJoin.id,
+//            selectedDatetimeISO = ParcelableZoneDateTime(getSelectedDate())
+//        )
+//        findNavController().navigate(destination)
+//    }
+//
+//    private fun setOnClickOpenQuizInDetail(taskAndSessionJoin: TaskAndSessionJoin) {
+//        val destination = TodoFragmentDirections.actionTodoFragmentToTaskManagementActivity(
+//            actionToOpen = TaskManagementActivity.OPEN_DETAIL_GO_TO_QUIZ,
+//            title = taskAndSessionJoin.title,
+//            id = taskAndSessionJoin.id,
+//            selectedDatetimeISO = ParcelableZoneDateTime(getSelectedDate()),
+//        )
+//        findNavController().navigate(destination)
+//    }
+//
+//    private fun setOnClickOpenDetail(taskAndSessionJoin: TaskAndSessionJoin) {
+//        val destination = TodoFragmentDirections.actionTodoFragmentToTaskManagementActivity(
+//            actionToOpen = OPEN_DETAIL,
+//            title = taskAndSessionJoin.title,
+//            id = taskAndSessionJoin.id,
+//            selectedDatetimeISO = ParcelableZoneDateTime(getSelectedDate()),
+//            indexDay = taskAndSessionJoin.indexDay,
+//            sessionId = taskAndSessionJoin.fkSessionId
+//        )
+//
+//        findNavController().navigate(destination)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -235,7 +253,7 @@ class TodoFragment : Fragment() {
                 )
             }
 
-            selectedDateMainTaskAdapter.setNewCurrentDate(selectedDate)
+//            selectedDateMainTaskAdapter.setNewCurrentDate(selectedDate)
             selectedDateMainTaskAdapter.submitList(selectedDateTasks)
 
             if (forceUpdate) selectedDateMainTaskAdapter.notifyDataSetChanged()
@@ -247,7 +265,7 @@ class TodoFragment : Fragment() {
         //TODO: Search result from database
         lifecycleScope.launch {
             val searchResult = withContext(Dispatchers.IO) {
-                taskViewModel.search(searchQuery)
+                taskViewModel.search(searchQuery,  getSelectedDate())
             }
 
             val selectedDate = ZonedDateTime.now()
@@ -258,7 +276,7 @@ class TodoFragment : Fragment() {
                 .withMinute(0)
                 .withSecond(0)
 
-            selectedDateMainTaskAdapter.setNewCurrentDate(selectedDate)
+//            selectedDateMainTaskAdapter.setNewCurrentDate(selectedDate)
             selectedDateMainTaskAdapter.submitList(searchResult)
         }
     }

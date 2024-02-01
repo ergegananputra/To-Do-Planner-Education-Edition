@@ -42,106 +42,139 @@ class HomeFragment : Fragment() {
 
     private val todayMainTaskAdapter by lazy {
         MainTaskAdapter(
-            currentDate = DatetimeAppManager().selectedDetailDatetimeISO,
+//            currentDate = DatetimeAppManager().selectedDetailDatetimeISO,
             scope = lifecycleScope,
             notesViewModel = noteViewModel,
-            onClickOpenDetail = {setOnClickOpenDetail(it)},
-            onClickOpenQuizInDetail = {setOnClickOpenQuizInDetail(it)},
-            onClickOpenToPackInDetail = {setOnClickOpenToPackInDetail(it)}
+            onClickOpenDetail = {setOnClickOpenTask(it, OPEN_DETAIL)},
+            onClickOpenQuizInDetail = {setOnClickOpenTask(it, OPEN_DETAIL_GO_TO_QUIZ)},
+            onClickOpenToPackInDetail = {setOnClickOpenTask(it, OPEN_DETAIL_GO_TO_PACK)}
         )
     }
 
     private val upComingMainTaskAdapter by lazy {
         MainTaskAdapter(
-            currentDate = DatetimeAppManager().selectedDetailDatetimeISO.plusDays(1),
+//            currentDate = DatetimeAppManager().selectedDetailDatetimeISO.plusDays(1),
             scope = lifecycleScope,
             notesViewModel = noteViewModel,
-            onClickOpenDetail = { setOnClickOpenDetailUpcoming(it)},
-            onClickOpenQuizInDetail = {setOnClickOpenQuizInDetailUpcoming(it)},
-            onClickOpenToPackInDetail = { setOnClickOpenToPackInDetailUpcoming(it) }
+            onClickOpenDetail = {setOnClickOpenTask(it, OPEN_DETAIL)},
+            onClickOpenQuizInDetail = {setOnClickOpenTask(it, OPEN_DETAIL_GO_TO_QUIZ)},
+            onClickOpenToPackInDetail = {setOnClickOpenTask(it, OPEN_DETAIL_GO_TO_PACK)}
         )
     }
 
-    /**
-     * Set on click open to pack in detail upcoming.
-     * Note: The interval is the difference between today and the day the task is active.
-     * this only works up to 7 days.
-     *
-     *
-     * Please tweak the code if you want to make it work for more than 7 days.
-     */
-    private fun setOnClickOpenToPackInDetailUpcoming(it: TaskAndSessionJoin) {
-        val todayIndex = DatetimeAppManager().getTodayDayId()
-        val interval =
-            if (todayIndex <= it.indexDay) it.indexDay - todayIndex
-            else 7 + it.indexDay - todayIndex
-        setOnClickOpenToPackInDetail(it, interval)
-    }
+//    /**
+//     * Set on click open to pack in detail upcoming.
+//     * Note: The interval is the difference between today and the day the task is active.
+//     * this only works up to 7 days.
+//     *
+//     *
+//     * Please tweak the code if you want to make it work for more than 7 days.
+//     */
+//    private fun setOnClickOpenToPackInDetailUpcoming(it: TaskAndSessionJoin) {
+//        val todayIndex = DatetimeAppManager().getTodayDayId()
+//        val interval =
+//            if (todayIndex <= it.indexDay) it.indexDay - todayIndex
+//            else 7 + it.indexDay - todayIndex
+//        setOnClickOpenToPackInDetail(it, interval)
+//    }
 
-    /**
-     * Set on click open quiz in detail upcoming.
-     * Note: The interval is the difference between today and the day the task is active.
-     * this only works up to 7 days.
-     *
-     *
-     * Please tweak the code if you want to make it work for more than 7 days.
-     */
-    private fun setOnClickOpenQuizInDetailUpcoming(it: TaskAndSessionJoin) {
-        val todayIndex = DatetimeAppManager().getTodayDayId()
-        val interval =
-            if (todayIndex <= it.indexDay) it.indexDay - todayIndex
-            else 7 + it.indexDay - todayIndex
-        setOnClickOpenQuizInDetail(it, interval)
-    }
+//    /**
+//     * Set on click open quiz in detail upcoming.
+//     * Note: The interval is the difference between today and the day the task is active.
+//     * this only works up to 7 days.
+//     *
+//     *
+//     * Please tweak the code if you want to make it work for more than 7 days.
+//     */
+//    private fun setOnClickOpenQuizInDetailUpcoming(it: TaskAndSessionJoin) {
+//        val todayIndex = DatetimeAppManager().getTodayDayId()
+//        val interval =
+//            if (todayIndex <= it.indexDay) it.indexDay - todayIndex
+//            else 7 + it.indexDay - todayIndex
+//        setOnClickOpenQuizInDetail(it, interval)
+//    }
 
-    /**
-     * Set on click open detail upcoming.
-     * Note: The interval is the difference between today and the day the task is active.
-     * this only works up to 7 days.
-     *
-     *
-     * Please tweak the code if you want to make it work for more than 7 days.
-     */
-    private fun setOnClickOpenDetailUpcoming(it: TaskAndSessionJoin) {
-        val todayIndex = DatetimeAppManager().getTodayDayId()
-        val interval =
-            if (todayIndex <= it.indexDay) it.indexDay - todayIndex
-            else 7 + it.indexDay - todayIndex
-        setOnClickOpenDetail(it, interval)
-    }
+//    /**
+//     * Set on click open detail upcoming.
+//     * Note: The interval is the difference between today and the day the task is active.
+//     * this only works up to 7 days.
+//     *
+//     *
+//     * Please tweak the code if you want to make it work for more than 7 days.
+//     */
+//    private fun setOnClickOpenDetailUpcoming(it: TaskAndSessionJoin) {
+//        val todayIndex = DatetimeAppManager().getTodayDayId()
+//        val interval =
+//            if (todayIndex <= it.indexDay) it.indexDay - todayIndex
+//            else 7 + it.indexDay - todayIndex
+//        setOnClickOpenDetail(it, interval)
+//    }
 
-    private fun setOnClickOpenToPackInDetail(taskAndSessionJoinTable: TaskAndSessionJoin, interval: Int = 0) {
+
+    private fun setOnClickOpenTask(taskAndSessionJoinTable: TaskAndSessionJoin, action : String) {
         val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
-            actionToOpen = OPEN_DETAIL_GO_TO_PACK,
+            actionToOpen = action,
             title = taskAndSessionJoinTable.title,
             id = taskAndSessionJoinTable.id,
-            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime().plusDays(interval.toLong()))
-        )
-        findNavController().navigate(destination)
-    }
-
-
-    private fun setOnClickOpenQuizInDetail(taskAndSessionJoinTable: TaskAndSessionJoin, interval: Int = 0) {
-        val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
-            actionToOpen = OPEN_DETAIL_GO_TO_QUIZ,
-            title = taskAndSessionJoinTable.title,
-            id = taskAndSessionJoinTable.id,
-            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime().plusDays(interval.toLong()))
-        )
-        findNavController().navigate(destination)
-    }
-
-    private fun setOnClickOpenDetail(taskAndSessionJoinTable: TaskAndSessionJoin, interval: Int = 0) {
-        val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
-            actionToOpen = OPEN_DETAIL,
-            title = taskAndSessionJoinTable.title,
-            id = taskAndSessionJoinTable.id,
-            selectedDatetimeISO = ParcelableZoneDateTime(DatetimeAppManager().getLocalDateTime().plusDays(interval.toLong())),
+            selectedDatetimeISO = ParcelableZoneDateTime(
+                DatetimeAppManager(
+                    taskAndSessionJoinTable.paramsSelectedIso8601Date
+                ).selectedDetailDatetimeISO
+            ),
             indexDay = taskAndSessionJoinTable.indexDay,
             sessionId = taskAndSessionJoinTable.fkSessionId
         )
         findNavController().navigate(destination)
     }
+
+//    private fun setOnClickOpenToPackInDetail(taskAndSessionJoinTable: TaskAndSessionJoin) {
+//        val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
+//            actionToOpen = OPEN_DETAIL_GO_TO_PACK,
+//            title = taskAndSessionJoinTable.title,
+//            id = taskAndSessionJoinTable.id,
+//            selectedDatetimeISO = ParcelableZoneDateTime(
+//                DatetimeAppManager(
+//                    taskAndSessionJoinTable.paramsSelectedIso8601Date
+//                ).selectedDetailDatetimeISO
+//            ),
+//            indexDay = taskAndSessionJoinTable.indexDay,
+//            sessionId = taskAndSessionJoinTable.fkSessionId
+//        )
+//        findNavController().navigate(destination)
+//    }
+//
+//
+//    private fun setOnClickOpenQuizInDetail(taskAndSessionJoinTable: TaskAndSessionJoin) {
+//        val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
+//            actionToOpen = OPEN_DETAIL_GO_TO_QUIZ,
+//            title = taskAndSessionJoinTable.title,
+//            id = taskAndSessionJoinTable.id,
+//            selectedDatetimeISO = ParcelableZoneDateTime(
+//                DatetimeAppManager(
+//                    taskAndSessionJoinTable.paramsSelectedIso8601Date
+//                ).selectedDetailDatetimeISO
+//            ),
+//            indexDay = taskAndSessionJoinTable.indexDay,
+//            sessionId = taskAndSessionJoinTable.fkSessionId
+//        )
+//        findNavController().navigate(destination)
+//    }
+//
+//    private fun setOnClickOpenDetail(taskAndSessionJoinTable: TaskAndSessionJoin) {
+//        val destination = HomeFragmentDirections.actionHomeFragmentToTaskManagementActivity(
+//            actionToOpen = OPEN_DETAIL,
+//            title = taskAndSessionJoinTable.title,
+//            id = taskAndSessionJoinTable.id,
+//            selectedDatetimeISO = ParcelableZoneDateTime(
+//                DatetimeAppManager(
+//                    taskAndSessionJoinTable.paramsSelectedIso8601Date
+//                ).selectedDetailDatetimeISO
+//            ),
+//            indexDay = taskAndSessionJoinTable.indexDay,
+//            sessionId = taskAndSessionJoinTable.fkSessionId
+//        )
+//        findNavController().navigate(destination)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

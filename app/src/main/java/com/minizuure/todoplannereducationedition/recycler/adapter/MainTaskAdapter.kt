@@ -19,20 +19,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.ZonedDateTime
 
 
 class MainTaskAdapter(
-    private var currentDate : ZonedDateTime,
+//    private var currentDate : ZonedDateTime,
     private val scope : CoroutineScope,
     private val notesViewModel: NoteViewModel,
     private val onClickOpenDetail : (TaskAndSessionJoin) -> Unit,
     private val onClickOpenQuizInDetail : (TaskAndSessionJoin) -> Unit,
     private val onClickOpenToPackInDetail : (TaskAndSessionJoin) -> Unit
 ) : ListAdapter<TaskAndSessionJoin, MainTaskAdapter.MainTaskViewHolder>(MainTaskDiffUtil()){
-    fun setNewCurrentDate(currentDate: ZonedDateTime) {
-        this.currentDate = currentDate
-    }
+//    fun setNewCurrentDate(currentDate: ZonedDateTime) {
+//        this.currentDate = currentDate
+//    }
     class MainTaskDiffUtil : DiffUtil.ItemCallback<TaskAndSessionJoin>(){
         override fun areItemsTheSame(oldItem: TaskAndSessionJoin, newItem: TaskAndSessionJoin): Boolean {
             return oldItem.id == newItem.id
@@ -71,13 +70,14 @@ class MainTaskAdapter(
         }
 
         private fun setupTagsVisibility(item: TaskAndSessionJoin) {
-            val todayIndex = DatetimeAppManager(currentDate).getTodayDayId()
-            val interval =
-                if (todayIndex <= item.indexDay) item.indexDay - todayIndex
-                else 7 + item.indexDay - todayIndex
+            val todayIndex = DatetimeAppManager(item.paramsSelectedIso8601Date).getTodayDayId()
+//            val interval =
+//                if (todayIndex <= item.indexDay) item.indexDay - todayIndex
+//                else 7 + item.indexDay - todayIndex
 
             scope.launch {
-                val dateTimeString = DatetimeAppManager(currentDate.plusDays(interval.toLong()), true).dateISO8601inString
+//                val dateTimeString = DatetimeAppManager(currentDate.plusDays(interval.toLong()), true).dateISO8601inString
+                val dateTimeString = DatetimeAppManager(item.paramsSelectedIso8601Date).dateISO8601inString
                 val countQuiz = withContext(Dispatchers.IO) {
                     notesViewModel.note.getCountByFKTaskIdAndCategory(item.id, CATEGORY_QUIZ, dateTimeString)
                 }
@@ -161,6 +161,7 @@ class MainTaskAdapter(
             )
 
             scope.launch {
+                val currentDate = DatetimeAppManager(item.paramsSelectedIso8601Date).selectedDetailDatetimeISO
                 val dateTimeString = DatetimeAppManager(currentDate, true).dateISO8601inString
 
                 val toPackNote = withContext(Dispatchers.IO) {
@@ -191,6 +192,7 @@ class MainTaskAdapter(
 
 
             scope.launch {
+                val currentDate = DatetimeAppManager(item.paramsSelectedIso8601Date).selectedDetailDatetimeISO
                 val quizNote = withContext(Dispatchers.IO) {
                     val dateTimeString = DatetimeAppManager(currentDate, true).dateISO8601inString
 
@@ -330,6 +332,7 @@ class MainTaskAdapter(
             val timeEnd = DatetimeAppManager().convertStringTimeToMinutes(endTime)
             val localDate = DatetimeAppManager().selectedDetailDatetimeISO
 
+            val currentDate = DatetimeAppManager(item.paramsSelectedIso8601Date).selectedDetailDatetimeISO
 
             val isForward = localDate.isBefore(currentDate)
             Log.d(

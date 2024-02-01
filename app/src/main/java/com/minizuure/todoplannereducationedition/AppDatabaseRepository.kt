@@ -148,9 +148,9 @@ class AppDatabaseRepository(
             taskTableDao.getPaginated(limit, offset)
         }
 
-    suspend fun searchTasks(searchQuery: String) = withContext(Dispatchers.IO) {
+    suspend fun searchTasks(searchQuery: String, paramDateIso8601 :String) = withContext(Dispatchers.IO) {
         Log.d("AppDatabaseRepository", "searchTasks triggered with $searchQuery")
-        taskTableDao.search("%$searchQuery%")
+        taskTableDao.search("%$searchQuery%", iso8601Date = paramDateIso8601)
     }
 
     suspend fun getTaskAndSessionJoinByIndexDay(indexDay: Int, selectedDate : ZonedDateTime, isToday : Boolean, todayHour: String) = withContext(Dispatchers.IO) {
@@ -163,10 +163,10 @@ class AppDatabaseRepository(
         val (a,b) = todayHour.split(":")
         if (a.toInt() > 23 || a.toInt() < 0 || b.toInt() > 59 || b.toInt() < 0) throw Exception("Invalid todayHour format : '$todayHour'?\n\n")
         taskTableDao.getTaskAndSessionJoinByIndexDay(
-            indexDay,
-            DatetimeAppManager(selectedDate, true).dateISO8601inString,
-            isToday,
-            todayHour
+            indexDay = indexDay,
+            iso8601Date = DatetimeAppManager(selectedDate, true).dateISO8601inString,
+            isToday = isToday,
+            todayHour = todayHour
         )
     }
 
@@ -355,12 +355,14 @@ class AppDatabaseRepository(
         indexDay: Int,
         taskId: Long,
         sessionId: Long,
+        paramDateIso8601 : String
     ) = withContext(Dispatchers.IO) {
         Log.d("AppDatabaseRepository", "getTaskAndSessionJoinByProviderPrimaryKeys: $indexDay, $taskId, $sessionId")
         sessionTaskProviderTableDao.getTaskAndSessionJoinByProviderPrimaryKeys(
             indexDay = indexDay,
             taskId = taskId,
-            sessionId = sessionId
+            sessionId = sessionId,
+            iso8601Date = paramDateIso8601
         )
     }
 

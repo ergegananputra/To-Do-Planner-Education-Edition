@@ -49,7 +49,9 @@ interface TaskTableDao : BaseIODao<TaskTable> {
                 provider_table.rescheduled_date_start AS rescheduled_time_start,
                 provider_table.rescheduled_date_end AS rescheduled_time_end,
                 provider_table.location_name AS location_name,
-                provider_table.location_link AS location_link
+                provider_table.location_link AS location_link,
+                
+                :iso8601Date AS params_selected_iso8601_date
                 
         FROM session_task_provider_table as provider_table
         JOIN task_table ON provider_table.fk_task_id = task_table.id
@@ -105,7 +107,9 @@ interface TaskTableDao : BaseIODao<TaskTable> {
                 provider_table.rescheduled_date_start AS rescheduled_time_start,
                 provider_table.rescheduled_date_end AS rescheduled_time_end,
                 provider_table.location_name AS location_name,
-                provider_table.location_link AS location_link
+                provider_table.location_link AS location_link,
+                
+                :iso8601Date AS params_selected_iso8601_date
                 
         FROM session_task_provider_table as provider_table
         JOIN task_table ON provider_table.fk_task_id = task_table.id
@@ -152,7 +156,9 @@ interface TaskTableDao : BaseIODao<TaskTable> {
                 provider_table.rescheduled_date_start AS rescheduled_time_start,
                 provider_table.rescheduled_date_end AS rescheduled_time_end,
                 provider_table.location_name AS location_name,
-                provider_table.location_link AS location_link
+                provider_table.location_link AS location_link,
+                
+                :iso8601Date AS params_selected_iso8601_date
                 
         FROM session_task_provider_table as provider_table
         JOIN task_table ON provider_table.fk_task_id = task_table.id
@@ -160,5 +166,5 @@ interface TaskTableDao : BaseIODao<TaskTable> {
         JOIN routine_table ON session_table.fk_routine_id =  routine_table.id
         WHERE task_table.title LIKE :keyword OR  session_table.title LIKE :keyword OR provider_table.location_name LIKE :keyword
     """)
-    suspend fun search(keyword: String): List<TaskAndSessionJoin>
+    suspend fun search(keyword: String, iso8601Date : String): List<TaskAndSessionJoin>
 }
