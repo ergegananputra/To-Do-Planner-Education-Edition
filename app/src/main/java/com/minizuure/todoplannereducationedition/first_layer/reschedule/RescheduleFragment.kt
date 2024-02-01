@@ -210,7 +210,8 @@ class RescheduleFragment : Fragment() {
             val taskAndSessionJoin = taskViewModel.getTaskAndSessionJoinByProviderPrimaryKeys(
                 indexDay = args.indexDay,
                 taskId = args.taskId,
-                sessionId = args.sessionId
+                sessionId = args.sessionId,
+                paramDateIso8601 = ""
             ) ?: return@withContext
 
             val routine = routineViewModel.getById(args.routineId) ?: return@withContext

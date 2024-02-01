@@ -118,7 +118,7 @@ class DatetimeAppManager(
      * @return List of days of week in localized string, example ["Sunday", "Monday", "Tuesday", ...]
      */
     fun getAllDaysOfWeek() : List<String> {
-        val daysOfWeek = DayOfWeek.entries.map { dayOfWeek ->
+        val daysOfWeek = DayOfWeek.values().map { dayOfWeek ->
             dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
         }
         return daysOfWeek.rotate(1)

@@ -1,6 +1,7 @@
 package com.minizuure.todoplannereducationedition.services.database
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
@@ -29,8 +30,11 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
         NotificationQueueTable::class,
         SessionTaskProviderTable::class
                ],
-    version = 9,
-    exportSchema = true
+    version = 10,
+    exportSchema = true,
+    autoMigrations = [
+        AutoMigration(from = 9, to = 10),
+    ]
 )
 abstract class ApplicationDatabase : RoomDatabase() {
     abstract fun routineTableDao(): RoutineTableDao
@@ -57,7 +61,7 @@ abstract class ApplicationDatabase : RoomDatabase() {
                     ApplicationDatabase::class.java,
                     DATABASE_NAME
                 )
-                    .fallbackToDestructiveMigration() // change to this => .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+//                    .fallbackToDestructiveMigration() // change to this => .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
 
                 INSTANCE = instance

@@ -60,8 +60,6 @@ private const val ARG_DETAIL_SET_GO_TO = "set_go_to"
 /**
  * Todo List [DetailFragment] :
  *
- *
- * - [ ] Setup rescedule task navigation
  * - [ ] Setup bottom more dialog -- communities setting*
  *
  *
@@ -165,7 +163,8 @@ class DetailFragment : Fragment() {
                 taskViewModel.getTaskAndSessionJoinByProviderPrimaryKeys(
                     indexDay = args.indexDay,
                     taskId = args.taskDetailId,
-                    sessionId = args.sessionId
+                    sessionId = args.sessionId,
+                    paramDateIso8601 = ""
                 )
             }?: run {
                 Log.e("DetailFragment", "onViewCreated: taskAndSessionJoin is null \n" +
@@ -634,8 +633,8 @@ class DetailFragment : Fragment() {
      * @param isNextPlan : Boolean
      * @param description : String
      * @param title : String?
-     * @param weekSelected : Int
-     * @param weeksDictionary : Map<"days name" : String, [weekSelected] : Int>
+     * @param weekSelected : ZoneDateTime
+     * @param weeksDictionary : Map<"days name" : String, [weekSelected] : ZonedDateTime>
      *     - key : String
      *
      */

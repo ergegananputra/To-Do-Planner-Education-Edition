@@ -76,7 +76,8 @@ class SessionTaskProviderViewModel(
         return appDatabaseRepository.getTaskAndSessionJoinByProviderPrimaryKeys(
             indexDay = indexDay,
             taskId = taskId,
-            sessionId = sessionId
+            sessionId = sessionId,
+            paramDateIso8601 = ""
         )
     }
 

@@ -66,7 +66,9 @@ interface SessionTaskProviderTableDao : BaseIODao<SessionTaskProviderTable> {
                 provider_table.rescheduled_date_start AS rescheduled_time_start,
                 provider_table.rescheduled_date_end AS rescheduled_time_end,
                 provider_table.location_name AS location_name,
-                provider_table.location_link AS location_link
+                provider_table.location_link AS location_link,
+                
+                :iso8601Date AS params_selected_iso8601_date
                 
         FROM session_task_provider_table as provider_table
         JOIN task_table ON provider_table.fk_task_id = task_table.id
@@ -81,7 +83,8 @@ interface SessionTaskProviderTableDao : BaseIODao<SessionTaskProviderTable> {
     suspend fun getTaskAndSessionJoinByProviderPrimaryKeys(
         indexDay: Int,
         taskId: Long,
-        sessionId: Long
+        sessionId: Long,
+        iso8601Date : String
     ): TaskAndSessionJoin?
 
 

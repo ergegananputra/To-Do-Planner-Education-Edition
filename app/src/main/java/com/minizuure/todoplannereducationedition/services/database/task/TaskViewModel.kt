@@ -108,17 +108,23 @@ class TaskViewModel(
     suspend fun getTaskAndSessionJoinByProviderPrimaryKeys(
         indexDay: Int,
         taskId: Long,
-        sessionId: Long
+        sessionId: Long,
+        paramDateIso8601 : String
     ) : TaskAndSessionJoin? {
         return appDatabaseRepository.getTaskAndSessionJoinByProviderPrimaryKeys(
             indexDay = indexDay,
             taskId = taskId,
-            sessionId = sessionId
+            sessionId = sessionId,
+            paramDateIso8601 = paramDateIso8601
         )
     }
 
-    suspend fun search(query: String) : List<TaskAndSessionJoin> {
-        return appDatabaseRepository.searchTasks(query)
+    suspend fun search(
+        query: String,
+        selectedDate : ZonedDateTime
+    ) : List<TaskAndSessionJoin> {
+        val dateISO8601 = DatetimeAppManager(selectedDate, true).dateISO8601inString
+        return appDatabaseRepository.searchTasks(query, dateISO8601)
     }
 
 }
