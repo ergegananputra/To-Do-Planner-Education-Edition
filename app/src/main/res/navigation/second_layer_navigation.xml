@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/second_layer_navigation"
+    app:startDestination="@id/routinesFragment">
+
+    <fragment
+        android:id="@+id/routinesFragment"
+        android:name="com.minizuure.todoplannereducationedition.second_layer.routines.RoutinesFragment"
+        android:label="fragment_routines"
+        tools:layout="@layout/fragment_routines" >
+        <action
+            android:id="@+id/action_routinesFragment_to_routineFormFragment"
+            app:destination="@id/routineFormFragment" />
+        <action
+            android:id="@+id/action_routinesFragment_to_routineDetailFragment"
+            app:destination="@id/routineDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/routineFormFragment"
+        android:name="com.minizuure.todoplannereducationedition.second_layer.routines.RoutineFormFragment"
+        android:label="fragment_routine_form"
+        tools:layout="@layout/fragment_routine_form" >
+        <argument
+            android:name="routine_id"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_routineFormFragment_to_sessionFormFragment"
+            app:destination="@id/sessionFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sessionFormFragment"
+        android:name="com.minizuure.todoplannereducationedition.second_layer.session.SessionFormFragment"
+        android:label="fragment_session_form"
+        tools:layout="@layout/fragment_session_form" >
+        <argument
+            android:name="session_id"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="new_routine"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="title"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="start_time"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="end_time"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="selected_days"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="routine_id"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
+    <fragment
+        android:id="@+id/routineDetailFragment"
+        android:name="com.minizuure.todoplannereducationedition.second_layer.routines.RoutineDetailFragment"
+        android:label="fragment_routine_detail"
+        tools:layout="@layout/fragment_routine_detail" >
+        <argument
+            android:name="routine_id"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="description"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_routineDetailFragment_to_sessionFormFragment"
+            app:destination="@id/sessionFormFragment" />
+    </fragment>
+</navigation>

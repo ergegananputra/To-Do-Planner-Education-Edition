@@ -1,7 +1,9 @@
 package com.minizuure.todoplannereducationedition
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatActivity
+import com.minizuure.todoplannereducationedition.services.database.ApplicationDatabase
+import com.minizuure.todoplannereducationedition.services.notification.AlarmManagerSingleton
+import com.minizuure.todoplannereducationedition.services.notification.AndroidAlarmManager
 
 
 /**
@@ -10,6 +12,29 @@ import androidx.appcompat.app.AppCompatActivity
  */
 class ToDoPlannerApplication : Application() {
 
+    lateinit var appAlarmManager : AndroidAlarmManager
 
+    override fun onCreate() {
+        super.onCreate()
+        appAlarmManager = AlarmManagerSingleton.getInstance(this).instance
+    }
+
+
+
+    val appDb by lazy {
+        ApplicationDatabase.getDatabase(this)
+    }
+
+    val appRepository by lazy {
+        AppDatabaseRepository(
+            routineTableDao = appDb.routineTableDao(),
+            sessionTableDao = appDb.sessionTableDao(),
+            taskTableDao = appDb.taskTableDao(),
+            todoNoteTableDao = appDb.todoNoteTableDao(),
+            notesTaskTableDao = appDb.notesTaskTableDao(),
+            sessionTaskProviderTableDao = appDb.sessionTaskProviderTableDao(),
+            deleteAllOperation = appDb.deleteAllOperation(),
+        )
+    }
 
 }

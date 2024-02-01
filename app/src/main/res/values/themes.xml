@@ -2,7 +2,11 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.ToDoPlannerEducationEdition" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-<!--         <item name="colorPrimary">#720A30</item>-->
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:statusBarColor">@android:color/background_dark</item>
+        <item name="android:navigationBarColor">?attr/colorSurfaceContainerLow</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <!-- and so on for other color attributes -->
     </style>
 
     <style name="Theme.ToDoPlannerEducationEdition" parent="Base.Theme.ToDoPlannerEducationEdition" />
@@ -60,4 +64,109 @@
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
     </style>
+
+
+    <style name="Button.Card.Tags" parent="Base.Widget.AppCompat.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+    </style>
+
+    <style name="Button.Card.Tags.Primary">
+        <item name="android:background">@drawable/button_tags_primary</item>
+        <item name="android:textColor">?attr/colorOnPrimaryContainer</item>
+        <item name="android:drawableTint">?attr/colorOnPrimaryContainer</item>
+    </style>
+
+    <style name="Button.Card.Tags.Secondary">
+        <item name="android:background">@drawable/button_tags_secondary</item>
+        <item name="android:textColor">?attr/colorOnSecondaryContainer</item>
+        <item name="android:drawableTint">?attr/colorOnSecondaryContainer</item>
+    </style>
+
+    <style name="Tags.Quiz" parent="Button.Card.Tags.Primary">
+        <item name="android:drawableStart">@drawable/ic_book_4_18</item>
+    </style>
+
+    <style name="Tags.ToPack" parent="Button.Card.Tags.Secondary">
+        <item name="android:drawableStart">@drawable/ic_luggage_18</item>
+    </style>
+
+
+    <style name="Tags.Chip" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:minWidth">60dp</item>
+        <item name="android:background">@drawable/chip_tags</item>
+        <item name="android:clickable">true</item>
+        <item name="android:state_active">true</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:textAllCaps">false</item>
+
+        <item name="android:textColor">@color/text_color_chip_tags</item>
+        <item name="android:paddingVertical">4dp</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
+    </style>
+
+    <style name="SearchBar" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintEnabled">false</item>
+        <item name="boxBackgroundColor">?attr/colorSurfaceContainerHigh</item>
+        <item name="boxBackgroundMode">filled</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="boxCornerRadiusTopStart">28dp</item>
+        <item name="boxCornerRadiusTopEnd">28dp</item>
+        <item name="boxCornerRadiusBottomStart">28dp</item>
+        <item name="boxCornerRadiusBottomEnd">28dp</item>
+        <item name="startIconDrawable">@drawable/ic_search_outline</item>
+        <item name="endIconMode">clear_text</item>
+    </style>
+
+    <style name="SearchBar.Text" parent="ThemeOverlay.Material3.TextInputEditText">
+        <item name="android:paddingStart">48dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:inputType">text</item>
+        <item name="android:imeOptions">actionSearch</item>
+        <item name="android:imeActionLabel">Search</item>
+        <item name="android:hint">@string/search_here</item>
+    </style>
+
+    <style name="SimpleItem.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="android:layout_height">48dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerLow</item>
+        <item name="cardCornerRadius">0dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+
+    <style name="SimpleItem.Text" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:drawableTint">?attr/colorOnSurface</item>
+        <item name="drawableTint">?attr/colorOnSurface</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:drawableStart">@drawable/ic_add</item>
+    </style>
+
+
 </resources>

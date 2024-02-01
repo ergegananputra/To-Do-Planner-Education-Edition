@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bottom_sheet_global_background">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/bottom_sheet_handle"
+        android:layout_width="32dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/bottom_sheet_handle"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_top_bottom_sheet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top_bottom_sheet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="36dp" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:visibility="gone"
+        android:id="@+id/text_view_title_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/select"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="?attr/colorOnSurface"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline_top_bottom_sheet" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_item_edit_bottom_sheet"
+        android:layout_width="match_parent"
+        style="@style/SimpleItem.Card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_view_title_bottom_sheet"
+        >
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/SimpleItem.Text"
+            android:text="@string/item_edit"
+            android:drawableStart="@drawable/ic_edit_outline"
+            />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_item_reset_section_bottom_sheet"
+        style="@style/SimpleItem.Card"
+        android:layout_width="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_item_edit_bottom_sheet">
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/SimpleItem.Text"
+            android:drawableStart="@drawable/ic_device_reset_outline"
+            android:text="@string/item_reset_this_section" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_item_communities_setting_bottom_sheet"
+        style="@style/SimpleItem.Card"
+        android:layout_width="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_item_reset_section_bottom_sheet">
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/SimpleItem.Text"
+            android:drawableStart="@drawable/ic_communities_outline"
+            android:text="@string/item_communities_settings" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_item_delete_bottom_sheet"
+        style="@style/SimpleItem.Card"
+        android:layout_width="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_item_communities_setting_bottom_sheet">
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/SimpleItem.Text"
+            android:drawableStart="@drawable/ic_delete_outline"
+            android:text="@string/item_delete_from_routines"
+            android:textColor="?attr/colorError"
+            app:drawableTint="?attr/colorError"
+            />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:textAppearance="?attr/textAppearanceLabelSmall"
+        android:textColor="?attr/colorOnSurface"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_item_delete_bottom_sheet"
+        app:layout_constraintVertical_bias="1.0" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

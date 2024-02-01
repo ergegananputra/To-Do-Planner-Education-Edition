@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/first_layer_navigation"
+    app:startDestination="@id/dummyFragment">
+
+    <fragment
+        android:id="@+id/taskFragment"
+        android:name="com.minizuure.todoplannereducationedition.first_layer.task.TaskFragment"
+        android:label="fragment_task"
+        tools:layout="@layout/fragment_task" >
+        <argument
+            android:name="task_id"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="index_day"
+            app:argType="integer"
+            android:defaultValue="-1" />
+        <argument
+            android:name="session_id"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.minizuure.todoplannereducationedition.first_layer.detail.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" >
+        <argument
+            android:name="task_detail_id"
+            app:argType="long" />
+        <argument
+            android:name="title_detail"
+            app:argType="string" />
+        <argument
+            android:name="selected_datetime_detail_iso"
+            app:argType="com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime" />
+        <action
+            android:id="@+id/action_detailFragment_to_taskFragment"
+            app:destination="@id/taskFragment" />
+        <action
+            android:id="@+id/action_detailFragment_to_rescheduleFragment"
+            app:destination="@id/rescheduleFragment" />
+        <argument
+            android:name="set_go_to"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="index_day"
+            app:argType="integer" />
+        <argument
+            android:name="session_id"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/rescheduleFragment"
+        android:name="com.minizuure.todoplannereducationedition.first_layer.reschedule.RescheduleFragment"
+        android:label="fragment_reschedule"
+        tools:layout="@layout/fragment_reschedule" >
+        <argument
+            android:name="task_id"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="routine_id"
+            app:argType="long" />
+        <argument
+            android:name="selected_datetime_detail_iso"
+            app:argType="com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime" />
+        <argument
+            android:name="task_title"
+            app:argType="string" />
+        <argument
+            android:name="index_day"
+            app:argType="integer" />
+        <argument
+            android:name="session_id"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/dummyFragment"
+        android:name="com.minizuure.todoplannereducationedition.first_layer.DummyFragment"
+        android:label="fragment_dummy"
+        tools:layout="@layout/fragment_dummy" >
+        <action
+            android:id="@+id/action_dummyFragment_to_taskFragment"
+            app:destination="@id/taskFragment" />
+        <action
+            android:id="@+id/action_dummyFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+</navigation>

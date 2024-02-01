@@ -3,12 +3,16 @@
     <style name="Base.Theme.ToDoPlannerEducationEdition" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:statusBarColor">@android:color/background_dark</item>
+        <item name="android:navigationBarColor">?attr/colorSurfaceContainerLow</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowFullscreen">false</item>
         <item name="android:statusBarColor">@android:color/background_dark</item>
-        <item name="android:navigationBarColor">?attr/colorOnBackground</item>
+        <item name="android:navigationBarColor">?attr/colorSurfaceContainerLow</item>
         <item name="android:windowLightStatusBar">false</item>
 
         <item name="colorPrimary">@color/md_theme_primary</item>

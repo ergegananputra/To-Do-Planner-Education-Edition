@@ -9,15 +9,52 @@
         android:id="@+id/homeFragment"
         android:name="com.minizuure.todoplannereducationedition.surface.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_taskManagementActivity"
+            app:destination="@id/taskManagementActivity" />
+    </fragment>
     <fragment
         android:id="@+id/todoFragment"
         android:name="com.minizuure.todoplannereducationedition.surface.todo.TodoFragment"
         android:label="fragment_todo"
-        tools:layout="@layout/fragment_todo" />
+        tools:layout="@layout/fragment_todo" >
+        <action
+            android:id="@+id/action_todoFragment_to_taskManagementActivity"
+            app:destination="@id/taskManagementActivity" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.minizuure.todoplannereducationedition.surface.profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <activity
+        android:id="@+id/taskManagementActivity"
+        android:name="com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity"
+        android:label="activity_task_management"
+        tools:layout="@layout/activity_task_management" >
+        <argument
+            android:name="action_to_open"
+            app:argType="string"
+            android:defaultValue="none" />
+        <argument
+            android:name="id"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="title"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="selectedDatetimeISO"
+            app:argType="com.minizuure.todoplannereducationedition.model.ParcelableZoneDateTime" />
+        <argument
+            android:name="index_day"
+            app:argType="integer"
+            android:defaultValue="-1" />
+        <argument
+            android:name="session_id"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </activity>
 </navigation>
