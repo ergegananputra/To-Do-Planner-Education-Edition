@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.format.DateUtils.isToday
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,7 +59,6 @@ class TodoFragment : Fragment() {
 
     private val selectedDateMainTaskAdapter by lazy {
         MainTaskAdapter(
-//            currentDate = getSelectedDate(),
             scope = lifecycleScope,
             notesViewModel = noteViewModel,
             onClickOpenDetail = {setOnClickOpenTask(it, OPEN_DETAIL)},
@@ -88,38 +88,6 @@ class TodoFragment : Fragment() {
         findNavController().navigate(destination)
     }
 
-//    private fun setOnClickOpenToPackInDetail(taskAndSessionJoin: TaskAndSessionJoin) {
-//        val destination = TodoFragmentDirections.actionTodoFragmentToTaskManagementActivity(
-//            actionToOpen = TaskManagementActivity.OPEN_DETAIL_GO_TO_PACK,
-//            title = taskAndSessionJoin.title,
-//            id = taskAndSessionJoin.id,
-//            selectedDatetimeISO = ParcelableZoneDateTime(getSelectedDate())
-//        )
-//        findNavController().navigate(destination)
-//    }
-//
-//    private fun setOnClickOpenQuizInDetail(taskAndSessionJoin: TaskAndSessionJoin) {
-//        val destination = TodoFragmentDirections.actionTodoFragmentToTaskManagementActivity(
-//            actionToOpen = TaskManagementActivity.OPEN_DETAIL_GO_TO_QUIZ,
-//            title = taskAndSessionJoin.title,
-//            id = taskAndSessionJoin.id,
-//            selectedDatetimeISO = ParcelableZoneDateTime(getSelectedDate()),
-//        )
-//        findNavController().navigate(destination)
-//    }
-//
-//    private fun setOnClickOpenDetail(taskAndSessionJoin: TaskAndSessionJoin) {
-//        val destination = TodoFragmentDirections.actionTodoFragmentToTaskManagementActivity(
-//            actionToOpen = OPEN_DETAIL,
-//            title = taskAndSessionJoin.title,
-//            id = taskAndSessionJoin.id,
-//            selectedDatetimeISO = ParcelableZoneDateTime(getSelectedDate()),
-//            indexDay = taskAndSessionJoin.indexDay,
-//            sessionId = taskAndSessionJoin.fkSessionId
-//        )
-//
-//        findNavController().navigate(destination)
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -143,7 +111,20 @@ class TodoFragment : Fragment() {
     }
 
     private fun setupChipFilter() {
+        setChipAllEvent()
         setChipCommunity()
+    }
+
+    private fun setChipAllEvent() {
+        val chipAllEvenIcon = binding.chipAllTodo.chipIcon
+
+        binding.chipAllTodo.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.chipAllTodo.chipIcon = null
+            } else {
+                binding.chipAllTodo.chipIcon = chipAllEvenIcon
+            }
+        }
     }
 
     private fun setChipCommunity() {
@@ -173,11 +154,13 @@ class TodoFragment : Fragment() {
             if (searchQuery.isNotEmpty()) {
                 handler.removeCallbacks(clearFocus)
 
+                selectedDateMainTaskAdapter.setShowsTheDate(true)
                 binding.containerDatetime.visibility = View.GONE
                 updateQuizAdapterWithResult(searchQuery)
 
 
             } else {
+                selectedDateMainTaskAdapter.setShowsTheDate(false)
                 binding.containerDatetime.visibility = View.VISIBLE
                 updateQuizAdapter(forceUpdate = true)
 
@@ -253,7 +236,6 @@ class TodoFragment : Fragment() {
                 )
             }
 
-//            selectedDateMainTaskAdapter.setNewCurrentDate(selectedDate)
             selectedDateMainTaskAdapter.submitList(selectedDateTasks)
 
             if (forceUpdate) selectedDateMainTaskAdapter.notifyDataSetChanged()
@@ -264,20 +246,53 @@ class TodoFragment : Fragment() {
     private fun updateQuizAdapterWithResult(searchQuery: String) {
         //TODO: Search result from database
         lifecycleScope.launch {
-            val searchResult = withContext(Dispatchers.IO) {
-                taskViewModel.search(searchQuery,  getSelectedDate())
+
+            val isAllTime = binding.chipAllTodo.isChecked
+
+            val notes = withContext(Dispatchers.IO) {
+                noteViewModel.note.getAll()
             }
 
-            val selectedDate = ZonedDateTime.now()
-                .withYear(1970)
-                .withMonth(1)
-                .withDayOfMonth(1)
-                .withHour(0)
-                .withMinute(0)
-                .withSecond(0)
+            val result = mutableSetOf<TaskAndSessionJoin>()
 
-//            selectedDateMainTaskAdapter.setNewCurrentDate(selectedDate)
-            selectedDateMainTaskAdapter.submitList(searchResult)
+            val todayDate = DatetimeAppManager().selectedDetailDatetimeISO
+
+            withContext(Dispatchers.IO) {
+                taskViewModel.search(searchQuery,  todayDate)
+            }.let {taskAndSessionJoin ->
+                result.addAll(taskAndSessionJoin)
+                selectedDateMainTaskAdapter.submitList(result.toMutableList())
+            }
+
+            if (isAllTime) {
+                notes.forEach { notesTaskTable ->
+                    val date = DatetimeAppManager(notesTaskTable.dateISO8601).selectedDetailDatetimeISO
+                    val tempResult = withContext(Dispatchers.IO) {
+                        taskViewModel.search(searchQuery, date)
+                    }
+
+                    result.addAll(tempResult)
+                    selectedDateMainTaskAdapter.submitList(result.toMutableList())
+                }
+            } else {
+                notes.forEach { notesTaskTable ->
+                    val date = DatetimeAppManager(notesTaskTable.dateISO8601).selectedDetailDatetimeISO
+
+                    if (date.isAfter(todayDate)) {
+                        val tempResult = withContext(Dispatchers.IO) {
+                            taskViewModel.search(searchQuery, date)
+                        }
+
+                        result.addAll(tempResult)
+                        selectedDateMainTaskAdapter.submitList(result.toMutableList())
+                    }
+
+
+                }
+            }
+
+            Log.i("TodoFragment", "total result : ${result.size}")
+            selectedDateMainTaskAdapter.submitList(result.toMutableList())
         }
     }
 

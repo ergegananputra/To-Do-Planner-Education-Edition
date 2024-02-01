@@ -136,7 +136,7 @@ interface TaskTableDao : BaseIODao<TaskTable> {
 
 
     @Query("""
-        SELECT 
+        SELECT DISTINCT
                 task_table.id AS id,
                 task_table.title AS title,
                 task_table.updated_at AS updated_at,

@@ -22,16 +22,18 @@ import kotlinx.coroutines.withContext
 
 
 class MainTaskAdapter(
-//    private var currentDate : ZonedDateTime,
     private val scope : CoroutineScope,
     private val notesViewModel: NoteViewModel,
     private val onClickOpenDetail : (TaskAndSessionJoin) -> Unit,
     private val onClickOpenQuizInDetail : (TaskAndSessionJoin) -> Unit,
-    private val onClickOpenToPackInDetail : (TaskAndSessionJoin) -> Unit
+    private val onClickOpenToPackInDetail : (TaskAndSessionJoin) -> Unit,
+    private var showTheDate : Boolean = false
 ) : ListAdapter<TaskAndSessionJoin, MainTaskAdapter.MainTaskViewHolder>(MainTaskDiffUtil()){
-//    fun setNewCurrentDate(currentDate: ZonedDateTime) {
-//        this.currentDate = currentDate
-//    }
+
+    fun setShowsTheDate(showsTheDate: Boolean) {
+        this.showTheDate = showsTheDate
+    }
+
     class MainTaskDiffUtil : DiffUtil.ItemCallback<TaskAndSessionJoin>(){
         override fun areItemsTheSame(oldItem: TaskAndSessionJoin, newItem: TaskAndSessionJoin): Boolean {
             return oldItem.id == newItem.id
@@ -57,7 +59,7 @@ class MainTaskAdapter(
             setupTextTime(item)
 
             setupIconCommunity(item.isSharedToCommunity)
-            setupTextDay(item.indexDay)
+            setupTextDay(item)
             setupTextTitle(item.title)
             setupTextLocation(item.locationName)
 
@@ -70,13 +72,8 @@ class MainTaskAdapter(
         }
 
         private fun setupTagsVisibility(item: TaskAndSessionJoin) {
-            val todayIndex = DatetimeAppManager(item.paramsSelectedIso8601Date).getTodayDayId()
-//            val interval =
-//                if (todayIndex <= item.indexDay) item.indexDay - todayIndex
-//                else 7 + item.indexDay - todayIndex
 
             scope.launch {
-//                val dateTimeString = DatetimeAppManager(currentDate.plusDays(interval.toLong()), true).dateISO8601inString
                 val dateTimeString = DatetimeAppManager(item.paramsSelectedIso8601Date).dateISO8601inString
                 val countQuiz = withContext(Dispatchers.IO) {
                     notesViewModel.note.getCountByFKTaskIdAndCategory(item.id, CATEGORY_QUIZ, dateTimeString)
@@ -309,7 +306,14 @@ class MainTaskAdapter(
             binding.textViewTitle.text = title
         }
 
-        private fun setupTextDay(indexDay: Int) {
+        private fun setupTextDay(taskAndSessionJoin: TaskAndSessionJoin) {
+            if (showTheDate) {
+                val readableDate = DatetimeAppManager(taskAndSessionJoin.paramsSelectedIso8601Date).toReadable()
+                binding.chipCurrentDay.text = readableDate
+                return
+            }
+
+            val indexDay = taskAndSessionJoin.indexDay
             val dayName =DatetimeAppManager().dayNameFromDayId(indexDay)
             binding.chipCurrentDay.text = dayName
         }
