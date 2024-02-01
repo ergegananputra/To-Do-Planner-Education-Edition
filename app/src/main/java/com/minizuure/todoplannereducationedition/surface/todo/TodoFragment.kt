@@ -32,11 +32,12 @@ import com.minizuure.todoplannereducationedition.services.database.session.Sessi
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModel
 import com.minizuure.todoplannereducationedition.services.database.task.TaskViewModelFactory
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
-
 /**
  * TodoFragment adalah tempat untuk mencari task dan menambahkan task baru.
  * Pada TodoFragment, user dapat melihat task pada tanggal tertentu.
@@ -56,6 +57,7 @@ class TodoFragment : Fragment() {
     private lateinit var sessionViewModel: SessionViewModel
     private lateinit var taskViewModel : TaskViewModel
     private lateinit var noteViewModel: NoteViewModel
+    private var searchJob: Job? = null
 
     private val selectedDateMainTaskAdapter by lazy {
         MainTaskAdapter(
@@ -121,8 +123,19 @@ class TodoFragment : Fragment() {
         binding.chipAllTodo.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 binding.chipAllTodo.chipIcon = null
+                val searchQuery = binding.searchBarTodo.editText?.text.toString().trim()
+                updateQuizAdapterWithResult(searchQuery)
+                binding.containerDatetime.visibility = View.GONE
             } else {
                 binding.chipAllTodo.chipIcon = chipAllEvenIcon
+                val searchQuery = binding.searchBarTodo.editText?.text.toString().trim()
+
+                if (searchQuery.isEmpty()) {
+                    updateQuizAdapter(forceUpdate = true)
+                    binding.containerDatetime.visibility = View.VISIBLE
+                } else {
+                    updateQuizAdapterWithResult(searchQuery)
+                }
             }
         }
     }
@@ -173,6 +186,7 @@ class TodoFragment : Fragment() {
             updateQuizAdapter(forceUpdate = true)
 
             binding.containerDatetime.visibility = View.VISIBLE
+            it.clearFocus()
         }
     }
 
@@ -225,6 +239,7 @@ class TodoFragment : Fragment() {
     }
 
     private fun updateQuizAdapter(forceUpdate: Boolean = false) {
+        searchJob?.cancel()
         lifecycleScope.launch {
             val selectedDate = getSelectedDate()
             val selectedDateTasks = withContext(Dispatchers.IO) {
@@ -244,41 +259,34 @@ class TodoFragment : Fragment() {
     }
 
     private fun updateQuizAdapterWithResult(searchQuery: String) {
-        //TODO: Search result from database
-        lifecycleScope.launch {
+        //TODO: FILTERING FOR QUIZ AND TO PACK
+        searchJob?.cancel()
+        searchJob = lifecycleScope.launch(Dispatchers.IO) {
 
-            val isAllTime = binding.chipAllTodo.isChecked
+            try {
+                val isAllTime = binding.chipAllTodo.isChecked
 
-            val notes = withContext(Dispatchers.IO) {
-                noteViewModel.note.getAll()
-            }
 
-            val result = mutableSetOf<TaskAndSessionJoin>()
+                val notes = withContext(Dispatchers.IO) {
+                    noteViewModel.note.getAll()
+                }
 
-            val todayDate = DatetimeAppManager().selectedDetailDatetimeISO
+                val result = mutableSetOf<TaskAndSessionJoin>()
 
-            withContext(Dispatchers.IO) {
-                taskViewModel.search(searchQuery,  todayDate)
-            }.let {taskAndSessionJoin ->
-                result.addAll(taskAndSessionJoin)
-                selectedDateMainTaskAdapter.submitList(result.toMutableList())
-            }
+                val todayDate = DatetimeAppManager().selectedDetailDatetimeISO
 
-            if (isAllTime) {
-                notes.forEach { notesTaskTable ->
-                    val date = DatetimeAppManager(notesTaskTable.dateISO8601).selectedDetailDatetimeISO
-                    val tempResult = withContext(Dispatchers.IO) {
-                        taskViewModel.search(searchQuery, date)
-                    }
-
-                    result.addAll(tempResult)
+                withContext(Dispatchers.IO) {
+                    taskViewModel.search(searchQuery, todayDate)
+                }.let { taskAndSessionJoin ->
+                    result.addAll(taskAndSessionJoin)
                     selectedDateMainTaskAdapter.submitList(result.toMutableList())
                 }
-            } else {
-                notes.forEach { notesTaskTable ->
-                    val date = DatetimeAppManager(notesTaskTable.dateISO8601).selectedDetailDatetimeISO
 
-                    if (date.isAfter(todayDate)) {
+                if (isAllTime) {
+                    for (notesTaskTable in notes) {
+
+                        val date =
+                            DatetimeAppManager(notesTaskTable.dateISO8601).selectedDetailDatetimeISO
                         val tempResult = withContext(Dispatchers.IO) {
                             taskViewModel.search(searchQuery, date)
                         }
@@ -286,13 +294,28 @@ class TodoFragment : Fragment() {
                         result.addAll(tempResult)
                         selectedDateMainTaskAdapter.submitList(result.toMutableList())
                     }
+                } else {
+                    for (notesTaskTable in notes) {
 
+                        val date =
+                            DatetimeAppManager(notesTaskTable.dateISO8601).selectedDetailDatetimeISO
 
+                        if (date.isAfter(todayDate)) {
+                            val tempResult = withContext(Dispatchers.IO) {
+                                taskViewModel.search(searchQuery, date)
+                            }
+
+                            result.addAll(tempResult)
+                            selectedDateMainTaskAdapter.submitList(result.toMutableList())
+                        }
+                    }
                 }
-            }
 
-            Log.i("TodoFragment", "total result : ${result.size}")
-            selectedDateMainTaskAdapter.submitList(result.toMutableList())
+                Log.i("TodoFragment", "total result : ${result.size}")
+                selectedDateMainTaskAdapter.submitList(result.toMutableList())
+            } catch (e: CancellationException) {
+                Log.i("TodoFragment", "searchJob cancelled")
+            }
         }
     }
 
