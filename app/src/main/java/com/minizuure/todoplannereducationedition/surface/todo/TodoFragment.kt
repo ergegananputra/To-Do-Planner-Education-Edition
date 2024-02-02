@@ -276,7 +276,7 @@ class TodoFragment : Fragment() {
                 val todayDate = DatetimeAppManager().selectedDetailDatetimeISO
 
                 withContext(Dispatchers.IO) {
-                    taskViewModel.search(searchQuery, todayDate)
+                    taskViewModel.search(searchQuery, todayDate, 1)
                 }.let { taskAndSessionJoin ->
                     result.addAll(taskAndSessionJoin)
                     selectedDateMainTaskAdapter.submitList(result.toMutableList())
@@ -288,7 +288,7 @@ class TodoFragment : Fragment() {
                         val date =
                             DatetimeAppManager(notesTaskTable.dateISO8601).selectedDetailDatetimeISO
                         val tempResult = withContext(Dispatchers.IO) {
-                            taskViewModel.search(searchQuery, date)
+                            taskViewModel.search(searchQuery, date, 1)
                         }
 
                         result.addAll(tempResult)
@@ -302,13 +302,20 @@ class TodoFragment : Fragment() {
 
                         if (date.isAfter(todayDate)) {
                             val tempResult = withContext(Dispatchers.IO) {
-                                taskViewModel.search(searchQuery, date)
+                                taskViewModel.search(searchQuery, date, 1)
                             }
 
                             result.addAll(tempResult)
                             selectedDateMainTaskAdapter.submitList(result.toMutableList())
                         }
                     }
+                }
+
+                if (result.isEmpty()) {
+                    val unEfficientSearch = withContext(Dispatchers.IO) {
+                        taskViewModel.search(searchQuery, todayDate, 2)
+                    }
+                    result.addAll(unEfficientSearch)
                 }
 
                 Log.i("TodoFragment", "total result : ${result.size}")

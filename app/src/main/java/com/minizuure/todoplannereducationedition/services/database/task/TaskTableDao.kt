@@ -165,16 +165,28 @@ interface TaskTableDao : BaseIODao<TaskTable> {
         JOIN session_table ON provider_table.fk_session_id = session_table.id
         JOIN routine_table ON session_table.fk_routine_id =  routine_table.id
         WHERE 
-            (task_table.title LIKE :keyword 
-                OR  session_table.title LIKE :keyword 
-                OR provider_table.location_name LIKE :keyword)
-            AND (
-                provider_table.is_rescheduled = 0 
-                OR (
-                    provider_table.is_rescheduled = 1 
-                    AND :iso8601Date BETWEEN provider_table.rescheduled_date_start AND provider_table.rescheduled_date_end
-                )
-            )
+            CASE
+                WHEN :searchModel = "byNotesDates"
+                    THEN (
+                        (task_table.title LIKE :keyword 
+                            OR  session_table.title LIKE :keyword 
+                            OR provider_table.location_name LIKE :keyword)
+                        AND (
+                            provider_table.is_rescheduled = 0 
+                            OR (
+                                provider_table.is_rescheduled = 1 
+                                AND :iso8601Date BETWEEN provider_table.rescheduled_date_start AND provider_table.rescheduled_date_end
+                            )
+                        )
+                    )
+                WHEN :searchModel = "byProviders"
+                    THEN (
+                        (task_table.title LIKE :keyword 
+                            OR  session_table.title LIKE :keyword 
+                            OR provider_table.location_name LIKE :keyword)
+                    )
+                ELSE 1
+            END
     """)
-    suspend fun search(keyword: String, iso8601Date : String): List<TaskAndSessionJoin>
+    suspend fun search(keyword: String, iso8601Date : String, searchModel : String): List<TaskAndSessionJoin>
 }

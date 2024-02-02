@@ -119,12 +119,27 @@ class TaskViewModel(
         )
     }
 
+    /**
+     *
+     *  available [searchModel] :
+     *
+     *
+     *  1. "byNotesDates" : Search with references to the notes dates, this may not include all the
+     *  tasks that are not related to the notes dates
+     *  2. "byProvider" : Search with references to the provider table, this not efficient for the
+     *  search but almost include all the tasks
+     */
     suspend fun search(
         query: String,
-        selectedDate : ZonedDateTime
+        selectedDate : ZonedDateTime,
+        searchModel : Int
     ) : List<TaskAndSessionJoin> {
+        val searchModelDict = mapOf(
+            1 to "byNotesDates",
+            2 to "byProviders"
+        )
         val dateISO8601 = DatetimeAppManager(selectedDate, true).dateISO8601inString
-        return appDatabaseRepository.searchTasks(query, dateISO8601)
+        return appDatabaseRepository.searchTasks(query, dateISO8601, searchModelDict[searchModel] ?: searchModelDict[1]!!)
     }
 
 }
