@@ -20,6 +20,8 @@ import com.minizuure.todoplannereducationedition.recycler.adapter.RoutinesAdapte
 import com.minizuure.todoplannereducationedition.recycler.model.RoutinesItemPreview
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
 import com.minizuure.todoplannereducationedition.services.database.DEFAULT_ROUTINE_ID
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModel
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.session.SessionViewModel
@@ -38,6 +40,7 @@ class RoutinesFragment : Fragment() {
 
     private lateinit var routineViewModel : RoutineViewModel
     private lateinit var sessionViewModel: SessionViewModel
+    private lateinit var sessionTaskProviderViewModel : SessionTaskProviderViewModel
 
     private val routineAdapter by lazy {
         RoutinesAdapter(
@@ -210,6 +213,9 @@ class RoutinesFragment : Fragment() {
 
         val sessionFactory = SessionViewModelFactory(app.appRepository)
         sessionViewModel = ViewModelProvider(requireActivity(), sessionFactory)[SessionViewModel::class.java]
+
+        val sessionTaskProviderFactory = SessionTaskProviderViewModelFactory(app.appRepository)
+        sessionTaskProviderViewModel = ViewModelProvider(requireActivity(), sessionTaskProviderFactory)[SessionTaskProviderViewModel::class.java]
     }
 
     private fun setupRecyclerView() {
@@ -226,7 +232,7 @@ class RoutinesFragment : Fragment() {
             val routines = routineViewModel.getAll()
             val routinesItemPreview = mutableListOf<RoutinesItemPreview>()
             routines.forEach {
-                val count = sessionViewModel.countSessionsForRoutine(it.id)
+                val count = sessionTaskProviderViewModel.countByRoutineId(it.id)
                 routinesItemPreview.add(RoutinesItemPreview(
                     id = it.id,
                     title = it.title,

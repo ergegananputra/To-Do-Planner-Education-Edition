@@ -20,6 +20,8 @@ import com.minizuure.todoplannereducationedition.recycler.adapter.UsagesAdapter
 import com.minizuure.todoplannereducationedition.recycler.model.UsagesPreviewModel
 import com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity
 import com.minizuure.todoplannereducationedition.services.database.DEFAULT_ROUTINE_ID
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModel
+import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModel
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineViewModelFactory
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
@@ -41,6 +43,7 @@ class RoutineDetailFragment : Fragment() {
 
     private lateinit var routineViewModel : RoutineViewModel
     private lateinit var sessionViewModel: SessionViewModel
+    private lateinit var sessionTaskProviderViewModel : SessionTaskProviderViewModel
 
     private val sessionDetailAdapter by lazy {
         SessionDetailAdapter(
@@ -110,13 +113,14 @@ class RoutineDetailFragment : Fragment() {
             val usages = mutableListOf<UsagesPreviewModel>()
             DatetimeAppManager().getAllDaysOfWeek().forEachIndexed { index, name ->
 
-                // TODO : Count used for each usage
-                val used = 0
+                val used = withContext(Dispatchers.IO) {
+                    sessionTaskProviderViewModel.countByIndexDayAndRoutineId(index, args.routineId)
+                }
 
                 val usage = UsagesPreviewModel(
                     id = index,
                     name = name,
-                    used = 0
+                    used = used
                 )
 
                 usages.add(usage)
@@ -154,12 +158,24 @@ class RoutineDetailFragment : Fragment() {
         setupViewModelFactory()
 
         setupTextViews()
+        setupUsedCount()
         setupSessionRecyclerView()
         setupAddSessionButton()
         setupUsagesRecyclerView()
 
         checkCommunity()
 
+    }
+
+    private fun setupUsedCount() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val count = sessionTaskProviderViewModel.countByRoutineId(args.routineId)
+            val avg = count.toDouble() / 7
+            withContext(Dispatchers.Main) {
+                binding.textViewCountRoutineUsed.text = count.toString()
+                binding.textViewAverageSessionRoutineUsed.text = String.format("%.2f", avg)
+            }
+        }
     }
 
     private fun checkCommunity() {
@@ -221,6 +237,9 @@ class RoutineDetailFragment : Fragment() {
 
         val sessionFactory = SessionViewModelFactory(app.appRepository)
         sessionViewModel = ViewModelProvider(requireActivity(), sessionFactory)[SessionViewModel::class.java]
+
+        val sessionTaskProviderFactory = SessionTaskProviderViewModelFactory(app.appRepository)
+        sessionTaskProviderViewModel = ViewModelProvider(requireActivity(), sessionTaskProviderFactory)[SessionTaskProviderViewModel::class.java]
     }
 
     private fun setupAddSessionButton() {

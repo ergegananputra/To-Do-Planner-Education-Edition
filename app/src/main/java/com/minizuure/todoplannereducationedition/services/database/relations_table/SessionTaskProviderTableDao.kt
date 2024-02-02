@@ -88,4 +88,27 @@ interface SessionTaskProviderTableDao : BaseIODao<SessionTaskProviderTable> {
     ): TaskAndSessionJoin?
 
 
+    @Query("""
+        SELECT DISTINCT COUNT(*) 
+        FROM session_task_provider_table as provider_table
+        JOIN session_table ON provider_table.fk_task_id = session_table.id
+        WHERE
+            provider_table.index_day = :indexDay
+            AND fk_routine_id = :routineId
+    """)
+    suspend fun countByIndexDayAndRoutineId(
+        indexDay: Int,
+        routineId: Long
+    ): Int
+
+    @Query("""
+        SELECT DISTINCT COUNT(*) 
+        FROM session_task_provider_table as provider_table
+        JOIN session_table ON provider_table.fk_task_id = session_table.id
+        WHERE
+            fk_routine_id = :routineId
+    """)
+    suspend fun countByRoutineId(
+        routineId: Long
+    ): Int
 }

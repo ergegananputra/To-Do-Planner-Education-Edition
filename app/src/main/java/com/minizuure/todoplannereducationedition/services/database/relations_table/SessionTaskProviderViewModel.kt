@@ -115,4 +115,20 @@ class SessionTaskProviderViewModel(
         return appDatabaseRepository.getSessionTaskProviderByTaskId(taskId)
     }
 
+    suspend fun countByIndexDayAndRoutineId(
+        indexDay: Int,
+        routineId: Long
+    ) : Int {
+        return appDatabaseRepository.countItemInProvidersByIndexDayAndRoutineId(
+            indexDay = indexDay,
+            routineId = routineId
+        )
+    }
+
+    suspend fun countByRoutineId(
+        routineId: Long
+    ) : Int {
+        return appDatabaseRepository.countItemInProvidersByRoutineId(routineId)
+    }
+
 }

@@ -370,4 +370,25 @@ class AppDatabaseRepository(
         )
     }
 
+    suspend fun countItemInProvidersByIndexDayAndRoutineId(
+        indexDay: Int,
+        routineId: Long
+    ) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "countItemInProvidersByIndexDayAndRoutineId: $indexDay, $routineId")
+        sessionTaskProviderTableDao.countByIndexDayAndRoutineId(
+            indexDay = indexDay,
+            routineId = routineId
+        )
+    }
+
+    suspend fun countItemInProvidersByRoutineId(
+        routineId: Long
+    ) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "countItemInProvidersByRoutineId: $routineId")
+        sessionTaskProviderTableDao.countByRoutineId(
+            routineId = routineId
+        )
+    }
+
+
 }
