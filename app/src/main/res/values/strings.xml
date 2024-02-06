@@ -36,6 +36,17 @@
     <string name="app_language">App language</string>
     <string name="app_language_description_Example">English</string>
     <string name="settings">Settings</string>
+    <string name="storage">Storage</string>
+    <string name="storage_description">This section provides you with information about the amount of tasks and routines stored and allows you to delete all data. However, please note that this action cannot be undone.</string>
+    <string name="tasks_and_routines">Tasks and Routines</string>
+    <string name="tasks">tasks</string>
+    <string name="routines">routines</string>
+    <string name="permissions">Permissions</string>
+    <string name="permissions_description">This feature allows you to manage push notifications and alert or reminder permissions using the checkboxes provided in each option.</string>
+    <string name="push_notification">Push Notification</string>
+    <string name="push_notification_description">Allows the app to show notifications</string>
+    <string name="alert_and_reminder">Alert and Reminder</string>
+    <string name="alert_and_reminder_description">Allows the app to remind you of incoming tasks</string>
     <string name="settings_description"><![CDATA[storage, permission, terms & services]]></string>
     <string name="communities_settings_description">create or join communities</string>
     <string name="beta">BETA</string>
