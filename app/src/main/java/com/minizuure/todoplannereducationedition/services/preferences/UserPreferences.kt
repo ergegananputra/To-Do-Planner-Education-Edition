@@ -1,11 +1,20 @@
 package com.minizuure.todoplannereducationedition.services.preferences
 
 import android.content.Context
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import com.minizuure.todoplannereducationedition.R
 
 class UserPreferences(private val context: Context) {
     private val PREFERENCES_NAME = "personal_user_data"
-    private val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+    private val mKA = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+    private val sharedPreferences = EncryptedSharedPreferences.create(
+        PREFERENCES_NAME,
+        mKA,
+        context,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
 
     // Pref ID
     private val KEY_USER_ID = "user_id"

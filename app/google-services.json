@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "243091712444",
+    "project_id": "todo-planner-education-edition",
+    "storage_bucket": "todo-planner-education-edition.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:243091712444:android:6daea11ce7cace691863b9",
+        "android_client_info": {
+          "package_name": "com.minizuure.todoplannereducationedition"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "243091712444-cm9qbciop2atvm5lhid0ong2qcj92m9u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.minizuure.todoplannereducationedition",
+            "certificate_hash": "04c6b83c23c9d61978d1e1f4e871529a57a048a5"
+          }
+        },
+        {
+          "client_id": "243091712444-qi218n45v5i3f8mpbe49jqe3ln857qhc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVb2thQKIDXddFcAx-APYVf3l4hFzqCxs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "243091712444-qi218n45v5i3f8mpbe49jqe3ln857qhc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

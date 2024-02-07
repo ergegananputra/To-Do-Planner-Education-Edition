@@ -123,6 +123,12 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="marquee"
                     android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:freezesText="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:singleLine="true"
                     android:text="@string/username_default_profile"
                     android:textAppearance="?attr/textAppearanceTitleLarge"
                     android:textColor="?attr/colorOnSurface" />
