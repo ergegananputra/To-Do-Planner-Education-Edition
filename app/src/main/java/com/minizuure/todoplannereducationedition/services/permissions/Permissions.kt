@@ -39,6 +39,16 @@ class Permissions(
         }
     }
 
+    private val launcherPermissionNotificationRequest = activity.registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            POST_NOTIFICATIONS_GRANTED = true
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            POST_NOTIFICATIONS_GRANTED = false
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.S)
     fun requestPermissionAlarm() {
         if (ContextCompat.checkSelfPermission(context, SCHEDULE_EXACT_ALARM_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
@@ -55,7 +65,8 @@ class Permissions(
             POST_NOTIFICATIONS_GRANTED = true
             true
         } else {
-            false
+            launcherPermissionNotificationRequest.launch(POST_NOTIFICATIONS_PERMISSION)
+            POST_NOTIFICATIONS_GRANTED
         }
     }
 

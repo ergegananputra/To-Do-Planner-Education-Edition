@@ -3,6 +3,7 @@ package com.minizuure.todoplannereducationedition
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
@@ -58,10 +59,15 @@ class MainActivity : AppCompatActivity() {
         val permissions = Permissions(this)
         val isFirstTime = UserPreferences(this).firstTime
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU && isFirstTime) {
-            permissions.requestPermissionNotification()
-        }
+            val result = permissions.requestPermissionNotification()
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S && isFirstTime) {
+            result.let {
+                if (!it) {
+                    permissions.requestPermissionAlarm()
+                }
+            }
+            Log.d("MainActivity", "checkForPermission: $result")
+        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S && isFirstTime) {
             permissions.requestPermissionAlarm()
         }
 
