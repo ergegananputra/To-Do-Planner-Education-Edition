@@ -4,6 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -45,6 +46,12 @@ class MainActivity : AppCompatActivity() {
         optimizeSessionTaskProviderDatabase()
 
         checkForPermission()
+        checkThemeMode()
+    }
+
+    private fun checkThemeMode() {
+        val currentThemeMode = AppCompatDelegate.getDefaultNightMode()
+        UserPreferences(this).isThemeDark = currentThemeMode == AppCompatDelegate.MODE_NIGHT_YES
     }
 
     private fun checkForPermission() {

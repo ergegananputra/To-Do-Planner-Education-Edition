@@ -8,9 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.FirebaseAuth
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.authentication.AuthenticationActivity
 import com.minizuure.todoplannereducationedition.databinding.FragmentProfileBinding
@@ -21,7 +22,6 @@ import com.minizuure.todoplannereducationedition.services.preferences.UserPrefer
 class ProfileFragment : Fragment() {
     private val binding by lazy { FragmentProfileBinding.inflate(layoutInflater) }
 
-    private lateinit var auth : FirebaseAuth
 
     private val launcherToRoutineManagement = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
@@ -58,7 +58,39 @@ class ProfileFragment : Fragment() {
         setupRoutinesManagementButton()
         setupAuthentication()
         setupSettings()
+        setupThemeModeButton()
         marqueeSupport()
+    }
+
+    private fun setupThemeModeButton() {
+        fun action() {
+            val isDarkMode = UserPreferences(requireContext()).isThemeDark
+
+            val newThemeMode = !isDarkMode
+            UserPreferences(requireContext()).isThemeDark = newThemeMode
+
+            if (newThemeMode) {
+                setDarkMode()
+            } else {
+                setLightMode()
+            }
+        }
+
+
+        binding.buttonThemeMode.setOnClickListener { action() }
+        binding.cardViewThemeMode.setOnClickListener { action() }
+    }
+
+    private fun setLightMode() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        binding.textViewStatusThemeMode.text = getString(R.string.theme_mode_status_light)
+        binding.buttonThemeMode.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_light_mode, null)
+    }
+
+    private fun setDarkMode() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        binding.textViewStatusThemeMode.text = getString(R.string.theme_mode_status_dark)
+        binding.buttonThemeMode.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_dark_mode, null)
     }
 
     private fun setupSettings() {

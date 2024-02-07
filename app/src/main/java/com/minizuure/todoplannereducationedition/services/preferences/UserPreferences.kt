@@ -28,6 +28,7 @@ class UserPreferences(private val context: Context) {
     private val KEY_COMMUNITY_VCS = "community_vcs" // update version code and version name
 
     private val KEY_FIRST_TIME = "first_time"
+    private val KEY_THEME = "theme"
 
 
     // Getter and Setter
@@ -62,6 +63,10 @@ class UserPreferences(private val context: Context) {
     var firstTime: Boolean
         get() = sharedPreferences.getBoolean(KEY_FIRST_TIME, true)
         set(value) = sharedPreferences.edit().putBoolean(KEY_FIRST_TIME, value).apply()
+
+    var isThemeDark: Boolean
+        get() = sharedPreferences.getBoolean(KEY_THEME, false)
+        set(value) = sharedPreferences.edit().putBoolean(KEY_THEME, value).apply()
 
 
     // methods
