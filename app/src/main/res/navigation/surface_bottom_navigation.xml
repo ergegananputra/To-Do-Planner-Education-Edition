@@ -27,7 +27,14 @@
         android:id="@+id/profileFragment"
         android:name="com.minizuure.todoplannereducationedition.surface.profile.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_authenticationActivity"
+            app:destination="@id/authenticationActivity" />
+        <action
+            android:id="@+id/action_profileFragment_to_settingsInformationActivity"
+            app:destination="@id/settingsInformationActivity" />
+    </fragment>
     <activity
         android:id="@+id/taskManagementActivity"
         android:name="com.minizuure.todoplannereducationedition.first_layer.TaskManagementActivity"
@@ -57,4 +64,14 @@
             app:argType="long"
             android:defaultValue="-1L" />
     </activity>
+    <activity
+        android:id="@+id/authenticationActivity"
+        android:name="com.minizuure.todoplannereducationedition.authentication.AuthenticationActivity"
+        android:label="activity_authentication"
+        tools:layout="@layout/activity_authentication" />
+    <activity
+        android:id="@+id/settingsInformationActivity"
+        android:name="com.minizuure.todoplannereducationedition.settings_information.SettingsInformationActivity"
+        android:label="activity_settings_information"
+        tools:layout="@layout/activity_settings_information" />
 </navigation>

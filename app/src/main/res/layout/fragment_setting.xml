@@ -4,7 +4,10 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".settings_information.SettingsInformationFragment"
+    >
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout_storage"
         android:layout_width="match_parent"
@@ -49,32 +52,38 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="8dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:orientation="vertical"
 
-                    app:layout_constraintTop_toTopOf="parent"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginVertical="8dp"
+                    android:layout_marginStart="16dp"
+
+                    android:layout_marginEnd="8dp"
+                    android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
+                    app:layout_constraintEnd_toStartOf="@+id/button_delete_tasks_and_routines"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/text_view_title_tasks_and_routines"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
                         android:text="@string/tasks_and_routines"
                         android:textAppearance="?attr/textAppearanceTitleLarge"
-                        android:textColor="?attr/colorOnSurface"/>
+                        android:textColor="?attr/colorOnSurface" />
+
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/text_view_description_tasks_and_routines"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
                         android:text="999 task and 999 routines"
                         android:textAppearance="?attr/textAppearanceBodySmall"
-                        android:textColor="?attr/colorOnSurface"/>
+                        android:textColor="?attr/colorOnSurface" />
                 </LinearLayout>
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_delete_tasks_and_routines"
@@ -125,6 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:minHeight="72dp"
 
             app:cardCornerRadius="8dp"
             app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
@@ -134,44 +144,48 @@
             app:layout_constraintStart_toStartOf="parent">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:padding="16dp">
+
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/switch_push_notification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
 
                     android:checked="true"
-
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="8dp"
                     android:layout_marginHorizontal="16dp"
+                    android:layout_marginVertical="8dp"
                     android:orientation="vertical"
 
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/switch_push_notification">
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/switch_push_notification"
+                    app:layout_constraintTop_toTopOf="parent">
+
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/text_view_title_push_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
                         android:text="@string/push_notification"
                         android:textAppearance="?attr/textAppearanceTitleLarge"
-                        android:textColor="?attr/colorOnSurface"/>
+                        android:textColor="?attr/colorOnSurface" />
+
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/text_view_description_push_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
                         android:text="@string/push_notification_description"
                         android:textAppearance="?attr/textAppearanceBodySmall"
-                        android:textColor="?attr/colorOnSurface"/>
+                        android:textColor="?attr/colorOnSurface" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -180,6 +194,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:minHeight="72dp"
 
             app:cardCornerRadius="8dp"
             app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
@@ -189,47 +204,53 @@
             app:layout_constraintStart_toStartOf="parent">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="8dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:orientation="vertical"
+                android:layout_height="match_parent"
+                android:padding="16dp"
+                >
 
-                    app:layout_constraintTop_toTopOf="parent"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginVertical="8dp"
+
+                    android:layout_marginEnd="16dp"
+                    android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
+                    app:layout_constraintEnd_toStartOf="@+id/materialTextView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/text_view_title_alert_and_reminder"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
                         android:text="@string/alert_and_reminder"
                         android:textAppearance="?attr/textAppearanceTitleLarge"
-                        android:textColor="?attr/colorOnSurface"/>
+                        android:textColor="?attr/colorOnSurface" />
+
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/text_view_description_alert_and_reminder"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
                         android:text="@string/alert_and_reminder_description"
                         android:textAppearance="?attr/textAppearanceBodySmall"
-                        android:textColor="?attr/colorOnSurface"/>
+                        android:textColor="?attr/colorOnSurface" />
                 </LinearLayout>
-                <com.google.android.material.checkbox.MaterialCheckBox
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/materialTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="8dp"
-                    android:layout_marginEnd="16dp"
-
-                    android:checked="true"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@string/check"
+                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>

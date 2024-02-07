@@ -174,5 +174,6 @@
     <string name="log_out">Log out</string>
     <string name="you_are_not_currently_logged_in_please_sign_in_with_google_to_continue">You are not currently logged in. Please sign in with google to continue.</string>
     <string name="connected">Connected</string>
+    <string name="check">check</string>
 
 </resources>
