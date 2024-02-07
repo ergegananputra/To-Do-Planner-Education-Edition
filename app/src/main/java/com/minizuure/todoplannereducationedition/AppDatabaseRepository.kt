@@ -55,6 +55,10 @@ class AppDatabaseRepository(
         deleteAllTasks()
         deleteAllSessions()
         deleteAllRoutines()
+        deleteAllOperation.deleteAllNotificationQueue()
+        deleteAllOperation.deleteAllTodoNotes()
+        deleteAllOperation.deleteAllNotesTasks()
+        deleteAllOperation.deleteAllSessionTaskProvider()
     }
 
     // RoutineTableDao
@@ -137,6 +141,10 @@ class AppDatabaseRepository(
     suspend fun getAllTasks() = withContext(Dispatchers.IO) {
         Log.d("AppDatabaseRepository", "getAllTasks triggered")
         taskTableDao.getAll()
+    }
+    suspend fun countTasks() = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "countTasks triggered")
+        taskTableDao.getCount()
     }
     suspend fun getTaskById(id: Long) = withContext(Dispatchers.IO) {
         Log.d("AppDatabaseRepository", "getTaskById triggered with id $id")

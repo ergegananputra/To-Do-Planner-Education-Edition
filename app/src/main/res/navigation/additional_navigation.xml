@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/additional_navigation"
+    app:startDestination="@id/settingsInformationFragment">
+
+    <fragment
+        android:id="@+id/settingsInformationFragment"
+        android:name="com.minizuure.todoplannereducationedition.settings_information.SettingsInformationFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
+</navigation>

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.authentication.AuthenticationActivity
@@ -56,7 +57,19 @@ class ProfileFragment : Fragment() {
 
         setupRoutinesManagementButton()
         setupAuthentication()
+        setupSettings()
         marqueeSupport()
+    }
+
+    private fun setupSettings() {
+        fun action() {
+            val destination = ProfileFragmentDirections.actionProfileFragmentToSettingsInformationActivity()
+            findNavController().navigate(destination)
+        }
+
+        binding.buttonSettings.setOnClickListener{action()}
+        binding.cardViewSettings.setOnClickListener{action()}
+
     }
 
     private fun marqueeSupport() {
@@ -72,10 +85,14 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupRoutinesManagementButton() {
-        binding.cardViewRoutinesManagement.setOnClickListener {
+        fun action() {
             val intentToRoutinesManagementActivity = Intent(requireActivity(), RoutineManagementActivity::class.java)
             launcherToRoutineManagement.launch(intentToRoutinesManagementActivity)
         }
+
+        binding.buttonRoutinesManagement.setOnClickListener { action() }
+        binding.cardViewRoutinesManagement.setOnClickListener { action() }
+
     }
 
 }

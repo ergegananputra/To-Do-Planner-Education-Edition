@@ -4,6 +4,9 @@ import android.app.Application
 import com.minizuure.todoplannereducationedition.services.database.ApplicationDatabase
 import com.minizuure.todoplannereducationedition.services.notification.AlarmManagerSingleton
 import com.minizuure.todoplannereducationedition.services.notification.AndroidAlarmManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 /**
@@ -35,6 +38,12 @@ class ToDoPlannerApplication : Application() {
             sessionTaskProviderTableDao = appDb.sessionTaskProviderTableDao(),
             deleteAllOperation = appDb.deleteAllOperation(),
         )
+    }
+
+    fun deleteAllOperation() {
+        CoroutineScope(Dispatchers.IO).launch {
+            appRepository.deleteAllDatabase()
+        }
     }
 
 }
