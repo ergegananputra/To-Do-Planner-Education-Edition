@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
+    tools:context=".authentication.AuthenticationActivity">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/authentication_button_close"
+        style="@style/Widget.Material3.Button.IconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/exit_from_the_authentication_screen"
+        app:icon="@drawable/ic_close_24"
+        app:iconTint="?attr/colorOutlineVariant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/authentication_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:src="@drawable/logo_to_do_planner_education_edition"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/authentication_text_view_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/account_info"
+        android:textAppearance="?attr/textAppearanceDisplayMedium"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authentication_logo" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/authentication_text_view_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/you_are_not_currently_logged_in_please_sign_in_with_google_to_continue"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintEnd_toEndOf="@+id/authentication_text_view_title"
+        app:layout_constraintStart_toStartOf="@+id/authentication_text_view_title"
+        app:layout_constraintTop_toBottomOf="@+id/authentication_text_view_title" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/authentication_text_view_side_note"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:drawableStart="@drawable/ic_info_24"
+        android:drawablePadding="16dp"
+        android:text="Only sign in if you want to be able to use Experimental Features."
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="?attr/colorError"
+        app:drawableTint="?attr/colorError"
+        app:layout_constraintEnd_toEndOf="@+id/authentication_text_view_title"
+        app:layout_constraintStart_toStartOf="@+id/authentication_text_view_title"
+        app:layout_constraintTop_toBottomOf="@+id/authentication_text_view_status" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/authentication_button_log_out"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="100dp"
+        android:text="@string/log_out"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/authentication_button_log_in_with_google"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/android_neutral_rd_si"
+        app:backgroundTint="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authentication_text_view_side_note" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

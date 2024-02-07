@@ -154,5 +154,25 @@
     <string name="default_reschedule_option">Only this time</string>
     <string name="reschedule_option_only_this_time">Only this time</string>
     <string name="reschedule_option_all_following_meet">All following meet</string>
+    <string name="title_activity_authentication">AuthenticationActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="login">Login</string>
+    <string name="don_t_have_an_account_register_here">Don\'t have an account? Register here</string>
+    <string name="register">Register</string>
+    <string name="already_have_an_account_login">Already have an account? Login</string>
+    <string name="prompt_confirm_password">Confirm password</string>
+    <string name="exit_from_the_authentication_screen">Exit from the authentication screen</string>
+    <string name="username">Username</string>
+    <string name="account_info">Account info</string>
+    <string name="log_out">Log out</string>
+    <string name="you_are_not_currently_logged_in_please_sign_in_with_google_to_continue">You are not currently logged in. Please sign in with google to continue.</string>
+    <string name="connected">Connected</string>
 
 </resources>
