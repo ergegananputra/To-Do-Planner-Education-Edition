@@ -16,6 +16,8 @@ import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppMa
 import com.minizuure.todoplannereducationedition.services.notification.AndroidAlarmManager
 import com.minizuure.todoplannereducationedition.services.notification.CHANNEL_ID
 import com.minizuure.todoplannereducationedition.services.notification.ItemAlarmQueue
+import com.minizuure.todoplannereducationedition.services.permissions.Permissions
+import com.minizuure.todoplannereducationedition.services.preferences.UserPreferences
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -41,6 +43,22 @@ class MainActivity : AppCompatActivity() {
 
         startNotificationService()
         optimizeSessionTaskProviderDatabase()
+
+        checkForPermission()
+    }
+
+    private fun checkForPermission() {
+        val permissions = Permissions(this)
+        val isFirstTime = UserPreferences(this).firstTime
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU && isFirstTime) {
+            permissions.requestPermissionNotification()
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S && isFirstTime) {
+            permissions.requestPermissionAlarm()
+        }
+
+        UserPreferences(this).firstTime = false
     }
 
     private fun optimizeSessionTaskProviderDatabase() {

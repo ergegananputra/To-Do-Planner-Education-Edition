@@ -27,6 +27,8 @@ class UserPreferences(private val context: Context) {
     private val KEY_COMMUNITY_ID = "community_id"
     private val KEY_COMMUNITY_VCS = "community_vcs" // update version code and version name
 
+    private val KEY_FIRST_TIME = "first_time"
+
 
     // Getter and Setter
     var userId: String
@@ -56,6 +58,10 @@ class UserPreferences(private val context: Context) {
     var communityVcs: String
         get() = sharedPreferences.getString(KEY_COMMUNITY_VCS, "")!!
         set(value) = sharedPreferences.edit().putString(KEY_COMMUNITY_VCS, value).apply()
+
+    var firstTime: Boolean
+        get() = sharedPreferences.getBoolean(KEY_FIRST_TIME, true)
+        set(value) = sharedPreferences.edit().putBoolean(KEY_FIRST_TIME, value).apply()
 
 
     // methods

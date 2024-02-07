@@ -11,6 +11,9 @@ interface TaskTableDao : BaseIODao<TaskTable> {
     @Query("SELECT * FROM task_table")
     suspend fun getAll(): List<TaskTable>
 
+    @Query("SELECT COUNT(*) FROM task_table")
+    suspend fun getCount(): Int
+
     @Query("SELECT * FROM task_table LIMIT :limit OFFSET :offset")
     suspend fun getPaginated(limit: Int, offset: Int = 0): List<TaskTable>
 

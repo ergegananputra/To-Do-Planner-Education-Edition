@@ -15,6 +15,10 @@ class TaskViewModel(
         Log.d("TaskViewModel", "get all tasks")
         return appDatabaseRepository.getAllTasks()
     }
+    suspend fun getCount() : Int {
+        Log.d("TaskViewModel", "get count tasks")
+        return appDatabaseRepository.countTasks()
+    }
 
     suspend fun getById(id: Long) : TaskTable? {
         Log.d("TaskViewModel", "begin get task by id: $id")
