@@ -1,4 +1,18 @@
 <resources>
+    <string name="communities_guideline">Communities Guideline</string>
+    <string name="communities_guideline_description_1">This feature involves sending and receiving information with other community members. This may include your email, (application) tasks data, and (application) routines data. Please do not send any sensitive information!</string>
+    <string name="communities_guideline_description_2">Violations such as hate speech, harassment, or spamming may result in your account being suspended or banned permanently.</string>
+    <string name="create_community">Create community</string>
+    <string name="create_community_description">By creating community you agree to share tasks data and application routines data.</string>
+    <string name="manage_member">Manage member</string>
+    <string name="manage_member_description">Total members: </string>
+    <string name="routine_code">CODE: </string>
+    <string name="join_community">Join community</string>
+    <string name="join_community_description_1">You can only join 1 community. If you quit from community, you may have the tasks and routine data.</string>
+    <string name="join_community_description_2">Please input the unique code to join community and wait the admin of the community to accept your request.</string>
+    <string name="code">Code</string>
+
+    <string name="text">text</string>
     <string name="app_name">ToDo Planner : Education Edition</string>
     <string name="app_version">version x.y.z</string>
     <!-- TODO: Remove or change this placeholder text -->
