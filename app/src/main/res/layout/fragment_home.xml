@@ -33,17 +33,97 @@
             android:layout_height="wrap_content"
             android:paddingBottom="150dp">
 
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/home_vertical_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_routine_home_shortcut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                app:cardBackgroundColor="?attr/colorSecondaryContainer"
+                app:strokeWidth="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/home_vertical_guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_view_routines_home_shortcut"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingVertical="16dp"
+                    android:text="@string/routines_management"
+                    android:textColor="?attr/colorOnSecondaryContainer"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textAlignment="center"
+                    android:ellipsize="marquee"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:freezesText="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:singleLine="true"
+                    android:drawableTop="@drawable/ic_folder_outline"
+                    app:drawableTint="?attr/colorOnSecondaryContainer"
+                    android:drawablePadding="8dp"
+                    />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_default_routine_home_shortcut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardBackgroundColor="?attr/colorTertiaryContainer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/home_vertical_guideline"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeWidth="0dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_view_default_routine_home_shortcut"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:drawableTop="@drawable/ic_article_shortcut_outline"
+                    android:drawablePadding="8dp"
+                    app:drawableTint="?attr/colorOnTertiaryContainer"
+                    android:paddingVertical="16dp"
+                    android:textColor="?attr/colorOnTertiaryContainer"
+                    android:text="@string/no_routine_selected"
+                    android:ellipsize="marquee"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:freezesText="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:singleLine="true"
+                    android:textAlignment="center"
+                    android:textAppearance="?attr/textAppearanceLabelLarge" />
+
+            </com.google.android.material.card.MaterialCardView>
+
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/drawer_today"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
                 app:cardBackgroundColor="?attr/colorPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/card_view_routine_home_shortcut">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

@@ -94,7 +94,8 @@ class TaskFragment : Fragment() {
             } ?: run {
                 //TODO : Hapus ini
                 Log.e("TaskFragment", "loadData: taskAndSessionJoin is null")
-                Toast.makeText(requireContext(), "Task Tidak ditemukan", Toast.LENGTH_SHORT).show()
+                val text = getString(R.string.you_have_not_set_a_default_routine)
+                Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
                 return@launch
             }
 

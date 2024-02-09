@@ -193,5 +193,9 @@
     <string name="you_are_not_currently_logged_in_please_sign_in_with_google_to_continue">You are not currently logged in. Please sign in with google to continue.</string>
     <string name="connected">Connected</string>
     <string name="check">check</string>
+    <string name="please_create_new_routine_first">Please create new routine first</string>
+    <string name="error_msg_start_time_after_end_time">End time must be greater than start time</string>
+    <string name="you_have_no_routine">You have not created any routine yet. Please create a routine first.</string>
+    <string name="select_default_routine">Select default routine</string>
 
 </resources>

@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_taskManagementActivity"
             app:destination="@id/taskManagementActivity" />
+        <action
+            android:id="@+id/action_homeFragment_to_routineManagementActivity"
+            app:destination="@id/routineManagementActivity" />
     </fragment>
     <fragment
         android:id="@+id/todoFragment"
@@ -74,4 +77,9 @@
         android:name="com.minizuure.todoplannereducationedition.settings_information.SettingsInformationActivity"
         android:label="activity_settings_information"
         tools:layout="@layout/activity_settings_information" />
+    <activity
+        android:id="@+id/routineManagementActivity"
+        android:name="com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity"
+        android:label="activity_routine_management"
+        tools:layout="@layout/activity_routine_management" />
 </navigation>

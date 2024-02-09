@@ -248,9 +248,28 @@ class SessionFormFragment : Fragment() {
             binding.textInputLayoutStartTime.error = errMsg
             return notValid
         }
+        if (startTime.length < 5) {
+            val errMsg = getString(R.string.error_msg_time_invalid_format)
+            binding.textInputLayoutStartTime.error = errMsg
+            return notValid
+        }
 
         if (endTime == "") {
             val errMsg = getString(R.string.error_msg_end_time_empty)
+            binding.textInputLayoutEndTime.error = errMsg
+            return notValid
+        }
+        if (endTime.length < 5) {
+            val errMsg = getString(R.string.error_msg_time_invalid_format)
+            binding.textInputLayoutEndTime.error = errMsg
+            return notValid
+        }
+
+        // check if start time is before end time
+        val valueStartTime = startTime.replace(":", "").toInt()
+        val valueEndTime = endTime.replace(":", "").toInt()
+        if (valueStartTime >= valueEndTime) {
+            val errMsg = getString(R.string.error_msg_start_time_after_end_time)
             binding.textInputLayoutEndTime.error = errMsg
             return notValid
         }

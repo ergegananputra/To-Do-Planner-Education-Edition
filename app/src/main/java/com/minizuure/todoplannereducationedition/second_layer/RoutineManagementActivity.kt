@@ -13,9 +13,12 @@ import com.minizuure.todoplannereducationedition.second_layer.routines.RoutineFo
 import com.minizuure.todoplannereducationedition.second_layer.routines.RoutinesFragment
 import com.minizuure.todoplannereducationedition.second_layer.session.SessionFormFragment
 import com.minizuure.todoplannereducationedition.services.database.DEFAULT_ROUTINE_ID
+import com.minizuure.todoplannereducationedition.services.database.DEFAULT_ROUTINE_SHORTCUT
 import com.minizuure.todoplannereducationedition.services.database.DEFAULT_SESSION_ID
 
 class RoutineManagementActivity : AppCompatActivity() {
+    var isShortcut = false
+
     private lateinit var routineNavController : NavController
 
     private val binding by lazy {
@@ -34,6 +37,9 @@ class RoutineManagementActivity : AppCompatActivity() {
 
         CustomSystemTweak(this).statusBarTweak()
 
+        // get intent form extra
+        isShortcut = intent.getBooleanExtra(DEFAULT_ROUTINE_SHORTCUT, false)
+        if (isShortcut) intent.removeExtra(DEFAULT_ROUTINE_SHORTCUT)
 
     }
 

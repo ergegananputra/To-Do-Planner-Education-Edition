@@ -117,6 +117,16 @@ class RoutinesFragment : Fragment() {
         setupTotalRoutineCounter()
         setupDefaultRoutine()
         setupSearchBar()
+        setupIfShortcut()
+    }
+
+    private fun setupIfShortcut() {
+        val isShortcut = (activity as RoutineManagementActivity).isShortcut
+        if (isShortcut) {
+            binding.buttonDefaultRoutine.performClick()
+            val text = getText(R.string.select_default_routine)
+            Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun setupSearchBar() {
