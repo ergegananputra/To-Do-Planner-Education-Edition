@@ -1,89 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@drawable/bottom_sheet_global_background">
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/bottom_sheet_handle"
         android:layout_width="32dp"
         android:layout_height="4dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-
         android:src="@drawable/bottom_sheet_handle"
-
         app:layout_constraintBottom_toTopOf="@+id/guideline_top_bottom_sheet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_top_bottom_sheet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-
         app:layout_constraintGuide_begin="36dp" />
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_title_join_community_bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="56dp"
+        android:layout_height="wrap_content"
 
-        app:layout_constraintTop_toBottomOf="@id/guideline_top_bottom_sheet"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/join_community"
+
+        android:textAppearance="?attr/textAppearanceHeadlineSmall"
+        android:textColor="?attr/colorOnSurface"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline_top_bottom_sheet" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_layout_join_community_bottom_sheet"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/code"
+
+        android:textColorHint="?attr/colorOnSurfaceVariant"
+        app:boxBackgroundColor="?attr/colorSurfaceContainerHigh"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_title_join_community_bottom_sheet">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_view_description_join_community_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginStart="32dp"
+
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="72dp"
+
+        android:text="@string/join_community_description_2"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="?attr/colorOnBackground"
+        app:layout_constraintBottom_toTopOf="@+id/button_join_community_bottom_sheet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_input_layout_join_community_bottom_sheet"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_join_community_bottom_sheet"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+
+        android:layout_marginBottom="54dp"
+        android:text="@string/join_community"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/text_view_title_join_community_bottom_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-            android:text="@string/join_community"
-            android:textAppearance="?attr/textAppearanceTitleLarge"
-            android:textColor="?attr/colorOnBackground"
-
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_layout_join_community_bottom_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-            app:boxBackgroundColor="?attr/colorSurfaceContainerHigh"
-            android:hint="@string/code"
-            android:textColorHint="?attr/colorOnSurfaceVariant"
-
-            app:layout_constraintTop_toBottomOf="@id/text_view_title_join_community_bottom_sheet">
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/text_view_description_join_community_bottom_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginHorizontal="16dp"
-
-            android:text="@string/join_community_description_2"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?attr/colorOnBackground"
-
-            app:layout_constraintTop_toBottomOf="@id/text_input_layout_join_community_bottom_sheet"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_join_community_bottom_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:text="@string/join_community"
-            android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.minizuure.todoplannereducationedition.communities.dasbor
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.minizuure.todoplannereducationedition.databinding.FragmentCommunitiesBinding
+import com.minizuure.todoplannereducationedition.dialog_modal.ModalJoinCommunitySheetDialogFragment
+import com.minizuure.todoplannereducationedition.dialog_modal.preset.MinimumBottomSheetDialog
 
 
 class CommunitiesFragment : Fragment() {
@@ -51,9 +54,21 @@ class CommunitiesFragment : Fragment() {
     private fun setupJoinCommunityButton() {
         // TODO: Implement join community button
         binding.buttonJoinCommunity.setOnClickListener {
-            Toast.makeText(requireContext(), "Join community button not implemented yet", Toast.LENGTH_SHORT).show()
+            if (MinimumBottomSheetDialog.isDialogOpen) return@setOnClickListener
+
+            val bottomSheet = ModalJoinCommunitySheetDialogFragment(
+                onClickJoin = onClickJoinCommunity()
+            )
+
+            bottomSheet.show(parentFragmentManager, "JoinCommunityBottomSheet")
         }
 
+    }
+
+    private fun onClickJoinCommunity(): (String) -> Unit = {
+        // TODO: Implement join community button
+        Log.v("JoinCommunity", "Join community with code: $it")
+        Toast.makeText(requireActivity(), "Join community with code: $it", Toast.LENGTH_SHORT).show()
     }
 
     private fun setupManageMembersButton() {
