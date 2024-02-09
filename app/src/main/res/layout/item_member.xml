@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+    app:strokeWidth="0dp"
+    android:layout_marginBottom="8dp"
+    android:id="@+id/card_view_usages"
+    app:cardCornerRadius="8dp"
+    >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp"
+        >
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/icon_person_item"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+
+            app:srcCompat="@drawable/ic_person_outline"
+            app:iconTint="?attr/colorError"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text_view_session_used"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+
+            android:maxLines="1"
+            android:text="mail@email.com"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnSurface"
+
+            app:layout_constraintBottom_toBottomOf="@+id/icon_person_item"
+            app:layout_constraintStart_toEndOf="@+id/icon_person_item"
+            app:layout_constraintTop_toTopOf="@+id/icon_person_item"
+            />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_admit_community_member"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+
+            android:backgroundTint="?attr/colorPrimary"
+            android:text="@string/admit"
+            android:visibility="visible"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_kick_community_member"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+
+            android:backgroundTint="?attr/colorError"
+            android:text="@string/kick"
+            android:visibility="gone"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
