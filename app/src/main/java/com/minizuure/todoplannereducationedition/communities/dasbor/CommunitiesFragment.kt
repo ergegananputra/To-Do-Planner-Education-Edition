@@ -36,17 +36,24 @@ class CommunitiesFragment : Fragment() {
     private fun setupCreateCommunityButton() {
         // TODO: Implement create community button
         // by choosing a routine and its members
-        Toast.makeText(requireContext(), "Create community button not implemented yet", Toast.LENGTH_SHORT).show()
+        binding.buttonCreateCommunity.setOnClickListener {
+            Toast.makeText(requireContext(), "Create community button not implemented yet", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setupCommunityOffButton() {
         // TODO: Implement un publish routine button
-        Toast.makeText(requireContext(), "Un publish community button not implemented yet", Toast.LENGTH_SHORT).show()
+        binding.cardViewRoutine.setOnClickListener {
+            Toast.makeText(requireContext(), "Un publish community button not implemented yet", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setupJoinCommunityButton() {
         // TODO: Implement join community button
-        Toast.makeText(requireContext(), "Join community button not implemented yet", Toast.LENGTH_SHORT).show()
+        binding.buttonJoinCommunity.setOnClickListener {
+            Toast.makeText(requireContext(), "Join community button not implemented yet", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun setupManageMembersButton() {
