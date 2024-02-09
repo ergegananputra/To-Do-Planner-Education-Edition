@@ -197,5 +197,7 @@
     <string name="error_msg_start_time_after_end_time">End time must be greater than start time</string>
     <string name="you_have_no_routine">You have not created any routine yet. Please create a routine first.</string>
     <string name="select_default_routine">Select default routine</string>
+    <string name="welcome_to_communities">Welcome to communities</string>
+    <string name="version_beta">Version Beta 0.1</string>
 
 </resources>

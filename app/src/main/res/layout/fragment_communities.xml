@@ -1,47 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nested_scroll_view_communities"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="32dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".communities.dasbor.CommunitiesFragment">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="32dp"
+            android:paddingBottom="64dp"
+            >
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/icon_communities"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
 
-                app:srcCompat="@drawable/ic_communities_outline"
-                app:iconTint="?attr/colorError"
+                android:src="@drawable/ic_communities_outline"
+                app:tint="?attr/colorOnBackground"
 
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/text_view_title_communities_greeting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
 
-                android:text="Welcome to communities"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                android:text="@string/welcome_to_communities"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textAlignment="center"
+                android:textColor="?attr/colorOnBackground"
 
                 app:layout_constraintTop_toBottomOf="@id/icon_communities"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/text_view_title_app_version"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:text="Version Beta 0.1"
-                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                android:textAlignment="center"
+                android:text="@string/version_beta"
+                android:textColor="?attr/colorOnBackground"
 
-                app:layout_constraintTop_toBottomOf="@id/text_view_title_communities_greeting"/>
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_view_title_communities_greeting" />
+
             <LinearLayout
                 android:id="@+id/linearLayout_communities_guidelines"
                 android:layout_width="match_parent"
@@ -52,258 +66,269 @@
                 app:layout_constraintTop_toBottomOf="@id/text_view_title_app_version"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
+
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
 
                     app:strokeWidth="0dp"
                     app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
                     app:cardCornerRadius="8dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="8dp">
+                        android:padding="16dp">
+
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-
+                            android:textColor="?attr/colorOnSurface"
                             android:text="Communities Guideline"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"/>
+                            android:textAppearance="?attr/textAppearanceLabelLarge"/>
+
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-
+                            android:textColor="?attr/colorOnSurface"
                             android:text="@string/communities_guideline_description_1"
-                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"/>
+                            android:textAppearance="?attr/textAppearanceBodySmall"/>
+
                     </LinearLayout>
+
                 </com.google.android.material.card.MaterialCardView>
+
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
+
                     android:layout_marginTop="16dp"
 
                     app:strokeWidth="0dp"
                     app:cardBackgroundColor="?attr/colorErrorContainer"
                     app:cardCornerRadius="8dp">
-                    <LinearLayout
+
+                    <com.google.android.material.textview.MaterialTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:textColor="?attr/colorOnErrorContainer"
+                        android:text="@string/communities_guideline_description_2"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_create_community"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                app:icon="@drawable/ic_add"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout_communities_guidelines" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view_title_create_community"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:text="Create Community"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
+
+                android:textColor="?attr/colorOnBackground"
+                app:layout_constraintBottom_toBottomOf="@+id/button_create_community"
+                app:layout_constraintEnd_toStartOf="@+id/button_create_community"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/button_create_community" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view_description_create_community"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="@string/create_community_description"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnBackground"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button_create_community" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_manage_member"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+
+                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="?attr/colorSurfaceContainer"
+                app:strokeWidth="0dp"
+
+                app:layout_constraintTop_toBottomOf="@id/text_view_description_create_community"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginVertical="8dp"
                         android:orientation="vertical"
-                        android:padding="8dp">
+
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_manage_member"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
                         <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/text_view_title_manage_member"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
 
-                            android:text="@string/communities_guideline_description_2"
-                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"/>
+                            android:text="@string/manage_member"
+                            android:textAppearance="?attr/textAppearanceTitleLarge"
+                            android:textColor="?attr/colorOnSurface" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/text_view_description_manage_member"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            android:text="@string/manage_member_description"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/linearLayout_create_community"
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/icon_manage_member"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+
+                        android:src="@drawable/ic_group_outline"
+                        android:tint="?attr/colorOnSurface"
+
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_routine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                android:orientation="vertical"
+                android:layout_marginTop="16dp"
 
-                app:layout_constraintTop_toBottomOf="@id/linearLayout_communities_guidelines"
+                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+                app:strokeWidth="0dp"
+
+                app:layout_constraintTop_toBottomOf="@id/card_view_manage_member"
                 app:layout_constraintStart_toStartOf="parent">
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_title_create_community"
+
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent">
 
-                    android:text="Create Community"
-                    android:textAppearance="?attr/textAppearanceTitleLarge"
-                    android:textColor="?attr/colorOnBackground"
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginVertical="8dp"
+                        android:orientation="vertical"
 
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_description_create_community"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_routine"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                    android:text="@string/create_community_description"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:textColor="?attr/colorOnBackground"
-
-                    app:layout_constraintTop_toBottomOf="@id/text_view_title_create_community"
-                    app:layout_constraintStart_toStartOf="parent"/>
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card_view_manage_member"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-
-                    app:cardCornerRadius="8dp"
-                    app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
-                    app:strokeWidth="0dp"
-
-                    app:layout_constraintTop_toBottomOf="@id/text_view_description_create_community"
-                    app:layout_constraintStart_toStartOf="parent">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/text_view_title_routine"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="16dp"
-                            android:layout_marginVertical="8dp"
-                            android:orientation="vertical"
 
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+                            android:text="routine title"
+                            android:textAppearance="?attr/textAppearanceTitleLarge"
+                            android:textColor="?attr/colorOnSurface" />
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/text_view_title_manage_member"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-
-                                android:text="@string/manage_member"
-                                android:textAppearance="?attr/textAppearanceTitleLarge"
-                                android:textColor="?attr/colorOnSurface" />
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/text_view_description_manage_member"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-
-                                android:text="@string/manage_member_description"
-                                android:textAppearance="?attr/textAppearanceBodySmall"
-                                android:textColor="?attr/colorOnSurface" />
-                        </LinearLayout>
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/icon_manage_member"
-                            android:layout_width="wrap_content"
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/text_view_code_routine"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="16dp"
 
-                            app:srcCompat="@drawable/ic_group_outline"
-                            android:tint="?attr/colorOnSurface"
+                            android:text="@string/routine_code"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="?attr/colorOnSurface" />
 
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card_view_routine"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-
-                    app:cardCornerRadius="8dp"
-                    app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
-                    app:strokeWidth="0dp"
-
-                    app:layout_constraintTop_toBottomOf="@id/card_view_manage_member"
-                    app:layout_constraintStart_toStartOf="parent">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/text_view_description_routine"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="16dp"
-                            android:layout_marginVertical="8dp"
-                            android:orientation="vertical"
 
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+                            android:text="routine desccription"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="?attr/colorOnSurface" />
+                    </LinearLayout>
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/icon_routine"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/text_view_title_routine"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/ic_backup_outline"
+                        android:tint="?attr/colorOnSurface"
 
-                                android:text="routine title"
-                                android:textAppearance="?attr/textAppearanceTitleLarge"
-                                android:textColor="?attr/colorOnSurface" />
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/text_view_code_routine"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-                                android:text="@string/routine_code"
-                                android:textAppearance="?attr/textAppearanceBodySmall"
-                                android:textColor="?attr/colorOnSurface" />
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/text_view_description_routine"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-
-                                android:text="routine desccription"
-                                android:textAppearance="?attr/textAppearanceBodySmall"
-                                android:textColor="?attr/colorOnSurface" />
-                        </LinearLayout>
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/icon_routine"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="16dp"
-
-                            app:srcCompat="@drawable/ic_backup_outline"
-                            android:tint="?attr/colorOnSurface"
-
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view_title_join_community"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:layout_marginTop="48dp"
-                android:orientation="vertical"
+                android:text="@string/join_community"
 
-                app:layout_constraintTop_toBottomOf="@id/linearLayout_create_community"
-                app:layout_constraintStart_toStartOf="parent">
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_title_join_community"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
+                android:textColor="?attr/colorOnBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/card_view_routine" />
 
-                    android:text="@string/join_community"
-                    android:textAppearance="?attr/textAppearanceTitleLarge"
-                    android:textColor="?attr/colorOnBackground"
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view_description_join_community"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
 
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_description_join_community"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                android:text="@string/join_community_description_1"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
 
-                    android:text="@string/join_community_description_1"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:textColor="?attr/colorOnBackground"
+                android:textColor="?attr/colorOnBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_view_title_join_community" />
 
-                    app:layout_constraintTop_toBottomOf="@id/text_view_title_join_community"
-                    app:layout_constraintStart_toStartOf="parent"/>
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_join_community"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Material3.Button"
+                android:id="@+id/button_join_community"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="48dp"
+                android:text="@string/join_community"
 
-                    android:text="@string/join_community"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_view_description_join_community" />
 
-                    app:layout_constraintTop_toBottomOf="@id/text_view_description_join_community"
-                    app:layout_constraintStart_toStartOf="parent"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

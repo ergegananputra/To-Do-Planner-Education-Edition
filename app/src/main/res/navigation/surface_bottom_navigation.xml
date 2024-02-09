@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_profileFragment_to_settingsInformationActivity"
             app:destination="@id/settingsInformationActivity" />
+        <action
+            android:id="@+id/action_profileFragment_to_communitiesActivity"
+            app:destination="@id/communitiesActivity" />
     </fragment>
     <activity
         android:id="@+id/taskManagementActivity"
@@ -82,4 +85,9 @@
         android:name="com.minizuure.todoplannereducationedition.second_layer.RoutineManagementActivity"
         android:label="activity_routine_management"
         tools:layout="@layout/activity_routine_management" />
+    <activity
+        android:id="@+id/communitiesActivity"
+        android:name="com.minizuure.todoplannereducationedition.communities.CommunitiesActivity"
+        android:label="activity_communities"
+        tools:layout="@layout/activity_communities" />
 </navigation>

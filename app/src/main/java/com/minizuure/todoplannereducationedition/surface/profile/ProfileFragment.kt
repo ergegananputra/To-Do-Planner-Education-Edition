@@ -56,10 +56,20 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRoutinesManagementButton()
+        setupCommunitiesButton()
         setupAuthentication()
         setupSettings()
         setupThemeModeButton()
         marqueeSupport()
+    }
+
+    private fun setupCommunitiesButton() {
+        val destination = ProfileFragmentDirections.actionProfileFragmentToCommunitiesActivity()
+        binding.cardViewCommunities.setOnClickListener {
+            findNavController().navigate(destination)
+        }
+
+        binding.buttonCommunities.setOnClickListener { binding.cardViewCommunities.performClick() }
     }
 
     private fun setupThemeModeButton() {

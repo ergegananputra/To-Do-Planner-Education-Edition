@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/communities_navigation"
+    app:startDestination="@id/communitiesFragment2">
+
+
+    <fragment
+        android:id="@+id/communitiesFragment2"
+        android:name="com.minizuure.todoplannereducationedition.communities.dasbor.CommunitiesFragment"
+        android:label="fragment_communities"
+        tools:layout="@layout/fragment_communities" >
+        <action
+            android:id="@+id/action_communitiesFragment2_to_communityMemberFragment"
+            app:destination="@id/communityMemberFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/communityMemberFragment"
+        android:name="com.minizuure.todoplannereducationedition.communities.member.CommunityMemberFragment"
+        android:label="fragment_community_member"
+        tools:layout="@layout/fragment_community_member" />
+</navigation>
