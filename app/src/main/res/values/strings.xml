@@ -49,6 +49,10 @@
     <string name="alert_and_reminder_description">Allows the app to remind you of incoming tasks</string>
     <string name="settings_description"><![CDATA[storage, permission, terms & services]]></string>
     <string name="communities_settings_description">create or join communities</string>
+    <string name="community_manager_description">Make your community better by managing it properly. Don’t admit random member unless you know them.</string>
+    <string name="search_member">Search member</string>
+    <string name="admit">Admit</string>
+    <string name="kick">Kick</string>
     <string name="beta">BETA</string>
     <string name="help">Help</string>
     <string name="help_description">features description, about us</string>
