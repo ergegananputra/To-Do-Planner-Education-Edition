@@ -25,6 +25,12 @@ const val DEFAULT_SESSION_ID = -1L
 
 const val DEFAULT_NOTE_ID = -1L
 
+/**
+ * DEFAULT ROUTINE SHORTCUT
+ * @param DEFAULT_ROUTINE_SHORTCUT : String
+ */
+const val DEFAULT_ROUTINE_SHORTCUT = "shortcuts_to_default_routine"
+
 
 
 

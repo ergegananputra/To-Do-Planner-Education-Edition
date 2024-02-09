@@ -268,9 +268,18 @@ class DatetimeAppManager(
 
         textInputLayoutTime.editText?.doAfterTextChanged { text ->
             if (text.toString().trim().length == 5) {
-                val (hour, minute) = text.toString().trim().split(":")
-                if (hour.length != 2 || minute.length != 2 || hour.toInt() > 23 || hour.toInt() < 0 || minute.toInt() > 59 || minute.toInt() < 0) {
+                if (text!!.contains(':').not()) {
                     val errMsg = context.getString(R.string.error_msg_time_invalid_format)
+                    textInputLayoutTime.error = errMsg
+                    return@doAfterTextChanged
+                }
+
+                val (hour, minute) = text.toString().trim().split(":")
+                if (hour.length != 2 || minute.length != 2) {
+                    val errMsg = context.getString(R.string.error_msg_time_invalid_format)
+                    textInputLayoutTime.error = errMsg
+                } else if (hour.toInt() > 23 || hour.toInt() < 0 || minute.toInt() > 59 || minute.toInt() < 0) {
+                    val errMsg = context.getString(R.string.error_msg_time_is_not_valid)
                     textInputLayoutTime.error = errMsg
                 } else {
                     textInputLayoutTime.error = null
