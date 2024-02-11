@@ -3,7 +3,7 @@ package com.minizuure.todoplannereducationedition.services.database.routine
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.GlobalMinimumInterface
+import com.minizuure.todoplannereducationedition.model.base.RoutineInterface
 
 /**
  * [Last Modified: 8 January 2024]
@@ -32,17 +32,17 @@ data class RoutineTable(
     override var title: String,
 
     @ColumnInfo(name = "description")
-    var description: String,
+    override var description: String,
 
     @ColumnInfo(name = "date_start")
-    var date_start: String,
+    override var date_start: String,
 
     @ColumnInfo(name = "date_end")
-    var date_end: String,
+    override var date_end: String,
 
     @ColumnInfo(name = "isSharedToCommunity")
-    var isSharedToCommunity: Boolean = false,
+    override var isSharedToCommunity: Boolean = false,
 
     @ColumnInfo(name = "communityId")
-    var communityId: String? = null,
-) : GlobalMinimumInterface
+    override var communityId: String? = null,
+) : RoutineInterface

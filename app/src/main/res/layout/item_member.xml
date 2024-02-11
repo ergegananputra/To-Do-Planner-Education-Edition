@@ -6,7 +6,7 @@
     app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
     app:strokeWidth="0dp"
     android:layout_marginBottom="8dp"
-    android:id="@+id/card_view_usages"
+    android:id="@+id/item_member"
     app:cardCornerRadius="8dp"
     >
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,29 +20,30 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
 
-            app:srcCompat="@drawable/ic_person_outline"
-            app:iconTint="?attr/colorError"
+            android:src="@drawable/ic_person_outline"
+            app:iconTint="?attr/colorOnSurface"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
+
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_view_session_used"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
 
+            android:layout_marginEnd="8dp"
             android:maxLines="1"
-            android:text="mail@email.com"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?attr/colorOnSurface"
 
             app:layout_constraintBottom_toBottomOf="@+id/icon_person_item"
+            app:layout_constraintEnd_toStartOf="@+id/button_admit_community_member"
             app:layout_constraintStart_toEndOf="@+id/icon_person_item"
-            app:layout_constraintTop_toTopOf="@+id/icon_person_item"
-            />
+            app:layout_constraintTop_toTopOf="@+id/icon_person_item" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_admit_community_member"
             android:layout_width="wrap_content"
@@ -51,12 +52,13 @@
 
             android:backgroundTint="?attr/colorPrimary"
             android:text="@string/admit"
-            android:visibility="visible"
+            android:visibility="gone"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_kick_community_member"
             android:layout_width="wrap_content"
@@ -71,6 +73,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

@@ -199,5 +199,14 @@
     <string name="select_default_routine">Select default routine</string>
     <string name="welcome_to_communities">Welcome to communities</string>
     <string name="version_beta">Version Beta 0.1</string>
+    <string name="syncronizing">Syncronizing</string>
+    <string name="downloading">Downloading</string>
+    <string name="uploading">Uploading</string>
+    <string name="syncronization_notification_channel_name">Syncronization Notes Data</string>
+    <string name="syncronization_notification_channel_description">Sync your routine, task, and todo notes to the server database. This services only work if you agree and join the experimental features.</string>
+    <string name="select_routine">Select routine for community</string>
+    <string name="error_auth_user_not_logged_in">Error: User is not logged in.</string>
+    <string name="upload_completed">Upload completed</string>
+    <string name="error_uploading_to_firestore">Error when uploading to database</string>
 
 </resources>

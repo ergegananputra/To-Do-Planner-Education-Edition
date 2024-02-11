@@ -1,4 +1,4 @@
-package com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces
+package com.minizuure.todoplannereducationedition.model.base
 
 interface GlobalMinimumInterface {
     val id : Long

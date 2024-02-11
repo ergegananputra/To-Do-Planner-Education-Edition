@@ -32,6 +32,18 @@ interface TaskTableDao : BaseIODao<TaskTable> {
 
 
     @Query("""
+        SELECT DISTINCT task_table.* 
+        FROM session_task_provider_table as provider_table
+        JOIN task_table ON provider_table.fk_task_id = task_table.id
+        JOIN session_table ON provider_table.fk_session_id = session_table.id
+        JOIN routine_table ON session_table.fk_routine_id =  routine_table.id
+        WHERE routine_table.id = :routineId
+        """
+    )
+    suspend fun getByRoutineId(routineId: Long): List<TaskTable>
+
+
+    @Query("""
         SELECT 
                 task_table.id AS id,
                 task_table.title AS title,

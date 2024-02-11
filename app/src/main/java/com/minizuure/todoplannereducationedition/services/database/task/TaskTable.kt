@@ -3,6 +3,7 @@ package com.minizuure.todoplannereducationedition.services.database.task
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.minizuure.todoplannereducationedition.model.base.TaskInterface
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 
 /**
@@ -54,20 +55,20 @@ import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppMa
 @Entity(tableName = "task_table")
 data class TaskTable(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    override val id: Long = 0,
 
     @ColumnInfo(name = "title")
-    var title: String,
+    override var title: String,
 
     @ColumnInfo(name = "updated_at")
-    var updatedAt: String = DatetimeAppManager().dateISO8601inString,
+    override var updatedAt: String = DatetimeAppManager().dateISO8601inString,
 
     // Community Feature
 
     @ColumnInfo(name = "is_shared_to_community")
-    var isSharedToCommunity : Boolean = false,
+    override var isSharedToCommunity : Boolean = false,
 
     @ColumnInfo(name = "community_id")
-    var communityId : String? = null,
+    override var communityId : String? = null,
 
-    )
+    ) : TaskInterface

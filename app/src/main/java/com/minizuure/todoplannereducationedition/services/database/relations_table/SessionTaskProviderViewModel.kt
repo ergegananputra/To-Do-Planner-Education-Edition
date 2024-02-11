@@ -81,6 +81,10 @@ class SessionTaskProviderViewModel(
         )
     }
 
+    suspend fun getByRoutineId(routineId: Long) : List<SessionTaskProviderTable> {
+        return appDatabaseRepository.getSessionTaskProviderByRoutineId(routineId)
+    }
+
     /**
      *
      * [optimizeSessionTaskProviderTable]

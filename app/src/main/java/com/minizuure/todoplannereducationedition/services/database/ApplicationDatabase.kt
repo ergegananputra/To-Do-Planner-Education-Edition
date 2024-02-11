@@ -13,6 +13,8 @@ import com.minizuure.todoplannereducationedition.services.database.queue.Notific
 import com.minizuure.todoplannereducationedition.services.database.queue.NotificationQueueTableDao
 import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderTable
 import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderTableDao
+import com.minizuure.todoplannereducationedition.services.database.reservasion.ReservationTable
+import com.minizuure.todoplannereducationedition.services.database.reservasion.ReservationTableDao
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTableDao
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
@@ -28,12 +30,14 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
         TodoNoteTable::class,
         NotesTaskTable::class,
         NotificationQueueTable::class,
-        SessionTaskProviderTable::class
+        SessionTaskProviderTable::class,
+        ReservationTable::class
                ],
-    version = 10,
+    version = 3,
     exportSchema = true,
     autoMigrations = [
-        AutoMigration(from = 9, to = 10),
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3)
     ]
 )
 abstract class ApplicationDatabase : RoomDatabase() {
@@ -46,6 +50,8 @@ abstract class ApplicationDatabase : RoomDatabase() {
     abstract fun sessionTaskProviderTableDao(): SessionTaskProviderTableDao
 
     abstract fun deleteAllOperation(): DeleteAllOperation
+
+    abstract fun reservationTableDao(): ReservationTableDao
 
 
     companion object {
@@ -61,58 +67,12 @@ abstract class ApplicationDatabase : RoomDatabase() {
                     ApplicationDatabase::class.java,
                     DATABASE_NAME
                 )
-//                    .fallbackToDestructiveMigration() // change to this => .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
 
                 INSTANCE = instance
                 instance
             }
         }
-//
-//        /**
-//         * Migration from:
-//         * version 1 -> version 2
-//         * Add isSharedToCommunity and communityId column to routine_table
-//         */
-//        private val MIGRATION_1_2 = object : Migration(1, 2) {
-//            override fun migrate(db: SupportSQLiteDatabase) {
-//                db.execSQL("ALTER TABLE routine_table ADD COLUMN isSharedToCommunity INTEGER NOT NULL DEFAULT 0")
-//                db.execSQL("ALTER TABLE routine_table ADD COLUMN communityId TEXT")
-//            }
-//        }
-//
-//
-//        /**
-//         * Migration from:
-//         * version 2 -> version 3
-//         * Add TodoNoteTable and NotesTaskTable
-//         * Add date_iso8601 and updated_at column to task_table
-//         */
-//        private val MIGRATION_2_3 = object : Migration(2, 3) {
-//            override fun migrate(db: SupportSQLiteDatabase) {
-//                db.execSQL(
-//                    "CREATE TABLE todo_note_table (" +
-//                            "id INTEGER PRIMARY KEY NOT NULL, " +
-//                            "fk_notes_task_id INTEGER NOT NULL, " +
-//                            "is_checked INTEGER NOT NULL DEFAULT 0, " +
-//                            "description TEXT NOT NULL, " +
-//                            "updated_at INTEGER NOT NULL, " +
-//                            "FOREIGN KEY(fk_notes_task_id) REFERENCES notes_task_table(id) ON DELETE CASCADE)"
-//                )
-//                db.execSQL(
-//                    "CREATE TABLE notes_task_table (" +
-//                            "id INTEGER PRIMARY KEY NOT NULL, " +
-//                            "fk_task_id INTEGER NOT NULL, " +
-//                            "category TEXT NOT NULL, " +
-//                            "description TEXT NOT NULL, " +
-//                            "updated_at INTEGER NOT NULL, " +
-//                            "FOREIGN KEY(fk_task_id) REFERENCES task_table(id) ON DELETE CASCADE)"
-//                )
-//                db.execSQL("ALTER TABLE task_table ADD COLUMN date_iso8601 TEXT DEFAULT NULL")
-//                db.execSQL("ALTER TABLE task_table ADD COLUMN updated_at INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP")
-//
-//            }
-//        }
     }
 
 

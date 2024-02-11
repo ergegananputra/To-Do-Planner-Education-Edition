@@ -27,5 +27,8 @@ interface DeleteAllOperation {
     @Query("DELETE FROM session_task_provider_table")
     suspend fun deleteAllSessionTaskProvider()
 
+    @Query("DELETE FROM reservation_table")
+    suspend fun deleteAllReservations()
+
 
 }

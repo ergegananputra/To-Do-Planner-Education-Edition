@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import com.minizuure.todoplannereducationedition.model.base.SessionTaskProviderInterface
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 
@@ -35,28 +36,28 @@ import com.minizuure.todoplannereducationedition.services.database.task.TaskTabl
 )
 data class SessionTaskProviderTable (
     @ColumnInfo(name = "index_day")
-    val indexDay: Int = 0,
+    override val indexDay: Int = 0,
 
     @ColumnInfo(name = "fk_task_id")
-    val fkTaskId: Long,
+    override val fkTaskId: Long,
 
     @ColumnInfo(name = "fk_session_id")
-    val fkSessionId: Long,
+    override val fkSessionId: Long,
 
     @ColumnInfo(name = "is_rescheduled")
-    var isRescheduled : Boolean = false,
+    override var isRescheduled : Boolean = false,
 
     @ColumnInfo(name = "rescheduled_date_start")
-    var rescheduledDateStart : String? = null,
+    override var rescheduledDateStart : String? = null,
 
     @ColumnInfo(name = "rescheduled_date_end")
-    var rescheduledDateEnd : String? = null,
+    override var rescheduledDateEnd : String? = null,
 
     // Additional Location
 
     @ColumnInfo(name = "location_name")
-    var locationName : String? = null,
+    override var locationName : String? = null,
 
     @ColumnInfo(name = "location_link")
-    var locationLink : String? = null,
-)
+    override var locationLink : String? = null,
+) : SessionTaskProviderInterface

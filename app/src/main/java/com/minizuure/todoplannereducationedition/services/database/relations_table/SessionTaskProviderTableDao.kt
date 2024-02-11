@@ -17,6 +17,17 @@ interface SessionTaskProviderTableDao : BaseIODao<SessionTaskProviderTable> {
     @Query("SELECT * FROM session_task_provider_table WHERE fk_task_id = :taskId")
     suspend fun getByTaskId(taskId: Long): List<SessionTaskProviderTable>
 
+    @Query("""
+        SELECT DISTINCT provider_table.* 
+        FROM session_task_provider_table as provider_table
+        JOIN task_table ON provider_table.fk_task_id = task_table.id
+        JOIN session_table ON provider_table.fk_session_id = session_table.id
+        JOIN routine_table ON session_table.fk_routine_id =  routine_table.id
+        WHERE routine_table.id = :routineId
+        """
+    )
+    suspend fun getByRoutineId(routineId: Long): List<SessionTaskProviderTable>
+
     @Query("SELECT * FROM session_task_provider_table WHERE index_day = :indexDay AND fk_task_id = :taskId AND fk_session_id = :sessionId")
     suspend fun getByPrimaryKeys(
         indexDay: Int,

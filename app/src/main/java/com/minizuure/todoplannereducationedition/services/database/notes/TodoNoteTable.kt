@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.minizuure.todoplannereducationedition.services.database.TimeDatabaseAbstraction
+import com.minizuure.todoplannereducationedition.model.base.TodoNoteInterface
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 
 @Entity(
@@ -22,17 +22,17 @@ import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppMa
 )
 data class TodoNoteTable(
     @PrimaryKey(autoGenerate = true)
-    val id : Long = 0,
+    override val id : Long = 0,
 
     @ColumnInfo(name = "fk_notes_task_id")
-    val fkNotesTaskId : Long,
+    override val fkNotesTaskId : Long,
 
     @ColumnInfo(name = "is_checked")
-    var isChecked : Boolean = false,
+    override var isChecked : Boolean = false,
 
     @ColumnInfo(name = "description")
-    var description : String,
+    override var description : String,
 
     @ColumnInfo(name = "updated_at")
-    var updatedAt : String = DatetimeAppManager().dateISO8601inString,
-) : TimeDatabaseAbstraction()
+    override var updatedAt : String = DatetimeAppManager().dateISO8601inString,
+) : TodoNoteInterface

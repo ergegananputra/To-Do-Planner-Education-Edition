@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.minizuure.todoplannereducationedition.services.database.TimeDatabaseAbstraction
+import com.minizuure.todoplannereducationedition.model.base.NotesTaskInterface
 import com.minizuure.todoplannereducationedition.services.database.task.TaskTable
 import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppManager
 
@@ -42,20 +42,20 @@ import com.minizuure.todoplannereducationedition.services.datetime.DatetimeAppMa
 )
 data class NotesTaskTable(
     @PrimaryKey(autoGenerate = true)
-    val id : Long = 0,
+    override val id : Long = 0,
 
     @ColumnInfo(name = "fk_task_id")
-    val fkTaskId : Long,
+    override val fkTaskId : Long,
 
     @ColumnInfo(name = "date_iso8601")
-    var dateISO8601 : String,
+    override var dateISO8601 : String,
 
     @ColumnInfo(name = "category")
-    var category : String,
+    override var category : String,
 
     @ColumnInfo(name = "description")
-    var description : String,
+    override var description : String,
 
     @ColumnInfo(name = "updated_at")
-    var updatedAt : String = DatetimeAppManager().dateISO8601inString,
-) : TimeDatabaseAbstraction()
+    override var updatedAt : String = DatetimeAppManager().dateISO8601inString,
+) : NotesTaskInterface

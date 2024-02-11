@@ -73,6 +73,11 @@ class TaskViewModel(
         return appDatabaseRepository.getTasksBySessionId(sessionId)
     }
 
+    suspend fun getByRoutineId(routineId: Long) : List<TaskTable> {
+        Log.d("TaskViewModel", "get tasks by routine id: $routineId")
+        return appDatabaseRepository.getTasksByRoutineId(routineId)
+    }
+
     suspend fun insert(taskTable: TaskTable) : Long {
         Log.d("TaskViewModel", "insert task: $taskTable")
         return appDatabaseRepository.insertTask(taskTable)

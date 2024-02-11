@@ -8,6 +8,8 @@ import com.minizuure.todoplannereducationedition.services.database.notes.TodoNot
 import com.minizuure.todoplannereducationedition.services.database.notes.TodoNoteTable
 import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderTable
 import com.minizuure.todoplannereducationedition.services.database.relations_table.SessionTaskProviderTableDao
+import com.minizuure.todoplannereducationedition.services.database.reservasion.ReservationTable
+import com.minizuure.todoplannereducationedition.services.database.reservasion.ReservationTableDao
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTable
 import com.minizuure.todoplannereducationedition.services.database.routine.RoutineTableDao
 import com.minizuure.todoplannereducationedition.services.database.session.SessionTable
@@ -37,6 +39,7 @@ class AppDatabaseRepository(
     private val notesTaskTableDao: NotesTaskDao,
     private val sessionTaskProviderTableDao: SessionTaskProviderTableDao,
     private val deleteAllOperation: DeleteAllOperation,
+    private val reservationTableDao: ReservationTableDao
 ) {
     // Delete
     private suspend fun deleteAllTasks() = withContext(Dispatchers.IO) {
@@ -59,6 +62,7 @@ class AppDatabaseRepository(
         deleteAllOperation.deleteAllTodoNotes()
         deleteAllOperation.deleteAllNotesTasks()
         deleteAllOperation.deleteAllSessionTaskProvider()
+        deleteAllOperation.deleteAllReservations()
     }
 
     // RoutineTableDao
@@ -195,6 +199,12 @@ class AppDatabaseRepository(
         Log.d("AppDatabaseRepository", "getTasksBySessionId triggered with sessionId $sessionId")
         taskTableDao.getBySessionId(sessionId)
     }
+
+    suspend fun getTasksByRoutineId(routineId: Long) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getTasksByRoutineId triggered with routineId $routineId")
+        taskTableDao.getByRoutineId(routineId)
+    }
+
     suspend fun insertTask(taskTable: TaskTable) :Long = withContext(Dispatchers.IO) {
         Log.d("AppDatabaseRepository", "insertTask triggered with $taskTable")
         taskTableDao.insert(taskTable)
@@ -396,6 +406,67 @@ class AppDatabaseRepository(
         sessionTaskProviderTableDao.countByRoutineId(
             routineId = routineId
         )
+    }
+
+    suspend fun getSessionTaskProviderByRoutineId(
+        routineId: Long
+    ) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getSessionTaskProviderByRoutineId: $routineId")
+        sessionTaskProviderTableDao.getByRoutineId(
+            routineId = routineId
+        )
+    }
+
+
+    // Reservation
+    suspend fun getAllReservations() = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getAllReservations triggered")
+        reservationTableDao.getAll()
+    }
+
+    suspend fun getReservationById(documentId : String) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getReservationById triggered with documentId $documentId")
+        reservationTableDao.getById(documentId)
+    }
+
+    suspend fun getAllReservationByCommunity(communityId : String) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getAllReservationByCommunity triggered with communityId $communityId")
+        reservationTableDao.getAllByCommunity(communityId)
+    }
+
+    suspend fun getAllReservationByCommunityAndTable(communityId : String, tableName: String) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getAllReservationByCommunityAndTable triggered with communityId $communityId, tableName $tableName")
+        reservationTableDao.getAllByCommunityAndTable(communityId, tableName)
+    }
+
+    suspend fun getCountReservations() = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getCountReservations triggered")
+        reservationTableDao.getCount()
+    }
+
+    suspend fun getReservationByIdsFirebase(communityId : String, tableName : String, idFirebase : Long) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getReservationByIdsFirebase triggered with communityId $communityId, tableName $tableName, idFirebase $idFirebase")
+        reservationTableDao.getByIdsFirebase(communityId, tableName, idFirebase)
+    }
+
+    suspend fun getReservationByIdsLocal(communityId : String, tableName : String, idLocal : Long) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getReservationByIdsLocal triggered with communityId $communityId, tableName $tableName, idLocal $idLocal")
+        reservationTableDao.getByIdsLocal(communityId, tableName, idLocal)
+    }
+
+    suspend fun insertReservation(reservationTable: ReservationTable) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "insertReservation triggered with $reservationTable")
+        reservationTableDao.insert(reservationTable)
+    }
+
+    suspend fun deleteReservation(reservationTable: ReservationTable) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "deleteReservation triggered with $reservationTable")
+        reservationTableDao.delete(reservationTable)
+    }
+
+    suspend fun updateReservation(reservationTable: ReservationTable) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "updateReservation triggered with $reservationTable")
+        reservationTableDao.update(reservationTable)
     }
 
 

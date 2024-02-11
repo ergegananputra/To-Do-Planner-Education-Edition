@@ -1,6 +1,6 @@
 package com.minizuure.todoplannereducationedition.dialog_modal.model
 
-import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.GlobalMinimumInterface
+import com.minizuure.todoplannereducationedition.model.base.GlobalMinimumInterface
 
 data class DaysOfWeekImpl(
     override val id: Long,

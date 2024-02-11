@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.minizuure.todoplannereducationedition.databinding.ItemGeneralBottomSheetBinding
-import com.minizuure.todoplannereducationedition.dialog_modal.model_interfaces.GlobalMinimumInterface
+import com.minizuure.todoplannereducationedition.model.base.GlobalMinimumInterface
 
 class GlobalAdapter(
     var onClickAction : (GlobalMinimumInterface) -> Unit = {},
