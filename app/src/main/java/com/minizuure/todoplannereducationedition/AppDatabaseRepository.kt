@@ -70,6 +70,10 @@ class AppDatabaseRepository(
         Log.d("AppDatabaseRepository", "getAllRoutines triggered")
         routineTableDao.getAll()
     }
+    suspend fun getRoutineByCommunity(communityId: String) = withContext(Dispatchers.IO) {
+        Log.d("AppDatabaseRepository", "getRoutineByCommunity triggered with communityId $communityId")
+        routineTableDao.getByCommunity(communityId)
+    }
     suspend fun getRoutinesCount() = withContext(Dispatchers.IO) {
         Log.d("AppDatabaseRepository", "getRoutinesCount triggered")
         routineTableDao.getCount()

@@ -20,5 +20,8 @@ interface RoutineTableDao : BaseIODao<RoutineTable> {
     @Query("SELECT * FROM routine_table WHERE title LIKE :searchQuery LIMIT :limit OFFSET :offset")
     suspend fun getPaginated(limit: Int, offset: Int = 0, searchQuery: String = ""): List<RoutineTable>
 
+    @Query("SELECT * FROM routine_table WHERE communityId = :communityId")
+    suspend fun getByCommunity(communityId: String): RoutineTable?
+
 
 }

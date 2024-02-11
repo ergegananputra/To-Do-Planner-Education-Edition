@@ -41,14 +41,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 /**
  * This service is used to sync the local database with the Firestore database.
  * It can be used to upload the local database to Firestore or download the Firestore database to the local database.
  *
  * TODO:
- * - Datbase masih berantakan di firestore
- * - sink donwload belum
+ * - Orang lain belum bisa update
  */
 class DatabaseSyncServices : Service() {
     private lateinit var routineViewModel : RoutineViewModel
@@ -127,7 +128,11 @@ class DatabaseSyncServices : Service() {
 
 
             val isHost = UserPreferences(this@DatabaseSyncServices).isCommunityHost
-            val localRoutineId = UserPreferences(this@DatabaseSyncServices).communityId.toLong()
+            val localRoutineId = withContext(Dispatchers.IO) {
+                val comId = UserPreferences(this@DatabaseSyncServices).communityId
+                val routine = routineViewModel.getByCommunity(comId)
+                routine?.id ?: return@withContext comId.toLong()
+            }
 
             val routine = routineViewModel.getById(localRoutineId).also {
                 if (it != null) {
@@ -184,28 +189,43 @@ class DatabaseSyncServices : Service() {
                 return
             }
 
-            val community : Community = Community(
-                owner_references = firestore.collection(FireUser().table).document(auth.currentUser!!.uid),
-                update_at = Timestamp.now(),
-                created_at = Timestamp.now()
-            )
+
 
             // NOTE: Upload to Firestore
 
-            firestore.collection(community.table).add(community.firebaseMap).addOnSuccessListener {communityRef ->
-                val communityId = communityRef.id
-
-                community.apply {
-                    reference_id = communityRef
-                    members_references = firestore.collection(FireMember().parent).document(communityId)
-                    routine_references = firestore.collection(FireRoutine().table).document(communityId)
-                    session_references = firestore.collection(FireSession().parent).document(communityId)
-                    task_references = firestore.collection(FireTask().parent).document(communityId)
-                    provider_references = firestore.collection(FireSessionTaskProvider().parent).document(communityId)
-                    notes_task_references = firestore.collection(FireNotesTask().parent).document(communityId)
-                    todo_notes_references = firestore.collection(FireTodoNote().parent).document(communityId)
+            val communityId = if (isHost) {
+                auth.currentUser!!.uid.also {
+                    UserPreferences(this@DatabaseSyncServices).communityId = it
                 }
-                communityRef.update(community.firebaseMap).addOnSuccessListener {
+            } else {
+                UserPreferences(this@DatabaseSyncServices).communityId
+            }
+
+            val tempCommunity = firestore.collection(Community().table).document(communityId).get().await().toObject(Community::class.java)
+
+            val community : Community = tempCommunity?.apply {
+                this.update_at = Timestamp.now()
+            }
+                ?: Community(
+                    reference_id = firestore.collection(Community().table).document(communityId),
+                    owner_references = firestore.collection(FireUser().table).document(auth.currentUser!!.uid),
+
+                    members_references = firestore.collection(FireMember().parent).document(communityId),
+                    routine_references = firestore.collection(FireRoutine().table).document(communityId),
+                    session_references = firestore.collection(FireSession().parent).document(communityId),
+                    task_references = firestore.collection(FireTask().parent).document(communityId),
+                    provider_references = firestore.collection(FireSessionTaskProvider().parent).document(communityId),
+                    notes_task_references = firestore.collection(FireNotesTask().parent).document(communityId),
+                    todo_notes_references = firestore.collection(FireTodoNote().parent).document(communityId),
+
+                    update_at = Timestamp.now(),
+                    created_at = Timestamp.now()
+                )
+
+            firestore.collection(community.table)
+                .document(communityId)
+                .set(community.firebaseMap)
+                .addOnSuccessListener {
 
                     notification.setContentText("$contextDescription ${routine.title}...")
                     startForeground(1, notification.build())
@@ -424,16 +444,10 @@ class DatabaseSyncServices : Service() {
                     startForeground(1, notification.build())
 
 
-
-                }.addOnFailureListener {
+                }. addOnFailureListener {
                     failureAction(it)
                     return@addOnFailureListener
                 }
-
-            }. addOnFailureListener {
-                failureAction(it)
-                return@addOnFailureListener
-            }
 
 
             databaseJobs.joinAll()

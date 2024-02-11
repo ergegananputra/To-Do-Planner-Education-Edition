@@ -11,6 +11,10 @@ class RoutineViewModel(
         return appDatabaseRepository.getAllRoutines()
     }
 
+    suspend fun getByCommunity(communityId : String) : RoutineTable? {
+        return appDatabaseRepository.getRoutineByCommunity(communityId)
+    }
+
     suspend fun getCount() : Int {
         return appDatabaseRepository.getRoutinesCount()
     }
