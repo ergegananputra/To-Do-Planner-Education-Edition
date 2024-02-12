@@ -94,13 +94,197 @@ class DatabaseSyncServices : Service() {
         auth = FirebaseAuth.getInstance()
         setupViewModelFactory()
         when(intent?.action) {
-            SyncType.DOWNLOAD.toString() -> downloadDatabase()
-            SyncType.UPLOAD.toString() -> CoroutineScope(Dispatchers.Default).launch{
+            SyncType.DOWNLOAD.toString() -> CoroutineScope(Dispatchers.Default).launch{
+                downloadDatabase()
+            }
+            SyncType.CREATE_UPLOAD.toString() -> CoroutineScope(Dispatchers.Default).launch{
                 uploadDatabase()
+            }
+            SyncType.UPDATE.toString() -> CoroutineScope(Dispatchers.Default).launch{
+                updateDatabase()
             }
             SyncType.CANCEL_ALL_OPERATIONS.toString() -> stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun failureAction(e: Exception, notification: NotificationCompat.Builder, msg: String = "Upload") {
+        val errorMsg = getString(R.string.error_uploading_to_firestore)
+        notification.setContentText(errorMsg)
+        startForeground(1, notification.build())
+        Log.e("DatabaseSyncServices", "Error in $msg: ${e.message.toString()}")
+        stopSelf()
+    }
+    private suspend fun updateDatabase() {
+        val channelId = "TODO_PLANNER_EDUCATION_EDITION_BY_MINIZUURE_SERVICES_NOTIFICATIONS"
+        val syncTitle = getString(R.string.syncronizing)
+        val contextDescription = getString(R.string.uploading)
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_notification_emblem)
+            .setContentTitle("$syncTitle...")
+            .setContentText(contextDescription)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setSound(null)
+        startForeground(1, notification.build())
+
+        val errorMessage = "Update"
+
+        try {
+            val databaseJobs : MutableList<Job> = mutableListOf()
+
+            val communityId = UserPreferences(this@DatabaseSyncServices).communityId.also {
+                // Validate community ID
+                if (it.isEmpty()) {
+                    throw Exception("Community ID is empty")
+                }
+            }
+
+            val reservations = reservationViewModel.getAllByCommunity(communityId)
+            val localIdDumps = mutableListOf<Long>()
+
+            val fireSessionTable = FireSession()
+            val fireTaskTable = FireTask()
+            val fireSessionTaskProviderTable = FireSessionTaskProvider()
+            val fireNoteTaskTable = FireNotesTask()
+            val fireTodoNoteTable = FireTodoNote()
+
+
+
+            for (reservation in reservations) {
+                val documentId = reservation.documentId
+                val localId = reservation.idLocal
+                val additionalLocal = reservation.additionalDataLocal
+                val additionalFirebase = reservation.additionalDataFirebase
+
+
+                when(val tableName = reservation.tableName) {
+                    fireSessionTable.table -> {
+                        val fireReference = firestore.collection(fireSessionTable.parent).document(communityId).collection(tableName).document(documentId)
+                        val session = sessionViewModel.getById(localId) ?: continue // Skip if session is not found
+                        localIdDumps.add(localId)
+
+                        fireReference.get().addOnSuccessListener {
+                            val fireSession = it.toObject(FireSession::class.java) ?: return@addOnSuccessListener
+                            fireSession.apply {
+                                this.title = session.title
+                                this.timeStart = session.timeStart
+                                this.timeEnd = session.timeEnd
+                                this.selectedDays = session.selectedDays
+                                this.isCustomSession = session.isCustomSession
+                                this.update_at = Timestamp.now()
+                            }
+                            fireReference.set(fireSession.firebaseMap).addOnSuccessListener {
+                                Log.i("DatabaseSyncServices", "Session ${session.title} updated to Firestore")
+                            }.addOnFailureListener {
+                                Log.e("DatabaseSyncServices", it.message.toString())
+                            }
+                        }.addOnFailureListener {
+                            Log.e("DatabaseSyncServices", it.message.toString())
+                        }
+                    }
+                    fireTaskTable.table -> {
+                        val fireReference = firestore.collection(fireTaskTable.parent).document(communityId).collection(tableName).document(documentId)
+                        val task = taskViewModel.getById(localId) ?: continue // Skip if task is not found
+                        localIdDumps.add(localId)
+
+                        fireReference.get().addOnSuccessListener {
+                            val fireTask = it.toObject(FireTask::class.java) ?: return@addOnSuccessListener
+                            fireTask.apply {
+                                this.title = task.title
+                                this.updatedAt = task.updatedAt
+                                this.isSharedToCommunity = true
+                                this.update_at = Timestamp.now()
+                            }
+                            fireReference.set(fireTask.firebaseMap).addOnSuccessListener {
+                                Log.i("DatabaseSyncServices", "Task ${task.title} updated to Firestore")
+                            }.addOnFailureListener {
+                                Log.e("DatabaseSyncServices", it.message.toString())
+                            }
+                        }.addOnFailureListener {
+                            Log.e("DatabaseSyncServices", it.message.toString())
+                        }
+                    }
+                    fireSessionTaskProviderTable.table -> {
+                        val fireReference = firestore.collection(fireSessionTaskProviderTable.parent).document(communityId).collection(tableName).document(documentId)
+                        val localId = hashMapOf<Char, Long>(
+                            'I' to additionalLocal.split("T")[0].toLong(),
+                            'T' to additionalLocal.split("T")[1].split("S")[0].toLong(),
+                            'S' to additionalLocal.split("S")[1].toLong()
+                        )
+                        val firebaseId = hashMapOf<Char, Long>(
+                            'I' to additionalFirebase.split("T")[0].toLong(),
+                            'T' to additionalFirebase.split("T")[1].split("S")[0].toLong(),
+                            'S' to additionalFirebase.split("S")[1].toLong()
+                        )
+
+                        val provider = sessionTaskProviderViewModel.getByPrimaryKeys(localId['I']!!.toInt(), localId['T']!!, localId['S']!!) ?: continue // Skip if provider is not found
+
+                        fireReference.get().addOnSuccessListener {
+                            val fireProvider = it.toObject(FireSessionTaskProvider::class.java) ?: return@addOnSuccessListener
+                            fireProvider.apply {
+                                this.locationLink = provider.locationLink
+                                this.locationName = provider.locationName
+                                this.update_at = Timestamp.now()
+                            }
+                            fireReference.set(fireProvider.firebaseMap).addOnSuccessListener {
+                                Log.i("DatabaseSyncServices", "Provider ${provider.indexDay}T${provider.fkTaskId}S${provider.fkSessionId} updated to Firestore")
+                            }.addOnFailureListener {
+                                Log.e("DatabaseSyncServices", it.message.toString())
+                            }
+                        }
+                    }
+                    fireNoteTaskTable.table -> {
+                        val fireReference = firestore.collection(fireNoteTaskTable.parent).document(communityId).collection(tableName).document(documentId)
+                        val note = notesViewModel.note.getById(localId) ?: continue // Skip if note is not found
+                        localIdDumps.add(localId)
+
+                        fireReference.get().addOnSuccessListener {
+                            val fireNote = it.toObject(FireNotesTask::class.java) ?: return@addOnSuccessListener
+                            fireNote.apply {
+                                this.description = note.description
+                                this.updatedAt = note.updatedAt
+                                this.update_at = Timestamp.now()
+                            }
+                            fireReference.set(fireNote.firebaseMap).addOnSuccessListener {
+                                Log.i("DatabaseSyncServices", "Note ${note.category} updated to Firestore")
+                            }.addOnFailureListener {
+                                Log.e("DatabaseSyncServices", it.message.toString())
+                            }
+                        }.addOnFailureListener {
+                            Log.e("DatabaseSyncServices", it.message.toString())
+                        }
+                    }
+                    fireTodoNoteTable.table -> {
+                        val fireReference = firestore.collection(fireTodoNoteTable.parent).document(communityId).collection(tableName).document(documentId)
+                        val note = notesViewModel.todo.getById(localId) ?: continue // Skip if note is not found
+                        localIdDumps.add(localId)
+
+                        fireReference.get().addOnSuccessListener {
+                            val fireNote = it.toObject(FireTodoNote::class.java) ?: return@addOnSuccessListener
+                            fireNote.apply {
+                                this.description = note.description
+                                this.updatedAt = note.updatedAt
+                                this.update_at = Timestamp.now()
+                            }
+                            fireReference.set(fireNote.firebaseMap).addOnSuccessListener {
+                                Log.i("DatabaseSyncServices", "Todo ${note.description} updated to Firestore")
+                            }.addOnFailureListener {
+                                Log.e("DatabaseSyncServices", it.message.toString())
+                            }
+                        }.addOnFailureListener {
+                            Log.e("DatabaseSyncServices", it.message.toString())
+                        }
+                    }
+                }
+            }
+
+            // TODO: Bits above is not be able to adds new local data to Firestore
+
+            stopSelf()
+        } catch (e: Exception) {
+            failureAction(e, notification, errorMessage)
+        }
+
     }
 
     private suspend fun uploadDatabase() {
@@ -114,14 +298,6 @@ class DatabaseSyncServices : Service() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setSound(null)
         startForeground(1, notification.build())
-
-        fun failureAction(e: Exception) {
-            val errorMsg = getString(R.string.error_uploading_to_firestore)
-            notification.setContentText(errorMsg)
-            startForeground(1, notification.build())
-            Log.e("DatabaseSyncServices", "Error: ${e.message.toString()}")
-            stopSelf()
-        }
 
         try {
             val databaseJobs : MutableList<Job> = mutableListOf()
@@ -354,7 +530,8 @@ class DatabaseSyncServices : Service() {
                             created_at = community.update_at,
                             update_at = community.created_at
                         )
-                        val documentId = "${communityId}${fireProvider.table}${providerIter.indexDay}T${providerIter.fkTaskId}S${providerIter.fkSessionId}"
+                        val additional = "${providerIter.indexDay}T${providerIter.fkTaskId}S${providerIter.fkSessionId}"
+                        val documentId = "${communityId}${fireProvider.table}$additional"
                         community.provider_references!!.collection(fireProvider.table)
                             .document(documentId)
                             .set(fireProvider.firebaseMap)
@@ -364,6 +541,21 @@ class DatabaseSyncServices : Service() {
                                             "T${providerIter.fkTaskId}" +
                                             "S${providerIter.fkSessionId} " +
                                             "uploaded to Firestore")
+                                databaseJobs.add(
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        reservationViewModel.insert(
+                                            ReservationTable(
+                                                documentId = documentId,
+                                                communityId = communityId,
+                                                tableName = fireProvider.table,
+                                                idFirebase = 0,
+                                                additionalDataLocal = additional,
+                                                additionalDataFirebase = additional
+                                            )
+                                        )
+                                        Log.v("DatabaseSyncServices", "Reservation Provider ${additional}")
+                                    }
+                                )
                             }
                             .addOnFailureListener {
                                 Log.e("DatabaseSyncServices", it.message.toString())
@@ -445,7 +637,7 @@ class DatabaseSyncServices : Service() {
 
 
                 }. addOnFailureListener {
-                    failureAction(it)
+                    failureAction(it, notification)
                     return@addOnFailureListener
                 }
 
@@ -457,14 +649,14 @@ class DatabaseSyncServices : Service() {
 
         } catch (e: Exception) {
             Log.e("DatabaseSyncServices", e.message.toString())
-            failureAction(e)
+            failureAction(e, notification)
         }
 
 
     }
 
 
-    private fun downloadDatabase() {
+    private suspend fun downloadDatabase() {
         val channelId = "TODO_PLANNER_EDUCATION_EDITION_BY_MINIZUURE_SERVICES_NOTIFICATIONS"
         val syncTitle = getString(R.string.syncronizing)
         val contextDescription = getString(R.string.downloading)
@@ -476,11 +668,14 @@ class DatabaseSyncServices : Service() {
             .setSound(null)
             .build()
         startForeground(1, notification)
+
+        // TODO: Download from Firestore
     }
 
     enum class SyncType {
         DOWNLOAD,
-        UPLOAD,
+        CREATE_UPLOAD,
+        UPDATE,
         CANCEL_ALL_OPERATIONS
     }
 

@@ -25,6 +25,7 @@ class UserPreferences(private val context: Context) {
         COMMUNITY_ID,
         COMMUNITY_NAME,
         COMMUNITY_VCS,
+        COMMUNITY_DESCRIPTION,
         IS_COMMUNITY_HOST,
         FIRST_TIME,
         THEME
@@ -66,6 +67,10 @@ class UserPreferences(private val context: Context) {
         get() = sharedPreferences.getString(Key of KEYS.COMMUNITY_VCS, "")!!
         set(value) = sharedPreferences.edit().putString(Key of KEYS.COMMUNITY_VCS, value).apply()
 
+    var communityVcsDescription: String
+        get() = sharedPreferences.getString(Key of KEYS.COMMUNITY_DESCRIPTION, "")!!
+        set(value) = sharedPreferences.edit().putString(Key of KEYS.COMMUNITY_DESCRIPTION, value).apply()
+
     var isCommunityHost: Boolean
         get() = sharedPreferences.getBoolean(Key of KEYS.IS_COMMUNITY_HOST, false)
         set(value) = sharedPreferences.edit().putBoolean(Key of KEYS.IS_COMMUNITY_HOST, value).apply()
@@ -92,6 +97,8 @@ class UserPreferences(private val context: Context) {
             remove(Key of KEYS.COMMUNITY_ID).apply()
             remove(Key of KEYS.COMMUNITY_VCS).apply()
             remove(Key of KEYS.IS_COMMUNITY_HOST).apply()
+            remove(Key of KEYS.COMMUNITY_NAME).apply()
+            remove(Key of KEYS.COMMUNITY_DESCRIPTION).apply()
         }
     }
 

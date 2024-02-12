@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.minizuure.todoplannereducationedition.R
 import com.minizuure.todoplannereducationedition.ToDoPlannerApplication
 import com.minizuure.todoplannereducationedition.databinding.FragmentCommunitiesBinding
@@ -103,7 +104,7 @@ class CommunitiesFragment : Fragment() {
         }
 
         Intent(requireActivity().applicationContext, DatabaseSyncServices::class.java).also { intent ->
-            intent.action = DatabaseSyncServices.SyncType.UPLOAD.toString()
+            intent.action = DatabaseSyncServices.SyncType.CREATE_UPLOAD.toString()
             requireActivity().startService(intent)
         }
 
@@ -111,10 +112,63 @@ class CommunitiesFragment : Fragment() {
     }
 
     private fun setupCommunityOffButton() {
-        // TODO: Implement un publish routine button
         binding.cardViewRoutine.setOnClickListener {
-            Toast.makeText(requireContext(), "Un publish community button not implemented yet", Toast.LENGTH_SHORT).show()
+
+            val dialog = MaterialAlertDialogBuilder(requireContext())
+                .setTitle(UserPreferences(requireActivity()).communityName)
+                .setMessage("What are you gonna do with your community?")
+                .setPositiveButton("Un Publish") { dialog, which ->
+                    UserPreferences(requireActivity()).communityId = ""
+                    UserPreferences(requireActivity()).isCommunityHost = false
+                    UserPreferences(requireActivity()).communityName = ""
+                    UserPreferences(requireActivity()).communityVcs = ""
+                    UserPreferences(requireActivity()).communityVcsDescription = ""
+                    binding.cardViewRoutine.visibility = View.GONE
+                    binding.cardViewManageMember.visibility = View.GONE
+
+                    unPublishAction()
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, which ->
+                    dialog.dismiss()
+                }
+                .setNeutralButton("Copy Id") { dialog, which ->
+                    val code = UserPreferences(requireActivity()).communityId
+                    val clipboard = requireActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                    val clip = android.content.ClipData.newPlainText("Community Code", code)
+                    clipboard.setPrimaryClip(clip)
+                    Toast.makeText(requireActivity(), "Community code copied to clipboard", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+
+            dialog.show()
+
         }
+
+        val communityId = UserPreferences(requireActivity()).communityId
+        if (communityId.isEmpty()) {
+            binding.cardViewRoutine.visibility = View.GONE
+            binding.cardViewManageMember.visibility = View.GONE
+        } else {
+            binding.cardViewRoutine.visibility = View.VISIBLE
+            binding.cardViewManageMember.visibility = View.VISIBLE
+
+            val title = UserPreferences(requireActivity()).communityName
+            val code = UserPreferences(requireActivity()).communityId
+            val desc = UserPreferences(requireActivity()).communityVcsDescription
+
+            val fullCode = "${getString(R.string.routine_code)} $code"
+
+            binding.textViewTitleRoutine.text = title
+            binding.textViewCodeRoutine.text = fullCode
+            binding.textViewDescriptionRoutine.text = desc
+
+        }
+    }
+
+    private fun unPublishAction() {
+        //Todo: Implement un publish action
+        Toast.makeText(requireContext(), "Un publish action not implemented yet", Toast.LENGTH_SHORT).show()
     }
 
     private fun setupJoinCommunityButton() {

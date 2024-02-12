@@ -34,6 +34,12 @@ data class ReservationTable (
     @ColumnInfo(name = "id_local")
     var idLocal: Long = 0,
 
+    @ColumnInfo(name = "additional_data_local", defaultValue = "")
+    var additionalDataLocal: String = "",
+
+    @ColumnInfo(name = "additional_data_firebase", defaultValue = "")
+    var additionalDataFirebase: String = ""
+
 
 )
 
